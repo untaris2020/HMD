@@ -19,7 +19,7 @@ public class HeadLockScript : MonoBehaviour
 
     public enum State
     {
-        EMULATOR = 1,
+        STATIC = 1,
         CONTROLLER = 2, 
         EHS = 3
     }
@@ -41,7 +41,7 @@ public class HeadLockScript : MonoBehaviour
     #region Private Methods
     public void Update()
     {
-        if (runState == State.EMULATOR)  //For testing purpose only!
+        if (runState == State.STATIC)  //For testing purpose only!
         {
             this.transform.position = Camera.transform.position;
             this.transform.rotation = Camera.transform.rotation;
@@ -54,7 +54,7 @@ public class HeadLockScript : MonoBehaviour
 
                 Debug.Log("Controller Position Data: " + controller.Position);
 
-                Difference = (Camera.transform.position - controller.Position);
+                //Difference = (Camera.transform.position - controller.Position); unnessecary??
 
                 if (buttonPressed)
                 {
