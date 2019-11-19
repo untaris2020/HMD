@@ -9,6 +9,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 9180511834302890238}
+  - component: {fileID: 3316140460082731479}
+  - component: {fileID: 9007160365359296100}
   m_Layer: 0
   m_Name: TELEM
   m_TagString: Untagged
@@ -30,3 +32,32 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &3316140460082731479
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2155139277860649178}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3de3b6743726ac646a380df826cbbc74, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &9007160365359296100
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2155139277860649178}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ecec8a70581eeb9499338553a980778b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  errorScript: {fileID: 963089938247805051, guid: 7f96b8d4966eb6349adc84ab867eaaaf,
+    type: 3}
+  telemServerURL: http://davidw.engineer:3000/api/suit/recent
+  switchServerURL: http://davidw.engineer:3000/api/suitswitch/recent
+  connectionStatus: 0

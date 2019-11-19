@@ -20,7 +20,6 @@ using System.Text.RegularExpressions;
 public class TelemWebRequest : MonoBehaviour
 {
     public ErrorHandler errorScript;
-    public GameObject appManagerObject;
 
     string JSONString, JSONString2;
     public TelemObject[] telemObjects;
@@ -111,7 +110,6 @@ public class TelemWebRequest : MonoBehaviour
 
     void Start()
     {
-        errorScript = appManagerObject.GetComponent<ErrorHandler>();
 
         telemObjects = new TelemObject[numOfStoredValues];
         
