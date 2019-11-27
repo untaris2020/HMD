@@ -6,10 +6,9 @@ public class HeadLockScript : MonoBehaviour
 
     #region Public Variables
     private GameObject Camera;
-
     private Vector3 Difference;
     private Quaternion DefaultRot;
-
+    public float speed = 12f;
     public AudioClip reset;
     AudioSource source;
 
@@ -64,7 +63,7 @@ public class HeadLockScript : MonoBehaviour
                     this.transform.rotation = Camera.transform.rotation;
                     buttonPressed = false;
                 }
-                float speed = Time.deltaTime * 12.0f;
+                speed = Time.deltaTime * 12.0f;
 
                 if (controller.Type == MLInputControllerType.Control)
                 {
@@ -80,11 +79,30 @@ public class HeadLockScript : MonoBehaviour
                 }
             }
         }
-        else if(runState == State.EHS)
-        {
-            Debug.Log("EHS State...");
-        }
     }
+
+
+    public void updateHIDwithIMU(IMUJson imuData)
+    {
+        Debug.Log("Updating HID...");
+
+        // For Control, raw input is enough
+
+        Vector3 tempAccel = new Vector3(imuData.xAccel, imuData.yAccel, imuData.zAccel);
+        
+        speed = Time.deltaTime * 12.0f;
+
+        this.transform.position = Vector3.Slerp(this.transform.position, tempAccel, speed);
+
+        Vector3 tempRot = new Vector3(imuData.xAccel, imuData.yAccel, imuData.zAccel);
+
+        Quaternion rotation = Quaternion.Euler(tempRot);
+
+        //Quaternion rot = (rotation.orientation * Quaternion.Inverse(DefaultRot));
+        this.transform.rotation = Quaternion.Slerp(this.transform.rotation, rotation, speed);
+    }
+
+
     #endregion
 
     #region Event Handlers

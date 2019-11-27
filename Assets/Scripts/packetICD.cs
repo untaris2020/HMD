@@ -28,9 +28,7 @@ public class packetICD : MonoBehaviour
     public struct GloveIMU
     {
         public Header header;
-        public uint x;
-        public uint y;
-        public uint z; 
+ 
 
         //Add vars here needed for the glove packet 
     };

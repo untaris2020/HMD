@@ -13,10 +13,11 @@ public class SceneManager : MonoBehaviour
     void Start()
     {
         Debug.Log("Starting Scene...");
-        Debug.Log("Initializing HID...");
-        HIDInstance = Instantiate(HID, new Vector3(0, 0, 0), Quaternion.identity);
         Debug.Log("Initializing EHS...");
         EHSInstance = Instantiate(EHS, new Vector3(0, 0, 0), Quaternion.identity);
+        Debug.Log("Initializing HID...");
+        HIDInstance = Instantiate(HID, new Vector3(0, 0, 0), Quaternion.identity);
+        
     }
 
     // Update is called once per frame
