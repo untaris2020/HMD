@@ -24,6 +24,8 @@ public class TelemWebRequest : MonoBehaviour
     string JSONString, JSONString2;
     public TelemObject[] telemObjects;
     public StableCheckObject[] stableCheckObjects;
+    public TelemConstValues[] telemConstValues;
+
     /*[SerializeField]*/
     public string telemServerURL, switchServerURL;
     private int counter;
@@ -110,6 +112,8 @@ public class TelemWebRequest : MonoBehaviour
 
     void Start()
     {
+        // Initalize all const values
+        telemConstValues[0] = new TelemConstValues("heart_rate", );
 
         telemObjects = new TelemObject[numOfStoredValues];
         
@@ -477,6 +481,23 @@ public class StableCheckObject
     public StableCheckObject(ErrorHandler _errorScript)
     {
         errorScript = _errorScript;
+    }
+}
+
+
+public class TelemConstValues
+{
+    private string name;
+    private int lowVal, highVal, arrayPos;
+    private bool flag;
+
+    public TelemConstValues(string _name, int _lowVal, int _highVal, int _arrayPos, bool _flag)
+    {
+        name = _name;
+        lowVal = _lowVal;
+        highVal = _highVal;
+        arrayPos = _arrayPos;
+        flag = _flag;
     }
 }
 

@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 5946311688459297505}
   - component: {fileID: 6937130222121219055}
   - component: {fileID: 4973691584635185958}
+  - component: {fileID: 7633208563387115851}
   m_Layer: 0
   m_Name: HID
   m_TagString: Untagged
@@ -173,3 +174,30 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _devicesAllowed: 7
+--- !u!114 &7633208563387115851
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8251871913592945764}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bea28e26c1f8bb642add2870c207eefe, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  HeadingFont: {fileID: 0}
+  BodyFont: {fileID: 0}
+  ErrorFont: {fileID: 0}
+  HeadingFontSize: 0
+  BodyFontSize: 0
+  ErrorFontSize: 0
+  HeadingFontColor: {r: 0, g: 0, b: 0, a: 0}
+  BodyFontColor: {r: 0, g: 0, b: 0, a: 0}
+  ErrorFontColor: {r: 0, g: 0, b: 0, a: 0}
+  GreenFontColor: {r: 0, g: 0, b: 0, a: 0}
+  YellowFontColor: {r: 0, g: 0, b: 0, a: 0}
+  RedFontColor: {r: 0, g: 0, b: 0, a: 0}
+  HeadingFontStyle: 0
+  BodyFontStyle: 0
+  ErrorFontStyle: 0

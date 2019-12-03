@@ -7,6 +7,8 @@ using TMPro;
 public class TelemText : MonoBehaviour
 {
     public StyleSheet style;
+    public TelemWebRequest webRequest;
+
     public TextMeshProUGUI[] names;
     public TextMeshProUGUI[] data;
 
@@ -20,6 +22,11 @@ public class TelemText : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+        // foreach ()
+
+        foreach (object obj in names)
+        {
+            //if obj
+        }
     }
 }
