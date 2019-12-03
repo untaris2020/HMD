@@ -11,6 +11,7 @@ public class HeadLockScript : MonoBehaviour
     public float speed = 12f;
     public AudioClip reset;
     AudioSource source;
+    private bool firstTime; 
 
     public float VOL = 1.7f;
 
@@ -35,6 +36,7 @@ public class HeadLockScript : MonoBehaviour
         _controllerConnectionHandler = GetComponent<ControllerConnectionHandler>();
         MLInput.OnTriggerDown += HandleOnTriggerDown;
         source = GetComponent<AudioSource>();
+        firstTime = true; 
     }
 
     #region Private Methods
@@ -82,8 +84,18 @@ public class HeadLockScript : MonoBehaviour
     }
 
 
-    public void updateHIDwithIMU(IMUJson imuData)
+    public bool updateHIDwithIMU(IMUJson imuData)
     {
+        //This can be expanded to an event driven system for runtime resets. 
+        if(firstTime)
+        {
+            //Get the default rotation value from the headset  
+            Quaternion tenmprot = new Quaternion(-imuData.yQuan, -imuData.zQuan, imuData.xQuan, imuData.wQuan);
+
+            //Get the difference that should be applied every time. 
+            DefaultRot = Camera.transform.rotation; 
+        }
+
         Debug.Log("Updating HID...");
 
         // For Control, raw input is enough
@@ -94,12 +106,13 @@ public class HeadLockScript : MonoBehaviour
 
         this.transform.position = Vector3.Slerp(this.transform.position, tempAccel, speed);
 
-        Vector3 tempRot = new Vector3(imuData.xAccel, imuData.yAccel, imuData.zAccel);
+        Quaternion rot = new Quaternion(-imuData.yQuan, -imuData.zQuan, imuData.xQuan, imuData.wQuan);
 
-        Quaternion rotation = Quaternion.Euler(tempRot);
+        rot = rot *  Quaternion.Inverse(DefaultRot); 
 
-        //Quaternion rot = (rotation.orientation * Quaternion.Inverse(DefaultRot));
-        this.transform.rotation = Quaternion.Slerp(this.transform.rotation, rotation, speed);
+        this.transform.rotation = Quaternion.Slerp(this.transform.rotation, rot, speed);
+
+        return false;
     }
 
 
