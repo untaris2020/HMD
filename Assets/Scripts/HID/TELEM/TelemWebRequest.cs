@@ -112,7 +112,7 @@ public class TelemWebRequest : MonoBehaviour
         if (!(telemHashtable[0] is null))
         {
             int index = (int)telemHashtable[searchString];
-            Debug.Log("Index: " + index);
+            //Debug.Log("Index: " + index);
 
             if (!(telemObjects[1] is null)) {
                 if (telemObjects[1].suit_populated)

@@ -367,6 +367,7 @@ RectTransform:
   - {fileID: 3133972745762171361}
   - {fileID: 9093282512942500573}
   - {fileID: 1705751378129021316}
+  - {fileID: 1683817888853353016}
   m_Father: {fileID: 3513110055128739661}
   m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -447,6 +448,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d4ac446dfce8f3a4583a324e17e8d6d8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  RearviewImageHolder: {fileID: 6646791679731499285}
 --- !u!64 &3718951629586285292
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -644,6 +646,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1668743444356515500}
+  - component: {fileID: 7628259576536362468}
   m_Layer: 0
   m_Name: NAV
   m_TagString: Untagged
@@ -666,6 +669,27 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &7628259576536362468
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6303407141151369368}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ab5d56b2dacd43d4bbba5f9b0af7860e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  rearviewONButton: {fileID: 3149450505601945237}
+  rearviewOFFButton: {fileID: 1650796900924382877}
+  gloveONButton: {fileID: 5469503464582925010}
+  gloveOFFButton: {fileID: 6437849615604829632}
+  buttonMat: {fileID: 2100000, guid: 46db75fecee67ba469796ac4472d388e, type: 2}
+  buttonHoverMat: {fileID: 2100000, guid: 73fcc767f3778b6468ed92329a0f9806, type: 2}
+  headerMat: {fileID: 2100000, guid: 232ee01803e374846a2c703bfcca9293, type: 2}
+  headerHoverMat: {fileID: 2100000, guid: 6ba4c6f78918abb438f06051740080c2, type: 2}
+  camerasManager: {fileID: 6495686815083604921}
 --- !u!64 &1549593613633650057
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -840,6 +864,78 @@ MonoBehaviour:
   - {fileID: 0}
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
+--- !u!1 &6646791679731499285
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1683817888853353016}
+  - component: {fileID: 8516522627941859407}
+  - component: {fileID: 5750867699314137296}
+  m_Layer: 5
+  m_Name: RearviewCamRawImage
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &1683817888853353016
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6646791679731499285}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 6108389796207257810}
+  m_RootOrder: 7
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: -2.96, y: 0}
+  m_SizeDelta: {x: 3.2, y: 2.4}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!222 &8516522627941859407
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6646791679731499285}
+  m_CullTransparentMesh: 0
+--- !u!114 &5750867699314137296
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6646791679731499285}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1344c3c82d62a2a41a3576d8abb8e3ea, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_RaycastTarget: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
+      Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
+  m_Texture: {fileID: 0}
+  m_UVRect:
+    serializedVersion: 2
+    x: 0
+    y: 0
+    width: 1
+    height: 1
 --- !u!1 &7938155794412914826
 GameObject:
   m_ObjectHideFlags: 0
@@ -1010,7 +1106,7 @@ GameObject:
   - component: {fileID: 6837480127096418415}
   - component: {fileID: 133612381657250102}
   m_Layer: 5
-  m_Name: Hand Cam
+  m_Name: Glove Cam
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1063,7 +1159,7 @@ MonoBehaviour:
       m_Calls: []
     m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
-  m_text: Hand Cam
+  m_text: Glove Cam
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2100000, guid: e73a58f6e2794ae7b1b7e50b7fb811b0, type: 2}
@@ -1132,7 +1228,7 @@ MonoBehaviour:
   m_margin: {x: -36.459602, y: 0, z: -40.769066, w: 0}
   m_textInfo:
     textComponent: {fileID: 133612381657250102}
-    characterCount: 8
+    characterCount: 9
     spriteCount: 0
     spaceCount: 1
     wordCount: 2
@@ -1603,15 +1699,15 @@ PrefabInstance:
       objectReference: {fileID: 2100000, guid: 46db75fecee67ba469796ac4472d388e, type: 2}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 140c6a73e06b5994d923629c900c0e6e, type: 3}
---- !u!4 &2156733102997830790 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: -4216859302048453862, guid: 140c6a73e06b5994d923629c900c0e6e,
-    type: 3}
-  m_PrefabInstance: {fileID: 6382996613901277084}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &3149450505601945237 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: -927199367670048503, guid: 140c6a73e06b5994d923629c900c0e6e,
+    type: 3}
+  m_PrefabInstance: {fileID: 6382996613901277084}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &2156733102997830790 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: -4216859302048453862, guid: 140c6a73e06b5994d923629c900c0e6e,
     type: 3}
   m_PrefabInstance: {fileID: 6382996613901277084}
   m_PrefabAsset: {fileID: 0}
