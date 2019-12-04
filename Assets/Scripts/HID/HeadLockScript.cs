@@ -90,21 +90,22 @@ public class HeadLockScript : MonoBehaviour
         if(firstTime)
         {
             //Get the default rotation value from the headset  
-            Quaternion tenmprot = new Quaternion(-imuData.yQuan, -imuData.zQuan, imuData.xQuan, imuData.wQuan);
+            //Quaternion temprot = new Quaternion(-imuData.yQuan, -imuData.zQuan, imuData.xQuan, imuData.wQuan);
 
             //Get the difference that should be applied every time. 
-            DefaultRot = Camera.transform.rotation; 
+            DefaultRot = Camera.transform.rotation;
+            firstTime = false; 
         }
 
-        Debug.Log("Updating HID...");
+        //Debug.Log("Updating HID...");
 
         // For Control, raw input is enough
 
-        Vector3 tempAccel = new Vector3(imuData.xAccel, imuData.yAccel, imuData.zAccel);
-        
+        //Vector3 tempAccel = new Vector3(imuData.xAccel, imuData.yAccel, imuData.zAccel);
+
         speed = Time.deltaTime * 12.0f;
 
-        this.transform.position = Vector3.Slerp(this.transform.position, tempAccel, speed);
+        this.transform.position = Vector3.Slerp(this.transform.position, Camera.transform.position, speed);
 
         Quaternion rot = new Quaternion(-imuData.yQuan, -imuData.zQuan, imuData.xQuan, imuData.wQuan);
 

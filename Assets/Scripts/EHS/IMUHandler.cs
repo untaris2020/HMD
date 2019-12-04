@@ -26,70 +26,75 @@ public class StateObject {
 public class IMUHandler : MonoBehaviour
 {
     private HeadLockScript headlock;
-    //private GameObject hid = null;
 
-    private Socket tcpClient;
-    private Socket tcpServer; 
+    private Socket udpServer; 
 
     private System.Timers.Timer aTimer;
-    private GameObject sceneMang;
     private SceneManager scene;
 
-    private bool sceneUpdate;
+    EndPoint Remote; 
+
+    byte[] data = new byte[1024];
+
     private IMUJson imuJson;
 
     public string IP = "192.168.1.123";
     public int port = 5070;
     public int TIMEOUT = 2000;
 
+
+     ~IMUHandler()
+     {
+        udpServer.Dispose();
+     }
+
     // Start is called before the first frame update
     // Use this for initialization
-    void Start() {
-
+    void Start()
+    {
         scene = (GameObject.Find("SceneManager")).GetComponent(typeof(SceneManager)) as SceneManager;
-    
-        sceneUpdate = false; 
-
-        aTimer = new System.Timers.Timer(TIMEOUT);
-        aTimer.Elapsed += onTimeout;
-        aTimer.AutoReset = true;
-        aTimer.Enabled = false;
-
-        createTcpServer();
+        createUdpServer();
     }
 
     void Update()
     {
-        if (sceneUpdate)
-        {
-            sceneUpdate = false;
+        if (udpServer.Available > 0) // Only read if we have some data 
+        {                           // queued in the network buffer. 
+            int recv = udpServer.ReceiveFrom(data, ref Remote);
 
-            try
-            {
-                updateScene(imuJson);
-            }
-            catch(Exception e)
-            {
-                Debug.Log(e.ToString());
-            }
+            //This contains the full package but could be multiple
+            string message = (Encoding.ASCII.GetString(data, 0, recv));
 
+            string[] packets = message.Split('}');
+            string packet = packets[0];
+
+            //Appending } back again 
+            packet = packet + "}";
+
+            Debug.Log("PACKET RECEIVED");
+
+            //Now we need to convert to a json from a string
+            IMUJson imuJsonPacket = JsonUtility.FromJson<IMUJson>(packet);
+
+            updateScene(imuJsonPacket);
         }
     }
 
 
-    void createTcpServer()
+    void createUdpServer()
     {
         IPAddress IPAddr = IPAddress.Parse(IP);
         IPEndPoint endPoint = new IPEndPoint(IPAddr, port);
 
-        tcpServer = new Socket(IPAddr.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
+        udpServer = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
 
         try
         {
-            tcpServer.Bind(endPoint);
-            tcpServer.Listen(10);
+            udpServer.Bind(endPoint);
+            Debug.Log("Listening for client...");
+            IPEndPoint sender = new IPEndPoint(IPAddress.Any, 0);
+            Remote = (EndPoint)(sender);
 
-            tcpServer.BeginAccept(new AsyncCallback(asyncHandler), tcpServer);
         }
         catch(Exception e)
         {
@@ -97,20 +102,7 @@ public class IMUHandler : MonoBehaviour
         }
     }
 
-    public void asyncHandler(IAsyncResult ar)
-    {
-        Socket tempSrv = (Socket)ar.AsyncState;
-        Socket tempCli = tempSrv.EndAccept(ar);
-        tcpClient = tempCli;
-
-        StateObject state = new StateObject();
-        state.workSock = tempCli;
-
-        aTimer.Enabled = true;
-
-        tempCli.BeginReceive(state.buffer, 0, StateObject.BufferSize, 0, new AsyncCallback(recieveFromDevice), state);
-    }
-
+   
     public void updateScene( IMUJson imuJsonPacket)
     {
         try
@@ -131,67 +123,49 @@ public class IMUHandler : MonoBehaviour
     }
 
 
-    public void recieveFromDevice(IAsyncResult ar)
-    {
-        String content = string.Empty;
+    //public void recieveFromDevice(IAsyncResult ar)
+    //{
+    //    String content = string.Empty;
 
-        StateObject state = (StateObject)ar.AsyncState;
+    //    StateObject state = (StateObject)ar.AsyncState;
 
-        Socket tempCli = state.workSock;
+    //    Socket tempCli = state.workSock;
 
-        int bytesRead = tempCli.EndReceive(ar);
+    //    int bytesRead = tempCli.EndReceive(ar);
 
-        if (bytesRead > 0)
-        {
-            state.sb.Append(Encoding.UTF8.GetString(state.buffer, 0, bytesRead));
+    //    if (bytesRead > 0)
+    //    {
+    //        state.sb.Append(Encoding.UTF8.GetString(state.buffer, 0, bytesRead));
             
-            //This contains the full package but could be multiple
-            content = state.sb.ToString();
+    //        //This contains the full package but could be multiple
+    //        content = state.sb.ToString();
 
-            string[] packets = content.Split('}');
-            string packet = packets[0];
+    //        string[] packets = content.Split('}');
+    //        string packet = packets[0];
 
-            //Appending } back again 
-            packet = packet + "}";
+    //        //Appending } back again 
+    //        packet = packet + "}";
 
-            //Now we need to convert to a json from a string
-            IMUJson imuJsonPacket = JsonUtility.FromJson<IMUJson>(packet);
+    //        Debug.Log("PACKET RECEIVED");
 
-            //updateScene(imuJsonPacket);
-            sceneUpdate = true;
-            imuJson = imuJsonPacket; 
+    //        //Now we need to convert to a json from a string
+    //        IMUJson imuJsonPacket = JsonUtility.FromJson<IMUJson>(packet);
 
-            state.sb.Clear();
+    //        //updateScene(imuJsonPacket);
+    //        sceneUpdate = true;
+    //        imuJson = imuJsonPacket; 
 
-            Debug.Log("Starting begin receive");
-            tempCli.BeginReceive(state.buffer, 0, StateObject.BufferSize, 0, new AsyncCallback(recieveFromDevice), state);
-            Debug.Log("Ending begin receive");
-        }
-    }
+    //        state.sb.Clear();
 
-    public void onTimeout(System.Object source, ElapsedEventArgs e)
-    {
-        if(!(SocketExtensions.IsConnected(tcpClient)))
-        {
-            Debug.Log("Detected Disconnection");
-            aTimer.Enabled = false;
-            tcpServer.Dispose();
-            createTcpServer();
-        }
-    }
+    //        Debug.Log("Starting begin receive");
+    //        tempCli.BeginReceive(state.buffer, 0, StateObject.BufferSize, 0, new AsyncCallback(recieveFromDevice), state);
+    //        Debug.Log("Ending begin receive");
+    //    }
+    //}
+
+   
 }
 
-static class SocketExtensions
-{
-    public static bool IsConnected(this Socket socket)
-    {
-    try
-    {
-        return !(socket.Poll(1, SelectMode.SelectRead) && socket.Available == 0);
-    }
-    catch (SocketException) { return false; }
-    }
-}
 
 
 [System.Serializable]
