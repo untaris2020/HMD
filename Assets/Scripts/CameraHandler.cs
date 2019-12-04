@@ -6,15 +6,23 @@ using System.Net.Sockets;
 using System.Threading;
 using System.Text;
 using System;
+using UnityEngine.UI;
+using System.IO;
 
 public class CameraHandler : MonoBehaviour
 {
     private TcpListener tcpListener; 
     private Thread tcpListenerThread;  	
     private TcpClient connectedTcpClient;
+
+    public RawImage FrontCameraImage;
+    public RawImage RearCameraImage;
+    private byte[] pcxFile;
+    private Texture2D target;
+
     // Start is called before the first frame update
-// Use this for initialization
-	void Start () { 		
+    // Use this for initialization
+    void Start () { 		
 		// Start TcpServer background thread 		
 		tcpListenerThread = new Thread (new ThreadStart(ListenForIncommingRequests)); 		
 		tcpListenerThread.IsBackground = true; 		
@@ -32,7 +40,7 @@ public class CameraHandler : MonoBehaviour
 	private void ListenForIncommingRequests () { 		
 		try { 			
 			// Create listener on localhost port 5060. 			
-			tcpListener = new TcpListener(IPAddress.Parse("192.168.1.123"), 5060); 			
+			tcpListener = new TcpListener(IPAddress.Parse("192.168.1.114"), 5060); 			
 			tcpListener.Start();              
 			Debug.Log("Server is listening");              
 			Byte[] bytes = new Byte[1024];  			
@@ -47,8 +55,20 @@ public class CameraHandler : MonoBehaviour
 							var incommingData = new byte[length]; 							
 							Array.Copy(bytes, 0, incommingData, 0, length);  							
 							// Convert byte array to string message. 							
+
 							string clientMessage = Encoding.UTF8.GetString(incommingData); 							
-							Debug.Log("client message received as: " + clientMessage); 						
+							Debug.Log("client message received as: " + clientMessage); 					
+
+                            pcxFile = File.ReadAllBytes("Assets/5_ImageParser/bagit_icon.pcx");
+                            //int startPoint = 128;
+                            int height = 240; 
+                            int width = 320; 
+                            target = new Texture2D(height, width);
+                            target.LoadRawTextureData(pcxFile);
+                            target.Apply();
+                            // target.EncodeToJPG();
+
+                            FrontCameraImage.texture = target;
 						} 					
 					} 				
 				} 			
