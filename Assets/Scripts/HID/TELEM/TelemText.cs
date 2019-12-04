@@ -22,11 +22,24 @@ public class TelemText : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        // foreach ()
 
-        foreach (object obj in names)
+        foreach (TextMeshProUGUI obj in data)
         {
-            //if obj
+            //int temp = obj.name.Length;
+            //Debug.Log("LEN: " + temp);
+
+
+            string removeHeader = obj.name.Substring(5, obj.name.Length - 5);
+            //removeHeader = removeHeader;
+            Debug.Log("REMOVE: " + removeHeader);
+
+            obj.SetText(webRequest.GetDataFromString(removeHeader));
+           
+        }
+
+        foreach (TextMeshProUGUI obj in names)
+        {
+            // TODO: change name color based on error
         }
     }
 }

@@ -6,25 +6,23 @@ using System.Collections.Generic;
 using System.Text.RegularExpressions;
 
 // TODO 
-// 1) Convert Date/time strings to Date data type
-// 3) Handle packet loss
-// 4) Test
-// 6) Add logs for seperate suits and switch dissconects (make the code still work if one stream is lost)
-
-// UnityWebRequest.Get example
-
-// Access a website and use UnityWebRequest.Get to download a page.
-// Also try to download a non-existing page. Display the error.
+// 1) Update error checking code to use new Database
+// 2) add common names to database
+// 3) add bool flag to disable console debug logs
+// 4) heart_rate -> heart_bpm ,  also check telem values are consistent with server
 
 
 public class TelemWebRequest : MonoBehaviour
 {
+    public const int NUM_OF_TELEM_VALUES = 15;
+
     public ErrorHandler errorScript;
 
     string JSONString, JSONString2;
     public TelemObject[] telemObjects;
     public StableCheckObject[] stableCheckObjects;
-    public TelemConstValues[] telemConstValues;
+    public Hashtable telemHashtable = new Hashtable();
+    public TelemDatabaseEntry[] telemDatabase = new TelemDatabaseEntry[NUM_OF_TELEM_VALUES];
 
     /*[SerializeField]*/
     public string telemServerURL, switchServerURL;
@@ -109,11 +107,84 @@ public class TelemWebRequest : MonoBehaviour
         o2_off_Flag = false;
     }
 
+    public string GetDataFromString(string searchString)
+    {
+        if (!(telemHashtable[0] is null))
+        {
+            int index = (int)telemHashtable[searchString];
+            Debug.Log("Index: " + index);
+
+            if (!(telemObjects[1] is null)) {
+                if (telemObjects[1].suit_populated)
+                {
+                    return telemObjects[1].values[index];
+                } else
+                {
+                    return "Data not populated";
+                }
+            }
+        }
+
+        return "ERROR"; // error
+    }
+
 
     void Start()
     {
-        // Initalize all const values
-        telemConstValues[0] = new TelemConstValues("heart_rate", );
+        // Initalize database
+        // Suit values
+        
+        telemDatabase[0] = new TelemDatabaseEntry("heart_rate", 60, 100, 0);
+        telemDatabase[1] = new TelemDatabaseEntry("cap_battery", 0, 30, 1);
+        telemDatabase[2] = new TelemDatabaseEntry("t_sub", -250, 250, 2);
+        telemDatabase[3] = new TelemDatabaseEntry("p_o2", 750, 950, 3);
+        telemDatabase[4] = new TelemDatabaseEntry("p_h2o_l", 14, 16, 4);
+        telemDatabase[5] = new TelemDatabaseEntry("p_h2o_g", 14, 16, 5);
+        telemDatabase[6] = new TelemDatabaseEntry("p_sop", 750, 950, 6);
+        telemDatabase[7] = new TelemDatabaseEntry("p_suit", 2, 4, 7);
+        telemDatabase[8] = new TelemDatabaseEntry("p_sub", 2, 4, 8);
+        telemDatabase[9] = new TelemDatabaseEntry("rate_o2", 0.5, 1, 9);
+        telemDatabase[10] = new TelemDatabaseEntry("rate_sop", 60, 100, 11);
+        telemDatabase[11] = new TelemDatabaseEntry("v_fan", 10000, 40000, 10);
+        
+
+        // Times
+        telemDatabase[12] = new TelemDatabaseEntry("t_battery", 1800, 12);
+        telemDatabase[13] = new TelemDatabaseEntry("t_oxygen", 1800, 13);
+        telemDatabase[14] = new TelemDatabaseEntry("t_water", 1800, 14);
+        
+
+        telemHashtable.Add(0, "heart_rate");
+        telemHashtable.Add(1, "cap_battery");
+        telemHashtable.Add(2, "t_sub");
+        telemHashtable.Add(3, "p_o2");
+        telemHashtable.Add(4, "p_h2o_l");
+        telemHashtable.Add(5, "p_h2o_g");
+        telemHashtable.Add(6, "p_sop");
+        telemHashtable.Add(7, "p_suit");
+        telemHashtable.Add(8, "p_sub");
+        telemHashtable.Add(9, "rate_o2");
+        telemHashtable.Add(10, "rate_sop");
+        telemHashtable.Add(11, "v_fan");
+        telemHashtable.Add(12, "t_battery");
+        telemHashtable.Add(13, "t_oxygen");
+        telemHashtable.Add(14, "t_water");
+
+        telemHashtable.Add("heart_rate", 0);
+        telemHashtable.Add("cap_battery", 1);
+        telemHashtable.Add("t_sub", 2);
+        telemHashtable.Add("p_o2", 3);
+        telemHashtable.Add("p_h2o_l", 4);
+        telemHashtable.Add("p_h2o_g", 5);
+        telemHashtable.Add("p_sop", 6);
+        telemHashtable.Add("p_suit", 7);
+        telemHashtable.Add("p_sub", 8);
+        telemHashtable.Add("rate_o2", 9);
+        telemHashtable.Add("rate_sop", 10);
+        telemHashtable.Add("v_fan", 11);
+        telemHashtable.Add("t_battery", 12);
+        telemHashtable.Add("t_oxygen", 13);
+        telemHashtable.Add("t_water", 14);
 
         telemObjects = new TelemObject[numOfStoredValues];
         
@@ -338,6 +409,9 @@ public class TelemWebRequest : MonoBehaviour
                 // convert times to seconds
                 telemObjects[0].ConvertTimes();
 
+                // add JSON parsed values to array (indexed by hashtable)
+                telemObjects[0].AddValues();
+
                 // reset vars
                 foreach (StableCheckObject obj in stableCheckObjects)
                 {
@@ -484,23 +558,56 @@ public class StableCheckObject
     }
 }
 
-
-public class TelemConstValues
+public class TelemDatabaseEntry
 {
-    private string name;
-    private int lowVal, highVal, arrayPos;
-    private bool flag;
+    private string name, type;
+    private double lowVal, highVal;
+    private int key;
+    private string paramIsNominal;      // this means the value is in/out of expected range - "nominal" "low" "high" "unsteady"
+    private int errorTime;
 
-    public TelemConstValues(string _name, int _lowVal, int _highVal, int _arrayPos, bool _flag)
+    public TelemDatabaseEntry(string _name, double _lowVal, double _highVal, int _key)
     {
+        // Suit entry
         name = _name;
         lowVal = _lowVal;
         highVal = _highVal;
-        arrayPos = _arrayPos;
-        flag = _flag;
+        key = _key;
+        paramIsNominal = "nominal";
+        type = "suit";
+
+        // Dont use these
+        errorTime = -1;
+    }
+
+    public TelemDatabaseEntry(string _name, int _errorTime, int _key)
+    {
+        // Time entry
+        name = _name;
+        errorTime = _errorTime;
+        key = _key;
+        paramIsNominal = "nominal";
+        type = "time";
+
+        // Time entries dont use these params
+        lowVal = -1;
+        highVal = -1;
+    }
+
+    public TelemDatabaseEntry(string _name, int _key)
+    {
+        // Switch entry - unused as of 12/3/2019
+        name = _name;
+        key = _key;
+        paramIsNominal = "nominal";
+        type = "suitswitch";
+
+        // Time entries dont use these params
+        lowVal = -1;
+        highVal = -1;
+        errorTime = -1;
     }
 }
-
 
 
 
@@ -508,70 +615,73 @@ public class TelemConstValues
 public class TelemObject
  {
 
-       public ErrorHandler errorScript;
+    public ErrorHandler errorScript;
     // Stablility flags
     //static public bool heart_bpm_Flag = false;
-        public int[] flags = new int[12];
+    public int[] flags = new int[TelemWebRequest.NUM_OF_TELEM_VALUES];
+    public string[] values = new string[TelemWebRequest.NUM_OF_TELEM_VALUES];       //NOTE: this is an array of strings to account for multiple data types
 
-        //public int p_sub_Flag = 0;
-        //public bool t_sub_Flag = false;
-        //public bool v_fan_Flag = false;
-        //public bool p_o2_Flag = false;
-        //public bool rate_o2_Flag = false;
-        //public bool cap_battery_Flag = false;
-        //public bool p_h2o_g_Flag = false;
-        //public bool p_h2o_l_Flag = false;
-        //public bool p_sop_Flag = false;
-        //public bool rate_sop_Flag = false;
-        //static public bool create_date_Flag = false;
 
     // NOTE: could make all these private for increased security
     // Telem variables
 
     public bool suit_populated;
 
-        //public string _id;
-        public double p_sub;
-        public int t_sub;
-        public int v_fan;
-        public int p_o2;
-        public double rate_o2;
-        public int cap_battery;
-        public int p_h2o_g;
-        public int p_h2o_l;
-        public int p_sop;
-        public double rate_sop;
-        public double p_suit;
+    //public string _id;
+    public double p_sub;
+    public int t_sub;
+    public int v_fan;
+    public int p_o2;
+    public double rate_o2;
+    public int cap_battery;
+    public int p_h2o_g;
+    public int p_h2o_l;
+    public int p_sop;
+    public double rate_sop;
+    public double p_suit;
 
-        // old vals
-        public string t_oxygen;
-        public string t_water;
-        public string create_date;          // might have issues with overwriting this from the two JSONs
-        public string t_battery;
-        public int heart_bpm;              // timeout variable to check
+    // old vals
+    public string t_oxygen;
+    public string t_water;
+    public string create_date;          // might have issues with overwriting this from the two JSONs
+    public string t_battery;
+    public int heart_bpm;              // timeout variable to check
 
     // Switch variables
     // public DateTime create_date { get; set; }
-        public bool switch_populated;
-        public bool sop_on;                // timeout variable to check
-        public bool sspe;
-        public bool fan_error;
-        public bool vent_error;
-        public bool vehicle_power;
-        public bool h2o_off;
-        public bool o2_off;
+    public bool switch_populated;
+    public bool sop_on;                // timeout variable to check
+    public bool sspe;
+    public bool fan_error;
+    public bool vent_error;
+    public bool vehicle_power;
+    public bool h2o_off;
+    public bool o2_off;
 
     // Other Variables
-        public double t_battery_dbl;
-        public double t_oxygen_dbl;
-        public double t_water_dbl;
-
-
-
+    public double t_battery_dbl;
+    public double t_oxygen_dbl;
+    public double t_water_dbl;
        
 
-
-
+    public void AddValues()
+    {
+        values[0] = Convert.ToString(heart_bpm);
+        values[1] = Convert.ToString(cap_battery);
+        values[2] = Convert.ToString(t_sub);
+        values[3] = Convert.ToString(p_o2);
+        values[4] = Convert.ToString(p_h2o_l);
+        values[5] = Convert.ToString(p_h2o_g);
+        values[6] = Convert.ToString(p_sop);
+        values[7] = Convert.ToString(p_suit);
+        values[8] = Convert.ToString(p_sub);
+        values[9] = Convert.ToString(rate_o2);
+        values[10] = Convert.ToString(rate_sop);
+        values[11] = Convert.ToString(v_fan);
+        values[12] = Convert.ToString(t_battery);
+        values[13] = Convert.ToString(t_oxygen);
+        values[14] = Convert.ToString(t_water);
+    }
 
     public void ConvertTimes()
     {
@@ -1030,6 +1140,7 @@ public class TelemObject
        // Debug.Log("Vehicle Power: " + vehicle_power);
     }
     
+
     public static TelemObject CreateFromJSON(string jsonString)
     {
         return JsonUtility.FromJson<TelemObject>(jsonString);

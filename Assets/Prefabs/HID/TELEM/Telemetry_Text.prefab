@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 103221675}
   - component: {fileID: 103221673}
   m_Layer: 5
-  m_Name: Rate_O2 Data
+  m_Name: data_rate_o2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -169,7 +169,7 @@ GameObject:
   - component: {fileID: 122658051}
   - component: {fileID: 122658049}
   m_Layer: 5
-  m_Name: P_O2 Data
+  m_Name: data_p_o2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -326,7 +326,7 @@ GameObject:
   - component: {fileID: 251712091}
   - component: {fileID: 251712089}
   m_Layer: 5
-  m_Name: P_SOP Data
+  m_Name: data_p_sop
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -483,7 +483,7 @@ GameObject:
   - component: {fileID: 313208394}
   - component: {fileID: 313208392}
   m_Layer: 5
-  m_Name: T_Oxygen Data
+  m_Name: data_t_oxygen
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -640,7 +640,7 @@ GameObject:
   - component: {fileID: 437586063}
   - component: {fileID: 437586061}
   m_Layer: 5
-  m_Name: P_Sub Data
+  m_Name: data_p_sub
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -797,7 +797,7 @@ GameObject:
   - component: {fileID: 577832439}
   - component: {fileID: 577832437}
   m_Layer: 5
-  m_Name: V_Fan Data
+  m_Name: data_v_fan
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -815,7 +815,7 @@ RectTransform:
   m_LocalScale: {x: 0.002891854, y: 0.0028918523, z: 1}
   m_Children: []
   m_Father: {fileID: 224480394836765524}
-  m_RootOrder: 10
+  m_RootOrder: 11
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -954,7 +954,7 @@ GameObject:
   - component: {fileID: 892125790}
   - component: {fileID: 892125788}
   m_Layer: 5
-  m_Name: T_Battery Data
+  m_Name: data_t_battery
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1111,7 +1111,7 @@ GameObject:
   - component: {fileID: 1137997358}
   - component: {fileID: 1137997356}
   m_Layer: 5
-  m_Name: Rate_SOP Data
+  m_Name: data_rate_sop
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1129,7 +1129,7 @@ RectTransform:
   m_LocalScale: {x: 0.002891854, y: 0.0028918523, z: 1}
   m_Children: []
   m_Father: {fileID: 224480394836765524}
-  m_RootOrder: 11
+  m_RootOrder: 10
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -1268,7 +1268,7 @@ GameObject:
   - component: {fileID: 1168315884}
   - component: {fileID: 1168315882}
   m_Layer: 5
-  m_Name: HeartRate Name
+  m_Name: name_heart_rate
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1425,7 +1425,7 @@ GameObject:
   - component: {fileID: 1182196347}
   - component: {fileID: 1182196345}
   m_Layer: 5
-  m_Name: P_Suit Data
+  m_Name: data_p_suit
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1582,7 +1582,7 @@ GameObject:
   - component: {fileID: 1383937026}
   - component: {fileID: 1383937024}
   m_Layer: 5
-  m_Name: P_H2O_g Data
+  m_Name: data_p_h2o_g
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1739,7 +1739,7 @@ GameObject:
   - component: {fileID: 1547916293}
   - component: {fileID: 1547916291}
   m_Layer: 5
-  m_Name: T_Sub Data
+  m_Name: data_t_sub
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1896,7 +1896,7 @@ GameObject:
   - component: {fileID: 1613733689}
   - component: {fileID: 1613733687}
   m_Layer: 5
-  m_Name: P_Suit Name
+  m_Name: name_p_suit
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2053,7 +2053,7 @@ GameObject:
   - component: {fileID: 1754589534}
   - component: {fileID: 1754589532}
   m_Layer: 5
-  m_Name: P_H2O_l Data
+  m_Name: data_p_h2o_l
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2210,7 +2210,7 @@ GameObject:
   - component: {fileID: 1948035416}
   - component: {fileID: 1948035414}
   m_Layer: 5
-  m_Name: Cap_Battery Data
+  m_Name: data_cap_battery
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2367,7 +2367,7 @@ GameObject:
   - component: {fileID: 1948686592}
   - component: {fileID: 1948686590}
   m_Layer: 5
-  m_Name: T_Water Data
+  m_Name: data_t_water
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2524,7 +2524,7 @@ GameObject:
   - component: {fileID: 222486673639230106}
   - component: {fileID: 64121666}
   m_Layer: 5
-  m_Name: Rate_O2 Name
+  m_Name: name_rate_o2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2807,8 +2807,8 @@ RectTransform:
   - {fileID: 1613733686}
   - {fileID: 224719055479094904}
   - {fileID: 224421924136801050}
-  - {fileID: 224352329303364644}
   - {fileID: 224149436003209154}
+  - {fileID: 224352329303364644}
   - {fileID: 224378432177719074}
   - {fileID: 224045728615429868}
   - {fileID: 224352298024060296}
@@ -2832,7 +2832,7 @@ GameObject:
   - component: {fileID: 222304081242771034}
   - component: {fileID: 1456294269}
   m_Layer: 5
-  m_Name: P_H2O_l Name
+  m_Name: name_p_h2o_l
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2989,7 +2989,7 @@ GameObject:
   - component: {fileID: 222856440697490072}
   - component: {fileID: 1485601679}
   m_Layer: 5
-  m_Name: P_Sub Name
+  m_Name: name_p_sub
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3146,7 +3146,7 @@ GameObject:
   - component: {fileID: 222286893291935258}
   - component: {fileID: 280105603}
   m_Layer: 5
-  m_Name: T_Sub Name
+  m_Name: name_t_sub
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3460,7 +3460,7 @@ GameObject:
   - component: {fileID: 222592097894653466}
   - component: {fileID: 2016166675}
   m_Layer: 5
-  m_Name: V_Fan Name
+  m_Name: name_v_fan
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3478,7 +3478,7 @@ RectTransform:
   m_LocalScale: {x: 0.0028918523, y: 0.002891852, z: 1}
   m_Children: []
   m_Father: {fileID: 224577076158989808}
-  m_RootOrder: 10
+  m_RootOrder: 11
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -3617,7 +3617,7 @@ GameObject:
   - component: {fileID: 222925119527385034}
   - component: {fileID: 343563839}
   m_Layer: 5
-  m_Name: P_O2 Name
+  m_Name: name_p_o2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3774,7 +3774,7 @@ GameObject:
   - component: {fileID: 222536255817358400}
   - component: {fileID: 1341675212}
   m_Layer: 5
-  m_Name: P_SOP Name
+  m_Name: name_p_sop
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3931,7 +3931,7 @@ GameObject:
   - component: {fileID: 222250567369829820}
   - component: {fileID: 143184295}
   m_Layer: 5
-  m_Name: Heart Rate Data
+  m_Name: data_heart_rate
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4088,7 +4088,7 @@ GameObject:
   - component: {fileID: 222406348139387576}
   - component: {fileID: 1132450405}
   m_Layer: 5
-  m_Name: Rate_SOP Name
+  m_Name: name_rate_sop
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4103,10 +4103,10 @@ RectTransform:
   m_GameObject: {fileID: 1297690087453476}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0.0010000286}
-  m_LocalScale: {x: 0.0028918523, y: 0.002891852, z: 1.0000001}
+  m_LocalScale: {x: 0.0028918523, y: 0.002891852, z: 1}
   m_Children: []
   m_Father: {fileID: 224577076158989808}
-  m_RootOrder: 11
+  m_RootOrder: 10
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -4245,7 +4245,7 @@ GameObject:
   - component: {fileID: 222694515248042560}
   - component: {fileID: 1375595257}
   m_Layer: 5
-  m_Name: T_Battery Name
+  m_Name: name_t_battery
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4427,8 +4427,8 @@ RectTransform:
   - {fileID: 1182196344}
   - {fileID: 437586060}
   - {fileID: 103221672}
-  - {fileID: 577832436}
   - {fileID: 1137997355}
+  - {fileID: 577832436}
   - {fileID: 892125787}
   - {fileID: 313208391}
   - {fileID: 1948686589}
@@ -4452,7 +4452,7 @@ GameObject:
   - component: {fileID: 222622640638684068}
   - component: {fileID: 472586216}
   m_Layer: 5
-  m_Name: Cap_Battery Name
+  m_Name: name_cap_battery
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4703,7 +4703,7 @@ GameObject:
   - component: {fileID: 222520972297444438}
   - component: {fileID: 929664545}
   m_Layer: 5
-  m_Name: P_H2O_g Name
+  m_Name: name_p_h2o_g
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4860,7 +4860,7 @@ GameObject:
   - component: {fileID: 222760713991133640}
   - component: {fileID: 708743505}
   m_Layer: 5
-  m_Name: T_Water Name
+  m_Name: name_t_water
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -5017,7 +5017,7 @@ GameObject:
   - component: {fileID: 222014053467259098}
   - component: {fileID: 1377361493}
   m_Layer: 5
-  m_Name: T_Oxygen Name
+  m_Name: name_t_oxygen
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
