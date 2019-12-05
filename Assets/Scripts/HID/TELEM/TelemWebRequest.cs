@@ -31,7 +31,7 @@ public class TelemWebRequest : MonoBehaviour
 
     // const vatiables
     private const float tickTime = 1f;          // seconds
-    private const int connectionLossTimer = 10; // measured in ticks
+    private const int connectionLossTimer = 2; // measured in ticks
     public const int numOfStoredValues = 60;   // ticks - store last 2 minutes of data
     public const int numOfSuitValues = 12;
     //private const double errorWindowResetTime = 20000;      // number of miliseconds between error windows poppint up again
@@ -250,10 +250,10 @@ public class TelemWebRequest : MonoBehaviour
         using (UnityWebRequest webRequest = UnityWebRequest.Get(uri))
         {
             // Request and wait for the desired page.
-            DebugManager.Instance.LogBoth("T: Sending request...");
+            //DebugManager.Instance.LogBoth("T: Sending request...");
             yield return webRequest.SendWebRequest();
 
-            DebugManager.Instance.LogBoth("T: Request recieved.");
+            //DebugManager.Instance.LogBoth("T: Request recieved.");
 
             string[] pages = uri.Split('/');
             int page = pages.Length - 1;
@@ -272,10 +272,18 @@ public class TelemWebRequest : MonoBehaviour
                  //DebugManager.Instance.LogUnityConsole(pages[page] + ":\nReceived: " + webRequest.downloadHandler.text);
                 JSONString = webRequest.downloadHandler.text;
 
-                if (JSONString == "[]")
+                if (String.IsNullOrEmpty(JSONString))
+                {
+                    DebugManager.Instance.LogBoth("T ERROR: JSONString is null");
+                    //TelemObject telemObject = new TelemObject(errorScript);
+                    //telemObjects[0] = telemObject;
+                   
+                } else if (JSONString == "[]")
                 {
                     // ERROR: Telem server not started
                     DebugManager.Instance.LogBoth("ERROR: Telem server connected but not started");
+                    TelemObject telemObject = new TelemObject(errorScript);
+                    telemObjects[0] = telemObject;
                 } else
                 {
                     // remove [ and ]
@@ -311,7 +319,13 @@ public class TelemWebRequest : MonoBehaviour
             {
                 JSONString2 = webRequest.downloadHandler.text;
 
-                if (JSONString2 == "[]")
+                if (String.IsNullOrEmpty(JSONString) || String.IsNullOrEmpty(JSONString2))
+                {
+                    //DebugManager.Instance.LogBoth("T ERROR: JSONString is null");
+                    TelemObject telemObject = new TelemObject(errorScript);
+                    telemObjects[0] = telemObject;
+                   
+                } else if (JSONString2 == "[]")
                 {
                     TelemObject telemObject = new TelemObject(errorScript);
                     telemObjects[0] = telemObject;
@@ -401,7 +415,7 @@ public class TelemWebRequest : MonoBehaviour
                     {
                         connectionStatus = false;
                         // Critical Warning: Connection to telem suit server lost
-                        DebugManager.Instance.LogBoth("ERROR: Connection to telem server lost");
+                        DebugManager.Instance.LogBoth("ERROR: Connection to SUIT telem server lost");
                         DebugManager.Instance.SetParam("telem_status", "D-CON");
                     }
                     if (switchTimeOutCounter == connectionLossTimer)
