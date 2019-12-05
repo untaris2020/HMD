@@ -250,7 +250,10 @@ public class TelemWebRequest : MonoBehaviour
         using (UnityWebRequest webRequest = UnityWebRequest.Get(uri))
         {
             // Request and wait for the desired page.
+            DebugManager.Instance.LogBoth("T: Sending request...");
             yield return webRequest.SendWebRequest();
+
+            DebugManager.Instance.LogBoth("T: Request recieved.");
 
             string[] pages = uri.Split('/');
             int page = pages.Length - 1;
@@ -351,8 +354,8 @@ public class TelemWebRequest : MonoBehaviour
             }
         }
 
-        
 
+        DebugManager.Instance.LogBoth("T: GetRequest TICK");
         yield return new WaitForSeconds(tickTime);
 
         Tick();
