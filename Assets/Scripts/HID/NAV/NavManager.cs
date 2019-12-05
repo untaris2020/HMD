@@ -8,15 +8,25 @@ public class NavManager : MonoBehaviour
     public Material buttonMat, buttonHoverMat, headerMat, headerHoverMat;
     public CamerasManager camerasManager;
 
-    private IEnumerator coroutine;
+    public delegate void MyDelegate();
+
+    //private IEnumerator coroutine;
     private int counter = 0;
 
     // Start is called before the first frame update
     void Start()
     {
+        HeadTracking ht = GameObject.Find("SceneManager").GetComponent<HeadTracking>();
+
+        Debug.Log((rearviewONButton.GetComponent<Collider>()).name);
+
         counter = 0;
-        coroutine = SimulateButtons(2.0f);
-        StartCoroutine(coroutine);
+        //coroutine = SimulateButtons(2.0f);
+        //StartCoroutine(coroutine);
+
+        MyDelegate RearviewON = new MyDelegate(PressRearviewON);
+        ht.registerCollider(rearviewONButton.GetComponent<Collider>().name,RearviewON);
+        //MyDelegate RearviewON = new MyDelegate(PressRearviewON);
     }
 
     // Update is called once per frame
@@ -59,8 +69,10 @@ public class NavManager : MonoBehaviour
         rearviewONButton.GetComponent<Renderer>().material = buttonHoverMat;
         rearviewOFFButton.GetComponent<Renderer>().material = buttonMat;
 
+        Debug.Log("IT WORKED!!!!!!");
+
         // spawn camera
-        camerasManager.SpawnRearviewCam();
+        //camerasManager.SpawnRearviewCam();
     }
 
     public void PressRearviewOFF()
@@ -68,7 +80,7 @@ public class NavManager : MonoBehaviour
         rearviewOFFButton.GetComponent<Renderer>().material = buttonHoverMat;
         rearviewONButton.GetComponent<Renderer>().material = buttonMat;
 
-        camerasManager.DestroyRearviewCam();
+        //camerasManager.DestroyRearviewCam();
     }
 
     public void PressGloveON()

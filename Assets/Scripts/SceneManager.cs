@@ -22,7 +22,7 @@ public class SceneManager : MonoBehaviour
 
     void initalizeScene()
     {
-        HIDInstance = Instantiate(HID, new Vector3(0, 0, 0), Quaternion.identity);
+        HIDInstance = Instantiate(HID, new Vector3(0, 0, 0), Quaternion.Euler(90, 0, 0));
         EHSInstance = Instantiate(EHS, new Vector3(0, 0, 0), Quaternion.identity);
         
 
