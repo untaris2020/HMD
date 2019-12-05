@@ -50,14 +50,13 @@ public class DebugManager : MonoBehaviour
         debugHashtable.Add("hand_FS","UN-INIT");
         debugHashtable.Add("chest_cam","UN-INIT");
         debugHashtable.Add("hand_cam","UN-INIT");
-        debugHashtable.Add("a","UN-INIT");
+
+        debugHashtable.Add("w","UN-INIT");
         debugHashtable.Add("chest_IMU_PC","UN-INIT");
         debugHashtable.Add("hand_IMU_PC","UN-INIT");
-        debugHashtable.Add("b","UN-INIT");
-        debugHashtable.Add("c","UN-INIT");
-        debugHashtable.Add("d","UN-INIT");
-        debugHashtable.Add("e","UN-INIT");
-        debugHashtable.Add("f","UN-INIT");
+        debugHashtable.Add("x","UN-INIT");
+        debugHashtable.Add("y","UN-INIT");
+        debugHashtable.Add("z","UN-INIT");
         UpdateStatuses();
     }
 
