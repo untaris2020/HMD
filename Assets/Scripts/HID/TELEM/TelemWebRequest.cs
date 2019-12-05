@@ -94,6 +94,7 @@ public class TelemWebRequest : MonoBehaviour
         vehicle_power_Flag = false;
         h2o_off_Flag = false;
         o2_off_Flag = false;
+
     }
 
     public void ResetNonTimeFlags()
@@ -112,7 +113,7 @@ public class TelemWebRequest : MonoBehaviour
         if (!(telemHashtable[0] is null))
         {
             int index = (int)telemHashtable[searchString];
-            //Debug.Log("Index: " + index);
+            //DebugManager.Instance.LogUnityConsole("Index: " + index);
 
             if (!(telemObjects[1] is null)) {
                 if (telemObjects[1].suit_populated)
@@ -131,6 +132,7 @@ public class TelemWebRequest : MonoBehaviour
 
     void Start()
     {
+        
         // Initalize database
         // Suit values
         
@@ -233,8 +235,10 @@ public class TelemWebRequest : MonoBehaviour
 
         counter = 0;
 
-        Debug.Log("Telem URL: " + telemServerURL);
-        Debug.Log("Switch URL: " + switchServerURL);
+        DebugManager.Instance.LogUnityConsole("Telem URL: " + telemServerURL);
+        DebugManager.Instance.LogUnityConsole("Switch URL: " + switchServerURL);
+
+        
 
         // start loop
         Tick();
@@ -253,19 +257,22 @@ public class TelemWebRequest : MonoBehaviour
 
             if (webRequest.isNetworkError)
             {
-                Debug.Log(pages[page] + ": Error: " + webRequest.error);
+                DebugManager.Instance.LogBoth(pages[page] + ": Error: " + webRequest.error);
                 connectionStatus = false;
+                DebugManager.Instance.SetParam("telem_status", "D-CON");
             }
             else
             {
                 connectionStatus = true;
-                 //Debug.Log(pages[page] + ":\nReceived: " + webRequest.downloadHandler.text);
+                DebugManager.Instance.SetParam("telem_status", "CON");
+
+                 //DebugManager.Instance.LogUnityConsole(pages[page] + ":\nReceived: " + webRequest.downloadHandler.text);
                 JSONString = webRequest.downloadHandler.text;
 
                 if (JSONString == "[]")
                 {
                     // ERROR: Telem server not started
-                    Debug.Log("ERROR: Telem server connected but not started");
+                    DebugManager.Instance.LogBoth("ERROR: Telem server connected but not started");
                 } else
                 {
                     // remove [ and ]
@@ -277,7 +284,7 @@ public class TelemWebRequest : MonoBehaviour
                     string pattern2 = @"""([\d\.]+)""";
                     JSONString = Regex.Replace(JSONString, pattern2, "$1");
 
-                    //Debug.Log("FIXED: " + JSONString); 
+                    //DebugManager.Instance.LogUnityConsole("FIXED: " + JSONString); 
                 }
             }
         } 
@@ -292,7 +299,7 @@ public class TelemWebRequest : MonoBehaviour
 
             if (webRequest.isNetworkError)
             {
-                Debug.Log(pages[page] + ": Error: " + webRequest.error);
+                DebugManager.Instance.LogBoth(pages[page] + ": Error: " + webRequest.error);
 
                 TelemObject telemObject = new TelemObject(errorScript);
                 telemObjects[0] = telemObject;
@@ -307,7 +314,7 @@ public class TelemWebRequest : MonoBehaviour
                     telemObjects[0] = telemObject;
                 } else
                 {
-                    // Debug.Log(pages[page] + ":\nReceived: " + webRequest.downloadHandler.text);
+                    // DebugManager.Instance.LogUnityConsole(pages[page] + ":\nReceived: " + webRequest.downloadHandler.text);
 
                     //JSONString2 = JSONString2.Substring(1, JSONString2.Length - 2);
                     string pattern = @"[\[\]]";
@@ -317,7 +324,7 @@ public class TelemWebRequest : MonoBehaviour
                     string pattern2 = @"""([\d\.]+)""";
                     JSONString2 = Regex.Replace(JSONString2, pattern2, "$1");
 
-                    //Debug.Log("FIXED: " + JSONString);
+                    //DebugManager.Instance.LogUnityConsole("FIXED: " + JSONString);
 
                     // link 2 JSON files
 
@@ -332,7 +339,7 @@ public class TelemWebRequest : MonoBehaviour
                     JSONString2 = Regex.Replace(JSONString2, pattern4, "");
 
                     JSONString = JSONString + "," + JSONString2;
-                    //Debug.Log("Both: " + JSONString);
+                    //DebugManager.Instance.LogUnityConsole("Both: " + JSONString);
 
                     TelemObject telemObject = TelemObject.CreateFromJSON(JSONString);
                     telemObjects[0] = telemObject;
@@ -353,7 +360,7 @@ public class TelemWebRequest : MonoBehaviour
 
     private void Tick()
     {
-       // Debug.Log("Loop         : " + counter);
+       // DebugManager.Instance.LogUnityConsole("Loop         : " + counter);
 
         // counter == 0 is the script connecting to the server
         // PICKUP HERE - debugging loss of connection
@@ -370,14 +377,14 @@ public class TelemWebRequest : MonoBehaviour
                 }
                 else
                 {
-                    //Debug.Log("TEST")
+                    //DebugManager.Instance.LogUnityConsole("TEST")
                     int suitTimeOutCounter = 0;
                     int switchTimeOutCounter = 0;
                     for (int i = 0; i < connectionLossTimer; i++)
                     {
                         if (!telemObjects[i].suit_populated)
                         {
-                            //Debug.Log("INFO: timeout counter: " + suitTimeOutCounter);
+                            //DebugManager.Instance.LogUnityConsole("INFO: timeout counter: " + suitTimeOutCounter);
                             suitTimeOutCounter++;
                         }
                         if (!telemObjects[0].switch_populated)
@@ -386,18 +393,19 @@ public class TelemWebRequest : MonoBehaviour
                         }
                     }
 
-                    Debug.Log("Timeout: " + suitTimeOutCounter);
+                    DebugManager.Instance.LogUnityConsole("Timeout: " + suitTimeOutCounter);
                     if (suitTimeOutCounter == connectionLossTimer)
                     {
                         connectionStatus = false;
                         // Critical Warning: Connection to telem suit server lost
-                        Debug.Log("Critical Warning: Connection to telem SUIT server lost");
+                        DebugManager.Instance.LogBoth("ERROR: Connection to telem server lost");
+                        DebugManager.Instance.SetParam("telem_status", "D-CON");
                     }
                     if (switchTimeOutCounter == connectionLossTimer)
                     {
                         connectionStatus = false;
                         // Critical Warning: Connection to telem suit server lost
-                        Debug.Log("Critical Warning: Connection to telem SWITCH server lost");
+                        DebugManager.Instance.LogUnityConsole("Critical Warning: Connection to telem SWITCH server lost");
                     }
                 }
             }
@@ -493,21 +501,21 @@ public class StableCheckObject
         if (errorCounterTemp > TelemWebRequest.errorWindowDebounceTime)
         {
             status = "red";
-            //Debug.Log(name + " Status: " + status);
-            //Debug.Log("Ready: " + errorReady);
+            //DebugManager.Instance.LogUnityConsole(name + " Status: " + status);
+            //DebugManager.Instance.LogUnityConsole("Ready: " + errorReady);
             if (errorReady)
             {
                 // spawn error window
 
                 if (obj.flags[id] == -1)
                 {
-                    Debug.Log("Warning: " + name + " low");
+                    DebugManager.Instance.LogUnityConsole("Warning: " + name + " low");
                     errorScript.HandleError(0, "Warning: " + name + " low");
                     errorReady = false;
                 }
                 else if (obj.flags[id] == 1)
                 {
-                    Debug.Log("Warning: " + name + " high");
+                    DebugManager.Instance.LogUnityConsole("Warning: " + name + " high");
                     errorScript.HandleError(0, "Warning: " + name + " high");
                     errorReady = false;
                 }
@@ -530,7 +538,7 @@ public class StableCheckObject
             // Unstable, and the most recent value is not error
 
             status = "yellow";
-            //Debug.Log(name + " Status: " + status);
+            //DebugManager.Instance.LogUnityConsole(name + " Status: " + status);
         }
 
 
@@ -538,7 +546,7 @@ public class StableCheckObject
         {
             // Reset
             status = "green";
-            //Debug.Log(name + " Status: " + status);
+            //DebugManager.Instance.LogUnityConsole(name + " Status: " + status);
             errorReady = true;
         }
     }
@@ -704,7 +712,7 @@ public class TelemObject
         string testString = "9:59:59";
         double testDbl;
         testDbl = TimeSpan.Parse(testString).TotalSeconds;
-        Debug.Log("Seconds  :" + testDbl);
+        DebugManager.Instance.LogUnityConsole("Seconds  :" + testDbl);
         */
     }
 
@@ -716,7 +724,7 @@ public class TelemObject
             {
             // ERROR: Battery time is negative
             TelemWebRequest.t_batteryStatus = "red";
-            Debug.Log("ERROR: t_battery is negative");
+            DebugManager.Instance.LogUnityConsole("ERROR: t_battery is negative");
             }
             else 
             {
@@ -1131,13 +1139,13 @@ public class TelemObject
     public void PrintVals()
     {
         // prints a few values for testing
-        //Debug.Log("t_battery         : " + t_battery);
-        //Debug.Log("Heart BPM    : " + heart_bpm);
-        //Debug.Log("Sop          : " + sop_on);
-        //Debug.Log("Battery      : " + cap_battery);
-       // Debug.Log("V Fan        : " + v_fan);
-       // Debug.Log("Fan Error    : " + fan_error);
-       // Debug.Log("Vehicle Power: " + vehicle_power);
+        //DebugManager.Instance.LogUnityConsole("t_battery         : " + t_battery);
+        //DebugManager.Instance.LogUnityConsole("Heart BPM    : " + heart_bpm);
+        //DebugManager.Instance.LogUnityConsole("Sop          : " + sop_on);
+        //DebugManager.Instance.LogUnityConsole("Battery      : " + cap_battery);
+       // DebugManager.Instance.LogUnityConsole("V Fan        : " + v_fan);
+       // DebugManager.Instance.LogUnityConsole("Fan Error    : " + fan_error);
+       // DebugManager.Instance.LogUnityConsole("Vehicle Power: " + vehicle_power);
     }
     
 
