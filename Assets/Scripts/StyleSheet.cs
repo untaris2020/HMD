@@ -5,24 +5,27 @@ using UnityEngine.UI;
 
 public class StyleSheet : MonoBehaviour { 
 
-        public Font HeadingFont;
-        public Font BodyFont;
-        public Font ErrorFont;
+    public Material ButtonActiveMat;
+    public Material ButtonInactiveMat;
 
-        public int HeadingFontSize;
-        public int BodyFontSize;
-        public int ErrorFontSize;
+    public Font HeadingFont;
+    public Font BodyFont;
+    public Font ErrorFont;
 
-        public Color HeadingFontColor;
-        public Color BodyFontColor;
-        public Color ErrorFontColor;
-        public Color GreenFontColor;
-        public Color YellowFontColor;
-        public Color RedFontColor;
+    public int HeadingFontSize;
+    public int BodyFontSize;
+    public int ErrorFontSize;
 
-        public FontStyle HeadingFontStyle;
-        public FontStyle BodyFontStyle;
-        public FontStyle ErrorFontStyle;
+    public Color HeadingFontColor;
+    public Color BodyFontColor;
+    public Color ErrorFontColor;
+    public Color GreenFontColor;
+    public Color YellowFontColor;
+    public Color RedFontColor;
+
+    public FontStyle HeadingFontStyle;
+    public FontStyle BodyFontStyle;
+    public FontStyle ErrorFontStyle;
 }
 
 //Assignment Process

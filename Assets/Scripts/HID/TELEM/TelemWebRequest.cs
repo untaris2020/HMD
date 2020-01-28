@@ -356,7 +356,7 @@ public class TelemWebRequest : MonoBehaviour
                     JSONString2 = Regex.Replace(JSONString2, pattern4, "");
 
                     JSONString = JSONString + "," + JSONString2;
-                    //DebugManager.Instance.LogUnityConsole("Both: " + JSONString);
+                    DebugManager.Instance.LogUnityConsole("Both: " + JSONString);
 
                     TelemObject telemObject = TelemObject.CreateFromJSON(JSONString);
                     telemObjects[0] = telemObject;
@@ -369,7 +369,7 @@ public class TelemWebRequest : MonoBehaviour
         }
 
 
-        DebugManager.Instance.LogBoth("T: GetRequest TICK");
+        //DebugManager.Instance.LogBoth("T: GetRequest TICK");
         yield return new WaitForSeconds(tickTime);
 
         Tick();
