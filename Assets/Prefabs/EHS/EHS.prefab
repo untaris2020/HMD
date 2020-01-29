@@ -45,3 +45,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   IMUChestObj: {fileID: 820620286080163771, guid: 50ce9a2c6674f264ca45bb8c85752f2f,
     type: 3}
+  IMUGloveObj: {fileID: 4751712557677651979, guid: 03ef40df2e1c8904fb2ee3f81caad173,
+    type: 3}
+  ForceSensorObj: {fileID: 4247122678592020216, guid: 15afaa3a08a00b24db24b5c1f45d38e8,
+    type: 3}
+  ForceSensor: {fileID: 0}

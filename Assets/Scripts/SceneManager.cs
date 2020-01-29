@@ -9,21 +9,21 @@ using System.Timers;
 public class SceneManager : MonoBehaviour
 {
     public GameObject HID;
-    public GameObject HIDInstance;
+    private GameObject HIDInstance;
     public GameObject EHS;
     private GameObject EHSInstance;
-
+    public string IP = "192.168.1.123"; 
 
     // Start is called before the first frame update
     void Start()
     {
-        initalizeScene();   
+        initalizeScene();
     }
 
     void initalizeScene()
     {
-        HIDInstance = Instantiate(HID, new Vector3(0, 0, 0), Quaternion.Euler(90, 0, 0));
-        EHSInstance = Instantiate(EHS, new Vector3(0, 0, 0), Quaternion.identity);
+        //HIDInstance = Instantiate(HID, new Vector3(0, 0, 0), Quaternion.Euler(90, 0, 0));
+        //EHSInstance = Instantiate(EHS, new Vector3(0, 0, 0), Quaternion.identity);
         
 
     }
@@ -33,18 +33,4 @@ public class SceneManager : MonoBehaviour
     {
     }
 
-    public GameObject getHIDInstance()
-    {
-        return HIDInstance;
-    }
-
-    public HeadLockScript getHeadLockScriptInstance()
-    {
-        return (HeadLockScript)HIDInstance.GetComponent<HeadLockScript>();
-    }
-
-    public GameObject getEHSInstance()
-    {
-        return EHSInstance;
-    }
 }

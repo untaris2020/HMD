@@ -32,7 +32,6 @@ public class HeadTracking : MonoBehaviour
 
     private Dictionary<string, Delegate> colliderList = new Dictionary<string, Delegate>();
 
-    private float duration = 1.0f;
     void Start()
     {
         cam = GameObject.Find("Main Camera").GetComponent<Camera>();
@@ -60,12 +59,13 @@ public class HeadTracking : MonoBehaviour
 
             Debug.Log("Collided Name: " + collidedName + " RES: " + colliderList.ContainsKey(collidedName));
             //Check dictionary for collided name here
-            
+            Cursor.transform.position = Vector3.Slerp(Cursor.transform.position, hit.point, speed); //Updates the position of the cursor to show object collided with
+            Cursor.transform.rotation = Quaternion.Slerp(Cursor.transform.rotation, cam.transform.rotation, speed);
+            Cursor.SetActive(true);
+
             if (colliderList.ContainsKey(collidedName))
             {
-                Cursor.transform.position = Vector3.Slerp(Cursor.transform.position, hit.point, speed); //Updates the position of the cursor to show object collided with
-                Cursor.transform.rotation = Quaternion.Slerp(Cursor.transform.rotation, cam.transform.rotation, speed);
-                Cursor.SetActive(true);
+                
 
                 //Change texture of material if appliciable here 
 
@@ -75,7 +75,7 @@ public class HeadTracking : MonoBehaviour
                 {
                     if (dial.fillAmount != 1f) //if we have not clicked Start animation
                     {
-                        dial.fillAmount = dial.fillAmount + Time.deltaTime * speed;
+                        dial.fillAmount = dial.fillAmount + Time.deltaTime * timerSpeed;
                     }
                     else //we have clicked 
                     {
@@ -96,7 +96,6 @@ public class HeadTracking : MonoBehaviour
             {
                 if (missCount < threshold)
                 {
-
                     missCount++;
                 }
                 else
@@ -113,7 +112,6 @@ public class HeadTracking : MonoBehaviour
         {
             if (missCount < threshold)
             {
-
                 missCount++;
             }
             else
@@ -123,6 +121,31 @@ public class HeadTracking : MonoBehaviour
                 missCount = 0;
                 elapsed = 0;
                 pause = .25f;
+            }
+        }
+    }
+
+    public void forceClick()
+    {
+        DebugManager.Instance.LogBoth("Force Click Registered");
+
+        RaycastHit hit;
+
+        if (Physics.Raycast(cam.transform.position, cam.transform.forward, out hit))
+        {
+            string collidedName = hit.collider.name;
+
+            if (colliderList.ContainsKey(collidedName))
+            {
+                Debug.Log("Button pressed\n");
+                source.PlayOneShot(click, VOL);
+
+                //Call the delegate method here 
+                colliderList[collidedName].DynamicInvoke();
+
+                pause = .5f; //setting our delay
+                dial.fillAmount = 0; //reset the dial amount
+                elapsed = 0;
             }
         }
     }

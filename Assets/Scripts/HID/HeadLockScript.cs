@@ -109,6 +109,8 @@ public class HeadLockScript : MonoBehaviour
 
         Quaternion rot = new Quaternion(-imuData.yQuan, -imuData.zQuan, imuData.xQuan, imuData.wQuan);
 
+        rot *= Quaternion.Euler(-90, 0, 0);
+
         rot = rot *  Quaternion.Inverse(DefaultRot); 
 
         this.transform.rotation = Quaternion.Slerp(this.transform.rotation, rot, speed);

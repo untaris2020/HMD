@@ -95,6 +95,8 @@ public class DebugManager : MonoBehaviour
 
     public void LogSceneConsole(string msg)
     {
+        Debug.Log(msg);
+
         ShiftRight<ConsoleEntrie>(consoleEntries, 1);
         consoleEntries[0] = new ConsoleEntrie();
 

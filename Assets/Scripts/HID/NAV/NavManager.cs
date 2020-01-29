@@ -26,6 +26,9 @@ public class NavManager : MonoBehaviour
 
         MyDelegate RearviewON = new MyDelegate(PressRearviewON);
         ht.registerCollider(rearviewONButton.GetComponent<Collider>().name,RearviewON);
+
+        MyDelegate RearviewOFF = new MyDelegate(PressRearviewOFF);
+        ht.registerCollider(rearviewOFFButton.GetComponent<Collider>().name,RearviewOFF);
         //MyDelegate RearviewON = new MyDelegate(PressRearviewON);
     }
 
@@ -69,18 +72,17 @@ public class NavManager : MonoBehaviour
         rearviewONButton.GetComponent<Renderer>().material = buttonHoverMat;
         rearviewOFFButton.GetComponent<Renderer>().material = buttonMat;
 
-        Debug.Log("IT WORKED!!!!!!");
-
         // spawn camera
-        //camerasManager.SpawnRearviewCam();
+        camerasManager.SpawnRearviewCam();
     }
 
     public void PressRearviewOFF()
     {
         rearviewOFFButton.GetComponent<Renderer>().material = buttonHoverMat;
         rearviewONButton.GetComponent<Renderer>().material = buttonMat;
-
-        //camerasManager.DestroyRearviewCam();
+        
+        //Despawn camera
+        camerasManager.DestroyRearviewCam();
     }
 
     public void PressGloveON()
