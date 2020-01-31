@@ -77,25 +77,27 @@ public class DebugManager : MonoBehaviour
     {
         foreach (TextMeshProUGUI obj in statuses)
         {
+            if (obj != null)
+            {
+                obj.SetText((string)debugHashtable[obj.name]);
 
-            obj.SetText((string)debugHashtable[obj.name]);
-
-            if (obj.text == "CON")
-            {
-                obj.color = new Color32(0, 255, 0, 255);
-            } else if (obj.text == "D-CON")
-            {
-                obj.color = new Color32(255, 0, 0, 255);
-            } else
-            {
-                obj.color = new Color32(255, 255, 255, 255);
+                if (obj.text == "CON")
+                {
+                    obj.color = new Color32(0, 255, 0, 255);
+                } else if (obj.text == "D-CON")
+                {
+                    obj.color = new Color32(255, 0, 0, 255);
+                } else
+                {
+                    obj.color = new Color32(255, 255, 255, 255);
+                }
             }
         }
     }
 
-    public void LogSceneConsole(string msg)
+    public void LogSceneConsole(string fileName, string msg)
     {
-        Debug.Log(msg);
+        //Debug.Log(fileName + ": " + msg);
 
         ShiftRight<ConsoleEntrie>(consoleEntries, 1);
         consoleEntries[0] = new ConsoleEntrie();
@@ -145,15 +147,15 @@ public class DebugManager : MonoBehaviour
         console.text = buildString;
     }
 
-    public void LogUnityConsole(string msg)
+    public void LogUnityConsole(string fileName, string msg)
     {
-        Debug.Log(msg);
+        Debug.Log(fileName + ": " + msg);
     }
 
-    public void LogBoth(string msg)
+    public void LogBoth(string fileName, string msg)
     {
-        Debug.Log(msg);
-        LogSceneConsole(msg);
+        Debug.Log(fileName + ": " + msg);
+        LogSceneConsole(fileName, msg);
     }
 
     // UTIL Functions

@@ -228,15 +228,15 @@ public class TelemWebRequest : MonoBehaviour
 
         //stableCheckObjects[7].name = "t_battery";
 
-        //telemServerURL = "http://davidw.engineer:3000/api/suit/recent";
-        //switchServerURL = "http://davidw.engineer:3000/api/suitswitch/recent";
-        //telemServerURL = "http://davidw.engineer/ARIS/telem/suit.txt";
-        //switchServerURL = "http://davidw.engineer/ARIS/telem/switch.txt";
+        //telemServerURL = "http://13.58.74.16:3000/api/suit/recent";
+        //switchServerURL = "http://13.58.74.16:3000/api/suitswitch/recent";
+        //telemServerURL = "http://13.58.74.16/ARIS/telem/suit.txt";
+        //switchServerURL = "http://13.58.74.16/ARIS/telem/switch.txt";
 
         counter = 0;
 
-        DebugManager.Instance.LogUnityConsole("Telem URL: " + telemServerURL);
-        DebugManager.Instance.LogUnityConsole("Switch URL: " + switchServerURL);
+        DebugManager.Instance.LogUnityConsole(this.GetType().Name, "Telem URL: " + telemServerURL);
+        DebugManager.Instance.LogUnityConsole(this.GetType().Name, "Switch URL: " + switchServerURL);
 
         
 
@@ -260,7 +260,7 @@ public class TelemWebRequest : MonoBehaviour
 
             if (webRequest.isNetworkError)
             {
-                DebugManager.Instance.LogBoth(pages[page] + ": Error: " + webRequest.error);
+                DebugManager.Instance.LogBoth(this.GetType().Name, pages[page] + ": Error: " + webRequest.error);
                 connectionStatus = false;
                 DebugManager.Instance.SetParam("telem_status", "D-CON");
             }
@@ -274,14 +274,14 @@ public class TelemWebRequest : MonoBehaviour
 
                 if (String.IsNullOrEmpty(JSONString))
                 {
-                    DebugManager.Instance.LogBoth("T ERROR: JSONString is null");
+                    DebugManager.Instance.LogBoth(this.GetType().Name, "T ERROR: JSONString is null");
                     //TelemObject telemObject = new TelemObject(errorScript);
                     //telemObjects[0] = telemObject;
                    
                 } else if (JSONString == "[]")
                 {
                     // ERROR: Telem server not started
-                    DebugManager.Instance.LogBoth("ERROR: Telem server connected but not started");
+                    DebugManager.Instance.LogBoth(this.GetType().Name, "ERROR: Telem server connected but not started");
                     TelemObject telemObject = new TelemObject(errorScript);
                     telemObjects[0] = telemObject;
                 } else
@@ -310,7 +310,7 @@ public class TelemWebRequest : MonoBehaviour
 
             if (webRequest.isNetworkError)
             {
-                DebugManager.Instance.LogBoth(pages[page] + ": Error: " + webRequest.error);
+                DebugManager.Instance.LogBoth(this.GetType().Name, pages[page] + ": Error: " + webRequest.error);
 
                 TelemObject telemObject = new TelemObject(errorScript);
                 telemObjects[0] = telemObject;
@@ -356,7 +356,7 @@ public class TelemWebRequest : MonoBehaviour
                     JSONString2 = Regex.Replace(JSONString2, pattern4, "");
 
                     JSONString = JSONString + "," + JSONString2;
-                    DebugManager.Instance.LogUnityConsole("Both: " + JSONString);
+                    //DebugManager.Instance.LogUnityConsole("Both: " + JSONString);
 
                     TelemObject telemObject = TelemObject.CreateFromJSON(JSONString);
                     telemObjects[0] = telemObject;
@@ -410,19 +410,19 @@ public class TelemWebRequest : MonoBehaviour
                         }
                     }
 
-                    DebugManager.Instance.LogUnityConsole("Timeout: " + suitTimeOutCounter);
+                    DebugManager.Instance.LogUnityConsole(this.GetType().Name, "Timeout: " + suitTimeOutCounter);
                     if (suitTimeOutCounter == connectionLossTimer)
                     {
                         connectionStatus = false;
                         // Critical Warning: Connection to telem suit server lost
-                        DebugManager.Instance.LogBoth("ERROR: Connection to SUIT telem server lost");
+                        DebugManager.Instance.LogBoth(this.GetType().Name, "ERROR: Connection to SUIT telem server lost");
                         DebugManager.Instance.SetParam("telem_status", "D-CON");
                     }
                     if (switchTimeOutCounter == connectionLossTimer)
                     {
                         connectionStatus = false;
                         // Critical Warning: Connection to telem suit server lost
-                        DebugManager.Instance.LogUnityConsole("Critical Warning: Connection to telem SWITCH server lost");
+                        DebugManager.Instance.LogUnityConsole(this.GetType().Name, "Critical Warning: Connection to telem SWITCH server lost");
                     }
                 }
             }
@@ -526,13 +526,13 @@ public class StableCheckObject
 
                 if (obj.flags[id] == -1)
                 {
-                    DebugManager.Instance.LogUnityConsole("Warning: " + name + " low");
+                    DebugManager.Instance.LogUnityConsole(this.GetType().Name, "Warning: " + name + " low");
                     errorScript.HandleError(0, "Warning: " + name + " low");
                     errorReady = false;
                 }
                 else if (obj.flags[id] == 1)
                 {
-                    DebugManager.Instance.LogUnityConsole("Warning: " + name + " high");
+                    DebugManager.Instance.LogUnityConsole(this.GetType().Name, "Warning: " + name + " high");
                     errorScript.HandleError(0, "Warning: " + name + " high");
                     errorReady = false;
                 }
@@ -741,7 +741,7 @@ public class TelemObject
             {
             // ERROR: Battery time is negative
             TelemWebRequest.t_batteryStatus = "red";
-            DebugManager.Instance.LogUnityConsole("ERROR: t_battery is negative");
+            DebugManager.Instance.LogUnityConsole(this.GetType().Name, "ERROR: t_battery is negative");
             }
             else 
             {

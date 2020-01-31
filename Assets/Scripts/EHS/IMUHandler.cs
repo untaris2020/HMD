@@ -102,7 +102,7 @@ public class IMUHandler : MonoBehaviour
         }
         if(debug)
         {
-            DebugManager.Instance.LogBoth(msg);
+            DebugManager.Instance.LogBoth(this.GetType().Name, msg);
             msg = "";
             debug = false;
         }
@@ -122,7 +122,7 @@ public class IMUHandler : MonoBehaviour
 
         if(!watchDogTimer)
         {
-            DebugManager.Instance.LogBoth("IMU DISCONNECTED...");
+            DebugManager.Instance.LogBoth(this.GetType().Name, "IMU DISCONNECTED...");
 
             //Disconnection event 
             tcpListenerThread.Abort();
