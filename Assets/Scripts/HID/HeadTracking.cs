@@ -127,7 +127,7 @@ public class HeadTracking : MonoBehaviour
 
     public void forceClick()
     {
-        DebugManager.Instance.LogBoth("Force Click Registered");
+        DebugManager.Instance.LogBoth(this.GetType().Name, "Force Click Registered");
 
         RaycastHit hit;
 

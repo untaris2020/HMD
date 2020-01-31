@@ -18,7 +18,7 @@ public class NavManager : MonoBehaviour
     {
         HeadTracking ht = GameObject.Find("SceneManager").GetComponent<HeadTracking>();
 
-        Debug.Log((rearviewONButton.GetComponent<Collider>()).name);
+        //Debug.Log((rearviewONButton.GetComponent<Collider>()).name);
 
         counter = 0;
         //coroutine = SimulateButtons(2.0f);

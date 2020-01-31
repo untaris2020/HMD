@@ -56,7 +56,7 @@ public class forceSensorManager : MonoBehaviour
         }
         if(debug)
         {
-            DebugManager.Instance.LogBoth(msg);
+            DebugManager.Instance.LogBoth(this.GetType().Name, msg);
             msg = "";
             debug = false;
         }
