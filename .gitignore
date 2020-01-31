@@ -63,3 +63,12 @@ crashlytics-build.properties
 
 # VS Code
 .vscode/
+
+#TMP 
+[Aa]ssets/TextMesh Pro*
+
+#Samples
+[Aa]ssets/Samples*
+
+#.out temp filter
+.out*
