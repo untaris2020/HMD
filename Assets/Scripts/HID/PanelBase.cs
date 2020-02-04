@@ -22,12 +22,7 @@ public class PanelBase : MonoBehaviour
     {
         HeadTracking ht = GameObject.Find("SceneManager").GetComponent<HeadTracking>();
 
-        //MyDelegate RearviewON = new MyDelegate(PressRearviewON);
-        //ht.registerCollider(rearviewONButton.GetComponent<Collider>().name,RearviewON);
-
         // Resiter Colliders
-        DebugManager.Instance.LogUnityConsole("T0", ht.name);
-        DebugManager.Instance.LogUnityConsole("T1" , panels[0].GetComponent<Collider>().name);
 
         Button0Delegate tmpDelegate0 = new Button0Delegate(Button0Press);
         ht.registerCollider(panels[0].GetComponent<Collider>().name, tmpDelegate0);
