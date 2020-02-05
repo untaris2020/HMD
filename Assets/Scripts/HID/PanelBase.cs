@@ -38,7 +38,7 @@ public class PanelBase : MonoBehaviour
 
         pageIndex = 0;
 
-        Button0Press();
+        Button1Press();
     }
 
     // Update is called once per frame

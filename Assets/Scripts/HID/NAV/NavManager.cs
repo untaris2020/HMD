@@ -1,6 +1,8 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.XR.MagicLeap;
 
 public class NavManager : MonoBehaviour
 {
@@ -10,6 +12,9 @@ public class NavManager : MonoBehaviour
 
     public delegate void MyDelegate();
 
+    public MLPersistentBehavior persistentBehavior;
+    public GameObject _cube;
+
     //private IEnumerator coroutine;
     private int counter = 0;
 
@@ -17,8 +22,6 @@ public class NavManager : MonoBehaviour
     void Start()
     {
         HeadTracking ht = GameObject.Find("SceneManager").GetComponent<HeadTracking>();
-
-        //Debug.Log((rearviewONButton.GetComponent<Collider>()).name);
 
         counter = 0;
         //coroutine = SimulateButtons(2.0f);
@@ -29,13 +32,13 @@ public class NavManager : MonoBehaviour
 
         MyDelegate RearviewOFF = new MyDelegate(PressRearviewOFF);
         ht.registerCollider(rearviewOFFButton.GetComponent<Collider>().name,RearviewOFF);
-        //MyDelegate RearviewON = new MyDelegate(PressRearviewON);
     }
 
     // Update is called once per frame
     void Update()
     {
-        
+        //_cube.transform.position = SOMETHING...
+        persistentBehavior.UpdateBinding();
     }
 
     private IEnumerator SimulateButtons(float waitTime)
