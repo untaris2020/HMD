@@ -1,197 +1,138 @@
 ﻿using System;
-using System.Collections;
-using System.Net;
-using System.Net.Sockets;
-using System.Text;
-using UnityEngine;
+using System.Collections; 
+using System.Collections.Generic; 
+using System.Net; 
+using System.Net.Sockets; 
+using System.Text; 
+using System.Threading; 
+using UnityEngine;  
 
-/// <summary>
-/// Server class shows how to implement and use TcpListener in Unity.
-/// </summary>
-public class TCPServer : MonoBehaviour
-{
-    #region Public Variables
-    [Header("Network")]
-    public string ipAdress = "127.0.0.1";
-    public int port = 6002;
-    public float waitingMessagesFrequency = 0.01f;
+public class TCPServer : MonoBehaviour {  	
+	#region private members 	
+	/// <summary> 	
+	/// TCPListener to listen for incomming TCP connection 	
+	/// requests. 	
+	/// </summary> 	
+	private TcpListener tcpListener; 
+	/// <summary> 
+	/// Background thread for TcpServer workload. 	
+	/// </summary> 	
+	private Thread tcpListenerThread;  	
+	/// <summary> 	
+	/// Create handle to connected tcp client. 	
+	/// </summary> 	
+	private TcpClient connectedTcpClient;
+
+    private bool rstSvr; 
     #endregion
 
-    #region  Private m_Variables
-    private TcpListener m_Server = null;
-    private TcpClient m_Client = null;
-    private NetworkStream m_NetStream = null;
-    private byte[] m_Buffer = new byte[49152];
-    private int m_BytesReceived = 0;
-    private string m_ReceivedMessage = "";
-    private IEnumerator m_ListenClientMsgsCoroutine = null;
+
+    #region public members
+    public static string IPAddr = "127.0.0.1";
+    public static string port = "6002"; 
     #endregion
 
-    #region Delegate Variables
-    protected Action OnServerStarted = null;    //Delegate triggered when server start
-    protected Action OnServerClosed = null;     //Delegate triggered when server close
-    protected Action OnClientConnected = null;  //Delegate triggered when the server stablish connection with client
-    #endregion
-
-    //Start server and wait for clients
-    void Start()
-    {        
-        //Set and enable Server 
-        IPAddress ip = IPAddress.Parse(ipAdress);
-        m_Server = new TcpListener(ip, port);
-        m_Server.Start();
-        DebugManager.Instance.LogUnityConsole("TCPServer", "Server Started");
-        //Wait for async client connection 
-        m_Server.BeginAcceptTcpClient(ClientConnected, null);
-        OnServerStarted?.Invoke();
-    }
-
-    //Check if any client trys to connect
-    private void Update()
-    {
-        //If some client establish connection
-        if (m_Client != null && m_ListenClientMsgsCoroutine == null)
+    // Use this for initialization
+    void Start () {
+        rstSvr = false; 
+		// Start TcpServer background thread 		
+		tcpListenerThread = new Thread (new ThreadStart(ListenForIncommingRequests)); 		
+		tcpListenerThread.IsBackground = true; 		
+		tcpListenerThread.Start(); 	
+        
+	}  	
+	
+	// Update is called once per frame
+	void Update () { 		
+	    if(rstSvr)
         {
-            Debug.Log("Started listening");
-            //Start Listening Client Messages coroutine
-            m_ListenClientMsgsCoroutine = ListenClientMessages();
-            StartCoroutine(m_ListenClientMsgsCoroutine);
+            restartServer();
         }
-    }
+	}  	
+	
+	/// <summary> 	
+	/// Runs in background TcpServerThread; Handles incomming TcpClient requests 	
+	/// </summary> 	
+	private void ListenForIncommingRequests () { 		
+		try { 			
+			// Create listener on localhost port 8052. 			
+			tcpListener = new TcpListener(IPAddress.Parse(IPAddr), Int32.Parse(port)); 			
+			tcpListener.Start();              
+			Debug.Log("Server is listening");              
+			Byte[] bytes = new Byte[1024];  			
+			while (true) { 				
+				using (connectedTcpClient = tcpListener.AcceptTcpClient()) { 					
+					// Get a stream object for reading 					
+					using (NetworkStream stream = connectedTcpClient.GetStream()) { 						
+						int length; 						
+						// Read incomming stream into byte arrary. 	
+						while ((length = stream.Read(bytes, 0, bytes.Length)) != 0)
+                        {
+                            Debug.Log("TEST");
+							var incommingData = new byte[length]; 							
+							Array.Copy(bytes, 0, incommingData, 0, length);  							
+							// Convert byte array to string message. 							
+							string clientMessage = Encoding.ASCII.GetString(incommingData); 							
+							Debug.Log("client message received as: " + clientMessage); 						
+						} 					
+					} 				
+				} 			
+			} 		
+		} 		
+		catch (Exception exception)
+        { 			
+			Debug.Log("SocketException 2" + exception.ToString());
+            rstSvr = true; 
+		}     
+	}
 
-    //Callback called when "BeginAcceptTcpClient" detects new client connection
-    private void ClientConnected(IAsyncResult res)
+    /// <summary>
+    /// close disconnected thread and reset the server in a new thread 
+    /// </summary>
+    private void restartServer()
     {
-        //set the client reference
-        Debug.Log("Client Connected");
-        DebugManager.Instance.LogUnityConsole(this.GetType().Name, "Client Connected");
-        m_Client = m_Server.EndAcceptTcpClient(res);
-        OnClientConnected?.Invoke();
+        Debug.Log("Restarting Server...");
+        Debug.Log("Closing Client Socket...");
+        connectedTcpClient.Close();
+        Debug.Log("Stoping TCPListener...");
+        tcpListener.Stop();
+        Debug.Log("Lastly, Closing Thread...");
+        tcpListenerThread.Abort();
+        Debug.Log("Opening new listing process...");
+        tcpListenerThread = new Thread (new ThreadStart(ListenForIncommingRequests)); 		
+		tcpListenerThread.IsBackground = true; 		
+		tcpListenerThread.Start();
+        Debug.Log("Server Restarted...");
+        rstSvr = false; 
     }
 
-    #region Communication Server<->Client
-    //Coroutine waiting client messages while client is connected to the server
-    private IEnumerator ListenClientMessages()
-    {        
-        //Restart values in case there are more than one client connections
-       // m_BytesReceived = 0;
-       // m_Buffer = new byte[49152];
-
-        //Stablish Client NetworkStream information
-        m_NetStream = m_Client.GetStream();
-
-        //While there is a connection with the client, await for messages
-        do
-        {
-            Debug.Log("Listening for client...");
-            DebugManager.Instance.LogUnityConsole(this.GetType().Name,"Server is listening client msg...");
-            //Start Async Reading from Client and manage the response on MessageReceived function
-            m_NetStream.BeginRead(m_Buffer, 0, m_Buffer.Length, MessageReceived,  m_NetStream);
-
-            //If there is any msg, do something
-
-            if (m_BytesReceived > 0)
-            {
-                OnMessageReceived(m_ReceivedMessage);
-                m_BytesReceived = 0;
-            }
-
-            yield return new WaitForSeconds(waitingMessagesFrequency);
-
-        } while (m_BytesReceived >= 0 && m_NetStream != null);   
-        //The communication is over
-        //CloseClientConnection();
-    }
-
-    //What to do with the received message on server
-    protected virtual void OnMessageReceived(string receivedMessage)
-    {
-        DebugManager.Instance.LogUnityConsole(this.GetType().Name, "Msg recived on Server: " + "<b>" + receivedMessage + "</b>");
-
-        string[] messages = receivedMessage.Split(new[] { "<EOF>" }, StringSplitOptions.None);
-
-        foreach (var msg in messages)
-        {
-            Debug.Log("INDV MSG: " + msg); 
-        }
-        switch (receivedMessage)
-        {
-            case "Close":
-                //In this case we send "Close" to shut down client
-                SendMessageToClient("Close");
-                //Close client connection
-                CloseClientConnection();
-                break;
-            default:
-                //DebugManager.Instance.LogUnityConsole(this.GetType().Name, "Received message " + receivedMessage + ", has no special behaviuor");
-                break;
-        }
-    }
-
-    //Send custom string msg to client
-    protected void SendMessageToClient(string sendMsg)
-    {
-        //early out if there is nothing connected       
-        if (m_NetStream == null)
-        {
-            DebugManager.Instance.LogUnityConsole(this.GetType().Name, "Socket Error: Start at least one client first");
-            return;
-        }
-
-        //Build message to client        
-        byte[] msgOut = Encoding.ASCII.GetBytes(sendMsg); //Encode message as bytes
-        //Start Sync Writing
-        m_NetStream.Write(msgOut, 0, msgOut.Length);
-        DebugManager.Instance.LogUnityConsole(this.GetType().Name, "Msg sended to Client: " + "<b>" + sendMsg + "</b>");
-    }
-
-    //AsyncCallback called when "BeginRead" is ended, waiting the message response from client
-    private void MessageReceived(IAsyncResult result)
-    {
-        if (result.IsCompleted && m_Client.Connected)
-        {
-            //build message received from client
-            m_BytesReceived = m_NetStream.EndRead(result);                              //End async reading
-            m_ReceivedMessage = Encoding.ASCII.GetString(m_Buffer, 0, m_BytesReceived); //De-encode message as string
-        }
-    }
-    #endregion    
-
-    #region Close Server/ClientConnection
-    //Close client connection and disables the server
-    protected virtual void CloseServer()
-    {
-        DebugManager.Instance.LogUnityConsole(this.GetType().Name, "Server Closed");
-        //Close client connection
-        if (m_Client != null)
-        {
-            m_NetStream.Close();
-            m_NetStream = null;
-            m_Client.Close();
-            m_Client = null;
-        }
-        //Close server connection
-        if (m_Server != null)
-        {
-            m_Server.Stop();
-            m_Server = null;
-        }
-
-        OnServerClosed?.Invoke();
-    }
-
-    //Close connection with the client
-    protected virtual void CloseClientConnection()
-    {
-        DebugManager.Instance.LogUnityConsole(this.GetType().Name, "Close Connection with Client");
-        //Reset everything to defaults
-        StopCoroutine(m_ListenClientMsgsCoroutine);
-        m_ListenClientMsgsCoroutine = null;
-        m_Client.Close();
-        m_Client = null;
-
-        //Waiting to Accept a new Client
-        m_Server.BeginAcceptTcpClient(ClientConnected, null);
-    }
-    #endregion
+	/// <summary> 	
+	/// Send message to client using socket connection. 	
+	/// </summary> 	
+	private void SendMessage()
+    { 		
+		if (connectedTcpClient == null)
+        {             
+			return;         
+		}  		
+		
+		try
+        { 			
+			// Get a stream object for writing. 			
+			NetworkStream stream = connectedTcpClient.GetStream(); 			
+			if (stream.CanWrite)
+            {                 
+				string serverMessage = "This is a message from your server."; 			
+				// Convert string message to byte array.                 
+				byte[] serverMessageAsByteArray = Encoding.ASCII.GetBytes(serverMessage); 				
+				// Write byte array to socketConnection stream.               
+				stream.Write(serverMessageAsByteArray, 0, serverMessageAsByteArray.Length);               
+				Debug.Log("Server sent his message - should be received by client");           
+			}       
+		} 		
+		catch (SocketException socketException)
+        {             
+			Debug.Log("Socket exception: " + socketException);         
+		} 	
+	} 
 }
