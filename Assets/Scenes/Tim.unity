@@ -405,6 +405,24 @@ PrefabInstance:
       objectReference: {fileID: 626182290}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 71a76226100a94543a88b79c2ef40df9, type: 3}
+--- !u!1 &148735381 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 95766734099820351, guid: 71a76226100a94543a88b79c2ef40df9,
+    type: 3}
+  m_PrefabInstance: {fileID: 148735380}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &148735382
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 148735381}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 203442ab57ed739449d7dcc7430f62af, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!4 &253519269 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 1814814026029361778, guid: 30691d7d711b425408f2d5ab5dbdedcf,
@@ -3031,9 +3049,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7060fff05bd4acf47b8c0f1f44118d16, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ipAdress: 127.0.0.1
-  port: 6002
-  waitingMessagesFrequency: 2
 --- !u!20 &1851845007 stripped
 Camera:
   m_CorrespondingSourceObject: {fileID: 20294507499185110, guid: 24158fb1437dc8e418d893939758764d,

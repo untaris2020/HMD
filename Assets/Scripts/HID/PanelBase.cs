@@ -21,20 +21,24 @@ public class PanelBase : MonoBehaviour
     void Start()
     {
         HeadTracking ht = GameObject.Find("SceneManager").GetComponent<HeadTracking>();
-
         // Resiter Colliders
+
 
         Button0Delegate tmpDelegate0 = new Button0Delegate(Button0Press);
         ht.registerCollider(panels[0].GetComponent<Collider>().name, tmpDelegate0);
+        functionDebug.Instance.registerFunction("tab0",tmpDelegate0);
 
         Button1Delegate tmpDelegate1 = new Button1Delegate(Button1Press);
         ht.registerCollider(panels[1].GetComponent<Collider>().name, tmpDelegate1);
+        functionDebug.Instance.registerFunction("tab1",tmpDelegate1);
 
         Button2Delegate tmpDelegate2 = new Button2Delegate(Button2Press);
         ht.registerCollider(panels[2].GetComponent<Collider>().name, tmpDelegate2);
+        functionDebug.Instance.registerFunction("tab2",tmpDelegate2);
 
         Button3Delegate tmpDelegate3 = new Button3Delegate(Button3Press);
         ht.registerCollider(panels[3].GetComponent<Collider>().name, tmpDelegate3);
+        functionDebug.Instance.registerFunction("tab3",tmpDelegate3);
 
         pageIndex = 0;
 
