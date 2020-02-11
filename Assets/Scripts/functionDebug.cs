@@ -57,8 +57,12 @@ public class functionDebug : MonoBehaviour
 
     public void registerFunction(string cmd, Delegate function)
     {
-        DebugManager.Instance.LogUnityConsole("funcDebug:","Adding Function: " + cmd);
-        functions.Add(cmd, function);
+        //DebugManager.Instance.LogUnityConsole("funcDebug:","Adding Function: " + cmd);
+        if(!functions.ContainsKey(cmd))
+        {
+            functions.Add(cmd, function);
+        }
+        
     }
 
     void ReceiveMessages()
@@ -83,7 +87,7 @@ public class functionDebug : MonoBehaviour
         byte[] receiveBytes = u.EndReceive(ar, ref e);
         string received = Encoding.ASCII.GetString(receiveBytes);
 
-        DebugManager.Instance.LogUnityConsole("funcDebug:", "Received: " + received);
+        //DebugManager.Instance.LogUnityConsole("funcDebug:", "Received: " + received);
         messageReceived = true;
         recvMsg = received;
     }

@@ -42,7 +42,7 @@ public class HeadTracking : MonoBehaviour
 
     public void registerCollider(string colliderName, Delegate colliderFunc)
     {
-        Debug.Log("Adding collider: " + colliderName);
+        //Debug.Log("Adding collider: " + colliderName);
         colliderList.Add(colliderName, colliderFunc);
     }
 
@@ -57,7 +57,7 @@ public class HeadTracking : MonoBehaviour
         {
             string collidedName = hit.collider.name;
 
-            Debug.Log("Collided Name: " + collidedName + " RES: " + colliderList.ContainsKey(collidedName));
+            //Debug.Log("Collided Name: " + collidedName + " RES: " + colliderList.ContainsKey(collidedName));
             //Check dictionary for collided name here
             Cursor.transform.position = Vector3.Slerp(Cursor.transform.position, hit.point, speed); //Updates the position of the cursor to show object collided with
             Cursor.transform.rotation = Quaternion.Slerp(Cursor.transform.rotation, cam.transform.rotation, speed);
@@ -79,7 +79,7 @@ public class HeadTracking : MonoBehaviour
                     }
                     else //we have clicked 
                     {
-                        Debug.Log("Button pressed\n");
+                        //Debug.Log("Button pressed\n");
                         source.PlayOneShot(click, VOL);
 
                         //Call the delegate method here 
@@ -127,7 +127,7 @@ public class HeadTracking : MonoBehaviour
 
     public void forceClick()
     {
-        DebugManager.Instance.LogBoth(this.GetType().Name, "Force Click Registered");
+        //DebugManager.Instance.LogBoth(this.GetType().Name, "Force Click Registered");
 
         RaycastHit hit;
 
@@ -137,7 +137,7 @@ public class HeadTracking : MonoBehaviour
 
             if (colliderList.ContainsKey(collidedName))
             {
-                Debug.Log("Button pressed\n");
+                //Debug.Log("Button pressed\n");
                 source.PlayOneShot(click, VOL);
 
                 //Call the delegate method here 
