@@ -29,15 +29,13 @@ public class functionDebug : MonoBehaviour
     public IPEndPoint groupEP;
     UdpState s;
 
-       private void Awake()
-    {
-        //m_Instance = this;
+    private void Awake()
+    { 
         Instance = this;
     }
 
     private void OnDestroy()
     {
-        // m_Instance = null;
         Instance = null;
     }
 
@@ -58,7 +56,7 @@ public class functionDebug : MonoBehaviour
     public void registerFunction(string cmd, Delegate function)
     {
         //DebugManager.Instance.LogUnityConsole("funcDebug:","Adding Function: " + cmd);
-        if(!functions.ContainsKey(cmd))
+        if(!(functions.ContainsKey(cmd)))
         {
             functions.Add(cmd, function);
         }

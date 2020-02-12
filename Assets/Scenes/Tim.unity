@@ -150,7 +150,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c890bdf354698ba429472b626542bcc7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _privileges: ab000000
+  _privileges: ab000000c9000000
 --- !u!114 &99989021
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1255,6 +1255,11 @@ PrefabInstance:
       propertyPath: switchServerURL
       value: http://13.58.74.16:3000/api/suitswitch/recent
       objectReference: {fileID: 0}
+    - target: {fileID: 9007160365359296100, guid: 83ca115a245c487409860bf2169744ea,
+        type: 3}
+      propertyPath: connectionStatus
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 83ca115a245c487409860bf2169744ea, type: 3}
 --- !u!114 &359184633 stripped
@@ -1753,6 +1758,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: NAV
+      objectReference: {fileID: 0}
+    - target: {fileID: 6303407141151369368, guid: f6884cfcea15b5b44a5aa8b3a220c207,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1668743444356515500, guid: f6884cfcea15b5b44a5aa8b3a220c207,
         type: 3}
