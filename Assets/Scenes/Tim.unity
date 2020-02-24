@@ -1248,12 +1248,12 @@ PrefabInstance:
     - target: {fileID: 9007160365359296100, guid: 83ca115a245c487409860bf2169744ea,
         type: 3}
       propertyPath: telemServerURL
-      value: http://13.58.74.16:3000/api/suit/recent
+      value: http://18.189.202.93:3000/api/suit/recent
       objectReference: {fileID: 0}
     - target: {fileID: 9007160365359296100, guid: 83ca115a245c487409860bf2169744ea,
         type: 3}
       propertyPath: switchServerURL
-      value: http://13.58.74.16:3000/api/suitswitch/recent
+      value: http://18.189.202.93:3000/api/suitswitch/recent
       objectReference: {fileID: 0}
     - target: {fileID: 9007160365359296100, guid: 83ca115a245c487409860bf2169744ea,
         type: 3}
@@ -3184,6 +3184,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7060fff05bd4acf47b8c0f1f44118d16, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  IPAddr: 192.168.1.123
+  port: 6002
 --- !u!20 &1851845007 stripped
 Camera:
   m_CorrespondingSourceObject: {fileID: 20294507499185110, guid: 24158fb1437dc8e418d893939758764d,

@@ -8,7 +8,21 @@ using System.Text.RegularExpressions;
 using System.Threading; 
 using UnityEngine;
 
-public class TCPServer : MonoBehaviour {
+public class StateObject {  
+    // Client  socket.  
+    public Socket workSocket = null;  
+    // Size of receive buffer.  
+    public const int BufferSize = 1024;  
+    // Receive buffer.  
+    public byte[] buffer = new byte[BufferSize];  
+// Received data string.  
+    public StringBuilder sb = new StringBuilder();    
+}  
+  
+
+
+public class TCPServer : MonoBehaviour
+{
     #region private members 	
     /// <summary> 	
     /// TCPListener to listen for incomming TCP connection 	
@@ -26,7 +40,7 @@ public class TCPServer : MonoBehaviour {
 
     private bool rstSvr;
     private bool streaming;
-    private bool reqSent; 
+    private bool reqSent;
     #endregion
 
     protected struct IMUMsg
@@ -41,219 +55,136 @@ public class TCPServer : MonoBehaviour {
     }
 
     #region public members
-    public static string IPAddr = "127.0.0.1";
-    public static string port = "6002";
+    public string IPAddr;
+    public string port;
+    public static ManualResetEvent allDone;
+    
     #endregion
+    
+    
 
-    // Use this for initialization
-    void Start() 
+    private void Start()
     {
-        rstSvr = false;
-        // Start TcpServer background thread 		
-        tcpListenerThread = new Thread(new ThreadStart(ListenForIncommingRequests));
-        tcpListenerThread.IsBackground = true;
-        tcpListenerThread.Start();
-        streaming = false;
-        reqSent = false; 
-        startStream();
+        allDone = new ManualResetEvent(false);
+        StartListening();
     }
 
-    // Update is called once per frame
-    void Update() 
-    {
-        if (rstSvr)
-        {
-            restartServer();
-        }
-    }
+    public static void StartListening() {  
+        // Establish the local endpoint for the socket.  
+        // The DNS name of the computer  
+        // running the listener is "host.contoso.com".  
+        IPHostEntry ipHostInfo = Dns.GetHostEntry(Dns.GetHostName());  
+        IPAddress ipAddress = ipHostInfo.AddressList[0];  
+        IPEndPoint localEndPoint = new IPEndPoint(ipAddress, 11000);  
+  
+        // Create a TCP/IP socket.  
+        Socket listener = new Socket(ipAddress.AddressFamily,  
+            SocketType.Stream, ProtocolType.Tcp );  
+  
+        // Bind the socket to the local endpoint and listen for incoming connections.  
+        try {  
+            listener.Bind(localEndPoint);  
+            listener.Listen(100);  
+  
+            while (true) {  
+                // Set the event to nonsignaled state.  
+                allDone.Reset();  
+  
+                // Start an asynchronous socket to listen for connections.  
+                Console.WriteLine("Waiting for a connection...");  
+                listener.BeginAccept(   
+                    new AsyncCallback(AcceptCallback),  
+                    listener );  
+  
+                // Wait until a connection is made before continuing.  
+                allDone.WaitOne();  
+            }  
+  
+        } catch (Exception e) {  
+            Console.WriteLine(e.ToString());  
+        }  
+  
+        Console.WriteLine("\nPress ENTER to continue...");  
+        Console.Read();  
+  
+    }  
 
-    public void startStream()
-    {
-        streaming = true; 
-    }
-	
-    public void stopStream()
-    {
-        streaming = false;
-        SendMessage("STOP");
-        restartServer();
-        reqSent = false; 
-    }
+     public static void AcceptCallback(IAsyncResult ar) {  
+        // Signal the main thread to continue.  
+        allDone.Set();  
+  
+        // Get the socket that handles the client request.  
+        Socket listener = (Socket) ar.AsyncState;  
+        Socket handler = listener.EndAccept(ar);  
+  
+        // Create the state object.  
+        StateObject state = new StateObject();  
+        state.workSocket = handler;  
+        handler.BeginReceive( state.buffer, 0, StateObject.BufferSize, 0,  
+            new AsyncCallback(ReadCallback), state);  
+     }  
 
-	/// <summary> 	
-	/// Runs in background TcpServerThread; Handles incomming TcpClient requests 	
-	/// </summary> 	
-	private void ListenForIncommingRequests () { 		
-		try { 			 			
-			tcpListener = new TcpListener(IPAddress.Parse(IPAddr), Int32.Parse(port)); 			
-			tcpListener.Start();              
-			Debug.Log("Server is listening");              
-			Byte[] bytes = new Byte[1024];
-            while (true)
-            {
-                using (connectedTcpClient = tcpListener.AcceptTcpClient())
-                {
-                    //Connected -- wait for start msg from external source  
-                    if (streaming)
-                    {
+     public static void ReadCallback(IAsyncResult ar) {  
+        String content = String.Empty;  
+  
+        // Retrieve the state object and the handler socket  
+        // from the asynchronous state object.  
+        StateObject state = (StateObject) ar.AsyncState;  
+        Socket handler = state.workSocket;  
+  
+        // Read data from the client socket.   
+        int bytesRead = handler.EndReceive(ar);  
+  
+        if (bytesRead > 0) {  
+            // There  might be more data, so store the data received so far.  
+            state.sb.Append(Encoding.ASCII.GetString(  
+                state.buffer, 0, bytesRead));  
+  
+            // Check for end-of-file tag. If it is not there, read   
+            // more data.  
+            content = state.sb.ToString();  
+            if (content.IndexOf("<EOF>") > -1) {  
+                // All the data has been read from the   
+                // client. Display it on the console.  
+                Console.WriteLine("Read {0} bytes from socket. \n Data : {1}",  
+                    content.Length, content );  
+                // Echo the data back to the client.  
+                Send(handler, content);  
+            } else {  
+                // Not all data received. Get more.  
+                handler.BeginReceive(state.buffer, 0, StateObject.BufferSize, 0,  
+                new AsyncCallback(ReadCallback), state);  
+            }  
+        }  
+    }  
+  
+    private static void Send(Socket handler, String data) {  
+        // Convert the string data to byte data using ASCII encoding.  
+        byte[] byteData = Encoding.ASCII.GetBytes(data);  
+  
+        // Begin sending the data to the remote device.  
+        handler.BeginSend(byteData, 0, byteData.Length, 0,  
+            new AsyncCallback(SendCallback), handler);  
+    }  
 
-                        //Start stream if not started 
-
-                        if (!reqSent)
-                        {
-                            SendMessage("START");
-                            reqSent = true; 
-                        }
-
-                        // Get a stream object for reading 					
-                        using (NetworkStream stream = connectedTcpClient.GetStream())
-                        {
-                            int length;
-                            // Read incomming stream into byte arrary. 	
-                            while ((length = stream.Read(bytes, 0, bytes.Length)) != 0)
-                            {
-                                var incommingData = new byte[length];
-                                Array.Copy(bytes, 0, incommingData, 0, length);
-                                // Convert byte array to string message. 							
-                                string clientMessage = Encoding.ASCII.GetString(incommingData);
+     private static void SendCallback(IAsyncResult ar) {  
+        try {  
+            // Retrieve the socket from the state object.  
+            Socket handler = (Socket) ar.AsyncState;  
+  
+            // Complete sending the data to the remote device.  
+            int bytesSent = handler.EndSend(ar);  
+            Console.WriteLine("Sent {0} bytes to client.", bytesSent);  
+  
+            handler.Shutdown(SocketShutdown.Both);  
+            handler.Close();  
+  
+        } catch (Exception e) {  
+            Console.WriteLine(e.ToString());  
+        }  
+    }  
+  
 
 
-                                //Process client string here 
 
-                                //First I need to get my first <BEG> and my last full <EOF> so that I don't break
-
-                                int idx = clientMessage.IndexOf("<BEG>");
-
-                                if (idx != -1)
-                                {
-                                    clientMessage = clientMessage.Substring(idx);
-                                    idx = clientMessage.LastIndexOf("<EOF>");
-                                    if (idx != -1)
-                                    {
-                                        clientMessage = clientMessage.Substring(0, idx);
-                                    }
-                                    else
-                                    {
-                                        continue;
-                                    }
-                                }
-                                else
-                                {
-                                    continue;
-                                }
-
-                                Debug.Log("Formatted Msg: " + clientMessage);
-
-                                //Every string will be wrapped in <BEG><EOF> tags so grab those to begin
-                                string[] packets = clientMessage.Split(new string[] { "<EOF>" }, StringSplitOptions.None);
-
-                                var messages = new List<string>();
-
-                                foreach (var pack in packets)
-                                {
-
-                                    idx = pack.IndexOf("<BEG>");
-                                    if (idx != -1)
-                                    {
-                                        messages.Add(pack.Substring(idx + 5));
-                                    }
-                                    else
-                                    {
-                                        //its the full message already 
-                                        messages.Add(pack);
-                                    }
-                                }
-
-                                //Now all that is contained is the data in the message itself --Note this section is what will change based on the format
-                                int tmpSeqID = -1; //temp seq ID that stores the most up to date seq 
-                                IMUMsg imuPacket = new IMUMsg();
-                                foreach (var msg in messages)
-                                {
-
-                                    string[] tmp = msg.Split(new string[] { "$" }, StringSplitOptions.None);
-                                    if (tmp.Length == 7)
-                                    {
-                                        if (Int32.Parse(tmp[0]) > tmpSeqID) //If it is a newer packet 
-                                        {
-                                            tmpSeqID = Int32.Parse(tmp[0]); //Update the current newest value 
-
-                                            //Assign temp packet 
-                                            IMUMsg tempPkt = new IMUMsg();
-                                            tempPkt.seqID = Int32.Parse(tmp[0]);
-                                            tempPkt.x = Int32.Parse(tmp[1]);
-                                            tempPkt.y = Int32.Parse(tmp[2]);
-                                            tempPkt.z = Int32.Parse(tmp[3]);
-                                            tempPkt.xGyro = Int32.Parse(tmp[4]);
-                                            tempPkt.yGyro = Int32.Parse(tmp[5]);
-                                            tempPkt.zGyro = Int32.Parse(tmp[6]);
-
-                                            imuPacket = tempPkt; //assign the most up to date packet 
-                                        }
-                                    }
-                                }
-                                //Data grabbed at this point hypothetically 
-                                Debug.Log("Packet #" + imuPacket.seqID + " received");
-                            }
-                        }
-                    }
-                }
-            }
-		} 		
-		catch (Exception IOException)
-        { 			
-			Debug.Log("SocketException 2" + IOException.ToString());
-            rstSvr = true; 
-		} 
-	}
-
-    /// <summary>
-    /// close disconnected thread and reset the server in a new thread 
-    /// </summary>
-    private void restartServer()
-    {
-        Debug.Log("Restarting Server...");
-        Debug.Log("Closing Client Socket...");
-        connectedTcpClient.Close();
-        Debug.Log("Stoping TCPListener...");
-        tcpListener.Stop();
-        Debug.Log("Lastly, Closing Thread...");
-        tcpListenerThread.Abort();
-        Debug.Log("Opening new listing process...");
-        tcpListenerThread = new Thread (new ThreadStart(ListenForIncommingRequests)); 		
-		tcpListenerThread.IsBackground = true; 		
-		tcpListenerThread.Start();
-        Debug.Log("Server Restarted...");
-        rstSvr = false;
-        reqSent = false; 
-    }
-
-	/// <summary> 	
-	/// Send message to client using socket connection. 	
-	/// </summary> 	
-	private void SendMessage(string message)
-    { 		
-		if (connectedTcpClient == null)
-        {             
-			return;         
-		}  		
-		
-		try
-        { 			
-			// Get a stream object for writing. 			
-			NetworkStream stream = connectedTcpClient.GetStream(); 			
-			if (stream.CanWrite)
-            {
-                string serverMsg = "<BEG>" + message + "<EOF>";
-				// Convert string message to byte array.                 
-				byte[] serverMessageAsByteArray = Encoding.ASCII.GetBytes(message); 				
-				// Write byte array to socketConnection stream.               
-				stream.Write(serverMessageAsByteArray, 0, serverMessageAsByteArray.Length);               
-				Debug.Log("Server sent his message - should be received by client");           
-			}       
-		} 		
-		catch (SocketException socketException)
-        {             
-			Debug.Log("Socket exception: " + socketException);         
-		} 	
-	} 
 }
