@@ -133,6 +133,7 @@ public class HeadLockScript : MonoBehaviour
         if (controller != null && controller.Id == controllerId)
         {
             source.PlayOneShot(reset,VOL);
+            
             MLInputControllerFeedbackIntensity intensity = (MLInputControllerFeedbackIntensity)((int)(value * 2.0f));
             controller.StartFeedbackPatternVibe(MLInputControllerFeedbackPatternVibe.Buzz, intensity);
             buttonPressed = true;

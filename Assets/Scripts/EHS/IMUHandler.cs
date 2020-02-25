@@ -118,8 +118,6 @@ public class IMUHandler : MonoBehaviour
 
     private IEnumerator diconnectEvent(float waitTime)
     {
-        Debug.Log("IENUM");
-
         if(!watchDogTimer)
         {
             DebugManager.Instance.LogBoth(this.GetType().Name, "IMU DISCONNECTED...");
