@@ -33,6 +33,8 @@ public class TCPServer : MonoBehaviour
     private bool streaming;
     private bool reqSent; 
 
+    private delegate void funcDelegate();
+
     protected struct IMUMsg
     {
         public int seqID;
@@ -54,12 +56,18 @@ public class TCPServer : MonoBehaviour
         streaming = false;
         reqSent = false; 
 
+        funcDelegate tmpDelegate0 = new funcDelegate(startStream);
+        funcDelegate tmpDelegate1 = new funcDelegate(stopStream);
+        functionDebug.Instance.registerFunction("start",tmpDelegate0);
+        functionDebug.Instance.registerFunction("stop",tmpDelegate1);
+
         //Note: Uncomment the line below if the script is always active. Otherwise the controlling script will call this method to begin streaming
         //startStream();
     }
 
     public void startStream()
     {
+        
         streaming = true; 
     }
 
@@ -67,7 +75,7 @@ public class TCPServer : MonoBehaviour
     {
         streaming = false;
         SendMsg("STOP");
-        restartServer();
+        //restartServer();
         reqSent = false; 
     }
 
