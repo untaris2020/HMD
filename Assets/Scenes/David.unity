@@ -369,6 +369,12 @@ Camera:
     type: 3}
   m_PrefabInstance: {fileID: 648559554}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &648559557 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1011244501761250, guid: 24158fb1437dc8e418d893939758764d,
+    type: 3}
+  m_PrefabInstance: {fileID: 648559554}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &691561313
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -4407,6 +4413,11 @@ PrefabInstance:
       propertyPath: persistentBehavior
       value: 
       objectReference: {fileID: 1813634581}
+    - target: {fileID: 7628259576536362468, guid: f6884cfcea15b5b44a5aa8b3a220c207,
+        type: 3}
+      propertyPath: _camera
+      value: 
+      objectReference: {fileID: 648559557}
     - target: {fileID: 131569097099139369, guid: f6884cfcea15b5b44a5aa8b3a220c207,
         type: 3}
       propertyPath: m_textInfo.characterCount

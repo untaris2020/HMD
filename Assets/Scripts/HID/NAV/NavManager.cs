@@ -13,7 +13,8 @@ public class NavManager : MonoBehaviour
     public delegate void MyDelegate();
 
     public MLPersistentBehavior persistentBehavior;
-    public GameObject _cube;
+    public GameObject _cube, _camera;
+    private MLInputController _controller;
 
     //private IEnumerator coroutine;
     private int counter = 0;
@@ -32,13 +33,25 @@ public class NavManager : MonoBehaviour
 
         MyDelegate RearviewOFF = new MyDelegate(PressRearviewOFF);
         ht.registerCollider(rearviewOFFButton.GetComponent<Collider>().name,RearviewOFF);
+
+        MLInput.Start();
+        _controller = MLInput.GetController(MLInput.Hand.Left);
+    }
+
+    private void OnDestroy() {
+        MLInput.Stop();
     }
 
     // Update is called once per frame
     void Update()
     {
         //_cube.transform.position = SOMETHING...
-        persistentBehavior.UpdateBinding();
+        // PCF Testing
+        if (_controller.TriggerValue > 0.2f) {
+            _cube.transform.position = _camera.transform.position + _camera.transform.forward * 2.0f;
+            _cube.transform.rotation = _camera.transform.rotation;
+            persistentBehavior.UpdateBinding();
+        }
     }
 
     private IEnumerator SimulateButtons(float waitTime)
