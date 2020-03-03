@@ -11,8 +11,8 @@ public class PanelBase : MonoBehaviour
     public GameObject[] panels;
     public GameObject[] pages;
 
-    public int pageIndex;
-    public string panelName; 
+    private int pageIndex;
+    //public string panelName; 
     public delegate void Button0Delegate();
     public delegate void Button1Delegate();
     public delegate void Button2Delegate();

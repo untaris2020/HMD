@@ -29,19 +29,8 @@ public class DebugManager : MonoBehaviour
     {
         //m_Instance = this;
         Instance = this;
-    }
 
-    private void OnDestroy()
-    {
-        // m_Instance = null;
-        Instance = null;
-    }
-
-
-
-    void Start()
-    {
-        
+        // Moved from void Start()
         for (int i=0; i<consoleEntries.Length; i++) consoleEntries[i] = new ConsoleEntrie();
 
         debugHashtable.Add("telem_status","UN-INIT");
@@ -58,6 +47,20 @@ public class DebugManager : MonoBehaviour
         debugHashtable.Add("y","UN-INIT");
         debugHashtable.Add("z","UN-INIT");
         UpdateStatuses();
+    }
+
+    private void OnDestroy()
+    {
+        // m_Instance = null;
+        Instance = null;
+    }
+
+
+
+    void Start()
+    {
+        
+        
     }
 
     // Update is called once per frame

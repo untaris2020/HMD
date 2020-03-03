@@ -28,6 +28,7 @@ public class NavManager : MonoBehaviour
         //coroutine = SimulateButtons(2.0f);
         //StartCoroutine(coroutine);
 
+        // This might be broken, make unique MyDelegates
         MyDelegate RearviewON = new MyDelegate(PressRearviewON);
         ht.registerCollider(rearviewONButton.GetComponent<Collider>().name,RearviewON);
 
@@ -47,7 +48,7 @@ public class NavManager : MonoBehaviour
     {
         //_cube.transform.position = SOMETHING...
         // PCF Testing
-        if (_controller.TriggerValue > 0.2f) {
+        if (_controller != null && _controller.TriggerValue > 0.2f) {
             _cube.transform.position = _camera.transform.position + _camera.transform.forward * 2.0f;
             _cube.transform.rotation = _camera.transform.rotation;
             persistentBehavior.UpdateBinding();
