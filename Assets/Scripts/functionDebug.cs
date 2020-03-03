@@ -55,7 +55,7 @@ public class functionDebug : MonoBehaviour
 
     public void registerFunction(string cmd, Delegate function)
     {
-        //DebugManager.Instance.LogUnityConsole("funcDebug:","Adding Function: " + cmd);
+        DebugManager.Instance.LogBoth("funcDebug:","Adding Function: " + cmd);
         if(!(functions.ContainsKey(cmd)))
         {
             functions.Add(cmd, function);
@@ -71,21 +71,19 @@ public class functionDebug : MonoBehaviour
         s = new UdpState();
         s.u = listener;
         s.e = groupEP;
-
+        Debug.Log("STarting receive");
         listener.BeginReceive(new System.AsyncCallback(ReceiveCallback), s); 
     }
 
     void ReceiveCallback(IAsyncResult ar)
     {
-       
-
         UdpClient u = ((UdpState)(ar.AsyncState)).u;
         IPEndPoint e = ((UdpState)(ar.AsyncState)).e;
 
         byte[] receiveBytes = u.EndReceive(ar, ref e);
         string received = Encoding.ASCII.GetString(receiveBytes);
 
-        //DebugManager.Instance.LogUnityConsole("funcDebug:", "Received: " + received);
+        DebugManager.Instance.LogBoth("funcDebug:", "Received: " + received);
         messageReceived = true;
         recvMsg = received;
     }

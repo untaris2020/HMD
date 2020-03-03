@@ -13,11 +13,10 @@ using System.Collections.Generic;
 public class TCPServer : MonoBehaviour
 {
     // Setting IP and PORT
-    public string IP = "192.168.1.123";
-    public int PORT = 6006;
+    public string IP = "172.20.128.55";
+    public int PORT = 4050;
 
     // Setting Byte Size Parameters
-    private int minByteSize = 6000;
     private int maxByteSize = 30000;
 
     // TCPListener to listen for incomming TCP connection requests.
@@ -65,9 +64,22 @@ public class TCPServer : MonoBehaviour
         //startStream();
     }
 
+    private void Update()
+    {
+        if (streaming)
+        {
+            if (!reqSent)
+            {
+                Debug.Log("Sending message ");
+                SendMsg("START");
+                reqSent = true;
+            }
+        }
+    }
+
     public void startStream()
     {
-        
+        Debug.Log("Starting stream");
         streaming = true; 
     }
 
@@ -84,115 +96,113 @@ public class TCPServer : MonoBehaviour
     {
         try
         {
+            Debug.Log("0");
+
             // Create listener on localhost.
             tcpListener = new TcpListener(IPAddress.Parse(IP), PORT);
             tcpListener.Start();
             Debug.Log("Server is listening\n");
             Byte[] bytes = new Byte[maxByteSize];
+            Debug.Log("0.5");
             while (true)
             {
+                Debug.Log("1");
                 using (connectedTcpClient = tcpListener.AcceptTcpClient())
                 {
-                    if (streaming)
+                    Debug.Log("2");
+                    // Get a stream object for reading
+                    using (NetworkStream stream = connectedTcpClient.GetStream())
                     {
-                        if (!reqSent)
+                        Debug.Log("3");
+                        int length;
+                        // Read incomming stream into byte arrary.
+                        while ((length = stream.Read(bytes, 0, bytes.Length)) != 0)
                         {
-                            SendMsg("START");
-                            reqSent = true;
-                        }
+                            Debug.Log("4");
+                            var incommingData = new byte[length];
+                            Array.Copy(bytes, 0, incommingData, 0, length);
 
-                        // Get a stream object for reading
-                        using (NetworkStream stream = connectedTcpClient.GetStream())
-                        {
-                            int length;
-                            // Read incomming stream into byte arrary.
-                            while ((length = stream.Read(bytes, 0, bytes.Length)) != 0)
+                            // Convert byte array to string message.
+                            string clientMessage = Encoding.ASCII.GetString(incommingData);
+
+                            //Process client string here 
+
+                            //First I need to get my first <BEG> and my last full <EOF> so that I don't break
+
+                            int idx = clientMessage.IndexOf("<BEG>");
+
+                            if (idx != -1)
                             {
-                                var incommingData = new byte[length];
-                                Array.Copy(bytes, 0, incommingData, 0, length);
-
-                                // Convert byte array to string message.
-                                string clientMessage = Encoding.ASCII.GetString(incommingData);
-
-                                //Process client string here 
-
-                                //First I need to get my first <BEG> and my last full <EOF> so that I don't break
-
-                                int idx = clientMessage.IndexOf("<BEG>");
-
+                                clientMessage = clientMessage.Substring(idx);
+                                idx = clientMessage.LastIndexOf("<EOF>");
                                 if (idx != -1)
                                 {
-                                    clientMessage = clientMessage.Substring(idx);
-                                    idx = clientMessage.LastIndexOf("<EOF>");
-                                    if (idx != -1)
-                                    {
-                                        clientMessage = clientMessage.Substring(0, idx);
-                                    }
-                                    else
-                                    {
-                                        continue;
-                                    }
+                                    clientMessage = clientMessage.Substring(0, idx);
                                 }
                                 else
                                 {
                                     continue;
                                 }
+                            }
+                            else
+                            {
+                                continue;
+                            }
 
-                                Debug.Log("Formatted Msg: " + clientMessage);
+                            Debug.Log("Formatted Msg: " + clientMessage);
 
-                                //Every string will be wrapped in <BEG><EOF> tags so grab those to begin
-                                string[] packets = clientMessage.Split(new string[] { "<EOF>" }, StringSplitOptions.None);
+                            //Every string will be wrapped in <BEG><EOF> tags so grab those to begin
+                            string[] packets = clientMessage.Split(new string[] { "<EOF>" }, StringSplitOptions.None);
 
-                                var messages = new List<string>();
+                            var messages = new List<string>();
 
-                                foreach (var pack in packets)
+                            foreach (var pack in packets)
+                            {
+
+                                idx = pack.IndexOf("<BEG>");
+                                if (idx != -1)
                                 {
-
-                                    idx = pack.IndexOf("<BEG>");
-                                    if (idx != -1)
-                                    {
-                                        messages.Add(pack.Substring(idx + 5));
-                                    }
-                                    else
-                                    {
-                                        //its the full message already 
-                                        messages.Add(pack);
-                                    }
+                                    messages.Add(pack.Substring(idx + 5));
                                 }
-
-                                /*
-                                 * 
-                                 * Insert Packet processing here 
-                                 *               
-                                */
-                                int tmpSeqID = -1; //temp seq ID that stores the most up to date seq 
-                                IMUMsg imuPacket = new IMUMsg();
-                                foreach (var msg in messages)
+                                else
                                 {
+                                    //its the full message already 
+                                    messages.Add(pack);
+                                }
+                            }
 
-                                    string[] tmp = msg.Split(new string[] { "$" }, StringSplitOptions.None);
-                                    if (tmp.Length == 7)
+                            /*
+                                * 
+                                * Insert Packet processing here 
+                                *               
+                            */
+                            int tmpSeqID = -1; //temp seq ID that stores the most up to date seq 
+                            IMUMsg imuPacket = new IMUMsg();
+                            foreach (var msg in messages)
+                            {
+
+                                string[] tmp = msg.Split(new string[] { "$" }, StringSplitOptions.None);
+                                if (tmp.Length == 7)
+                                {
+                                    if (Int32.Parse(tmp[0]) > tmpSeqID) //If it is a newer packet 
                                     {
-                                        if (Int32.Parse(tmp[0]) > tmpSeqID) //If it is a newer packet 
-                                        {
-                                            tmpSeqID = Int32.Parse(tmp[0]); //Update the current newest value 
+                                        tmpSeqID = Int32.Parse(tmp[0]); //Update the current newest value 
 
-                                            //Assign temp packet 
-                                            IMUMsg tempPkt = new IMUMsg();
-                                            tempPkt.seqID = Int32.Parse(tmp[0]);
-                                            tempPkt.x = Int32.Parse(tmp[1]);
-                                            tempPkt.y = Int32.Parse(tmp[2]);
-                                            tempPkt.z = Int32.Parse(tmp[3]);
-                                            tempPkt.xGyro = Int32.Parse(tmp[4]);
-                                            tempPkt.yGyro = Int32.Parse(tmp[5]);
-                                            tempPkt.zGyro = Int32.Parse(tmp[6]);
+                                        //Assign temp packet 
+                                        IMUMsg tempPkt = new IMUMsg();
+                                        tempPkt.seqID = Int32.Parse(tmp[0]);
+                                        tempPkt.x = Int32.Parse(tmp[1]);
+                                        tempPkt.y = Int32.Parse(tmp[2]);
+                                        tempPkt.z = Int32.Parse(tmp[3]);
+                                        tempPkt.xGyro = Int32.Parse(tmp[4]);
+                                        tempPkt.yGyro = Int32.Parse(tmp[5]);
+                                        tempPkt.zGyro = Int32.Parse(tmp[6]);
 
-                                            imuPacket = tempPkt; //assign the most up to date packet 
-                                        }
+                                        imuPacket = tempPkt; //assign the most up to date packet 
                                     }
                                 }
                             }
-                        }
+                        }                          
                     }
                 }
             }

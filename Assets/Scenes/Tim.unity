@@ -3204,8 +3204,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7060fff05bd4acf47b8c0f1f44118d16, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  IPAddr: 192.168.1.123
-  port: 6006
+  IP: 172.20.128.55
+  PORT: 4050
 --- !u!20 &1851845007 stripped
 Camera:
   m_CorrespondingSourceObject: {fileID: 20294507499185110, guid: 24158fb1437dc8e418d893939758764d,

@@ -13,11 +13,11 @@ import sys
 sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 
 #Note: If you change one of these be sure you also update them on the DebugManager object - script function manager
-ip = 'localhost' #IP of the wireless interface to send messages too
-port = "10101"   #Port to send messages too
+ip = "localhost" #IP of the wireless interface to send messages too
+port = 10101   #Port to send messages too
 
 
-server_address = ('localhost', 10102)
+server_address = (ip, port)
 
 try:
     while(1):
@@ -27,8 +27,9 @@ try:
             break
         else:
             # Send data
+            print("Sending data")
             sent = sock.sendto(message.encode(), server_address)
-
+            print("Data sent")
 finally:
     print ( 'closing socket')
     sock.close()
