@@ -21,7 +21,7 @@ public class functionDebug : MonoBehaviour
 
     public int listenPort = 10102;
     public string IP = "127.0.0.1";
-    public static bool messageReceived = false;
+    private bool messageReceived;
     private string recvMsg; 
     private Dictionary<string, Delegate> functions = new Dictionary<string, Delegate>();
 
@@ -32,6 +32,7 @@ public class functionDebug : MonoBehaviour
     private void Awake()
     { 
         Instance = this;
+        messageReceived = false;
     }
 
     private void OnDestroy()
@@ -54,8 +55,8 @@ public class functionDebug : MonoBehaviour
     }
 
     public void registerFunction(string cmd, Delegate function)
-    {
-        DebugManager.Instance.LogBoth("funcDebug:","Adding Function: " + cmd);
+    {     
+        //DebugManager.Instance.LogBoth("funcDebug:","Adding Function: " + cmd);
         if(!(functions.ContainsKey(cmd)))
         {
             functions.Add(cmd, function);
@@ -71,7 +72,6 @@ public class functionDebug : MonoBehaviour
         s = new UdpState();
         s.u = listener;
         s.e = groupEP;
-        Debug.Log("STarting receive");
         listener.BeginReceive(new System.AsyncCallback(ReceiveCallback), s); 
     }
 
@@ -83,7 +83,9 @@ public class functionDebug : MonoBehaviour
         byte[] receiveBytes = u.EndReceive(ar, ref e);
         string received = Encoding.ASCII.GetString(receiveBytes);
 
-        DebugManager.Instance.LogBoth("funcDebug:", "Received: " + received);
+
+        //FIXME -- This causes function to return and it shouldn't
+        //DebugManager.Instance.LogBoth("funcDebug:", "Received: " + received);
         messageReceived = true;
         recvMsg = received;
     }
@@ -96,7 +98,7 @@ public class functionDebug : MonoBehaviour
         }
         else
         {
-            DebugManager.Instance.LogBoth("funcDebug:", "CMD \"" + recvMsg + "\" unknown");
+            //DebugManager.Instance.LogBoth("funcDebug:", "CMD \"" + recvMsg + "\" unknown");
         }
         messageReceived = false; 
         listener.BeginReceive(new System.AsyncCallback(ReceiveCallback), s); 
