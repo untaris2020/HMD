@@ -61,7 +61,6 @@ MonoBehaviour:
   - {fileID: 4347717166579083277}
   - {fileID: 4971552750409031388}
   - {fileID: 4067276831636845720}
-  pageIndex: 0
 --- !u!114 &9007160365359296100
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1405,6 +1404,21 @@ PrefabInstance:
       propertyPath: m_Name
       value: Pannel
       objectReference: {fileID: 0}
+    - target: {fileID: 9145356376395176306, guid: 49fe80de65c21eb4ca25298e67034c0c,
+        type: 3}
+      propertyPath: m_Name
+      value: telem_header_CL
+      objectReference: {fileID: 0}
+    - target: {fileID: 8262109519680251239, guid: 49fe80de65c21eb4ca25298e67034c0c,
+        type: 3}
+      propertyPath: m_Name
+      value: telem_header_CR
+      objectReference: {fileID: 0}
+    - target: {fileID: 7238272059171685252, guid: 49fe80de65c21eb4ca25298e67034c0c,
+        type: 3}
+      propertyPath: m_Name
+      value: telem_header_L
+      objectReference: {fileID: 0}
     - target: {fileID: 6843345267473178175, guid: 49fe80de65c21eb4ca25298e67034c0c,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -1464,21 +1478,6 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: telem_header_R
-      objectReference: {fileID: 0}
-    - target: {fileID: 9145356376395176306, guid: 49fe80de65c21eb4ca25298e67034c0c,
-        type: 3}
-      propertyPath: m_Name
-      value: telem_header_CL
-      objectReference: {fileID: 0}
-    - target: {fileID: 8262109519680251239, guid: 49fe80de65c21eb4ca25298e67034c0c,
-        type: 3}
-      propertyPath: m_Name
-      value: telem_header_CR
-      objectReference: {fileID: 0}
-    - target: {fileID: 7238272059171685252, guid: 49fe80de65c21eb4ca25298e67034c0c,
-        type: 3}
-      propertyPath: m_Name
-      value: telem_header_L
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 49fe80de65c21eb4ca25298e67034c0c, type: 3}
