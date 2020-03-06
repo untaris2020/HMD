@@ -98,7 +98,7 @@ public class DebugManager : MonoBehaviour
         }
     }
 
-    public void LogSceneConsole(string fileName, string msg)
+    public void LogSceneConsole(string msg)
     {
         //Debug.Log(fileName + ": " + msg);
 
@@ -155,10 +155,21 @@ public class DebugManager : MonoBehaviour
         Debug.Log(fileName + ": " + msg);
     }
 
+    public void LogUnityConsole(string msg)
+    {
+        Debug.Log(msg);
+    }
+
     public void LogBoth(string fileName, string msg)
     {
         Debug.Log(fileName + ": " + msg);
-        LogSceneConsole(fileName, msg);
+        LogSceneConsole(msg);
+    }
+
+    public void LogBoth(string msg)
+    {
+        Debug.Log(msg);
+        LogSceneConsole(msg);
     }
 
     // UTIL Functions
