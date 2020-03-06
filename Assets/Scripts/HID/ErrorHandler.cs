@@ -6,29 +6,39 @@ using UnityEngine.UI;
 using TMPro;
 
 
+
 // TODO
 // 1) Handle errors if error window already active
 // 2) Fade animation
 
 public class ErrorHandler : MonoBehaviour {
 
+    //Public ErrorHandler all objects can reference
+    public static ErrorHandler Instance;
+
     // Use this for initialization
     public GameObject errorPanel;
-    public TextMeshProUGUI myText; 
+    //public TextMeshProUGUI myText; 
 
-    public AudioClip error;
-        AudioSource source;
+    //public AudioClip error;
+      //  AudioSource source;
 
     public float VOL = 1.7f;
 
     //ErrorWindow windowInstance;
-    public bool windowActive;
+    private bool windowActive;
 
-    public List<string> ErrorList; 
+    private List<string> ErrorList;
 
+    private void Awake()
+    {
+        ErrorList = new List<string>();
+        Instance = this;
+
+    }
     void Start () {
         windowActive = false;
-        source = GetComponent<AudioSource>();
+        //source = GetComponent<AudioSource>();
 	}
 	
 	// Update is called once per frame
@@ -51,9 +61,9 @@ public class ErrorHandler : MonoBehaviour {
     {
         windowActive = true;
         //float trans = 0f;
-        myText.text = ErrorList[0];
+        //myText.text = ErrorList[0];
         errorPanel.SetActive(true);
-        source.PlayOneShot(error,VOL);
+        //source.PlayOneShot(error,VOL);
 
     }
 

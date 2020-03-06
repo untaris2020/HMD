@@ -16,7 +16,7 @@ public class TelemWebRequest : MonoBehaviour
 {
     public const int NUM_OF_TELEM_VALUES = 15;
 
-    public ErrorHandler errorScript;
+    //public ErrorHandler errorScript;
 
     string JSONString, JSONString2;
     public TelemObject[] telemObjects;
@@ -192,13 +192,13 @@ public class TelemWebRequest : MonoBehaviour
         
         for (int i=0; i<numOfStoredValues; i++)
         {
-            telemObjects[i] = new TelemObject(errorScript);
+            telemObjects[i] = new TelemObject();
         }
 
         stableCheckObjects = new StableCheckObject[numOfSuitValues];
         for (int i=0; i<numOfSuitValues; i++)
         {
-            stableCheckObjects[i] = new StableCheckObject(errorScript);
+            stableCheckObjects[i] = new StableCheckObject();
         }
 
         stableCheckObjects[0].name = "p_sub";
@@ -282,7 +282,7 @@ public class TelemWebRequest : MonoBehaviour
                 {
                     // ERROR: Telem server not started
                     DebugManager.Instance.LogBoth(this.GetType().Name, "ERROR: Telem server connected but not started");
-                    TelemObject telemObject = new TelemObject(errorScript);
+                    TelemObject telemObject = new TelemObject();
                     telemObjects[0] = telemObject;
                 } else
                 {
@@ -312,7 +312,7 @@ public class TelemWebRequest : MonoBehaviour
             {
                 DebugManager.Instance.LogBoth(this.GetType().Name, pages[page] + ": Error: " + webRequest.error);
 
-                TelemObject telemObject = new TelemObject(errorScript);
+                TelemObject telemObject = new TelemObject();
                 telemObjects[0] = telemObject;
             }
             else
@@ -322,12 +322,12 @@ public class TelemWebRequest : MonoBehaviour
                 if (String.IsNullOrEmpty(JSONString) || String.IsNullOrEmpty(JSONString2))
                 {
                     //DebugManager.Instance.LogBoth("T ERROR: JSONString is null");
-                    TelemObject telemObject = new TelemObject(errorScript);
+                    TelemObject telemObject = new TelemObject();
                     telemObjects[0] = telemObject;
                    
                 } else if (JSONString2 == "[]")
                 {
-                    TelemObject telemObject = new TelemObject(errorScript);
+                    TelemObject telemObject = new TelemObject();
                     telemObjects[0] = telemObject;
                 } else
                 {
@@ -363,7 +363,7 @@ public class TelemWebRequest : MonoBehaviour
                     // TODO 6
                     telemObjects[0].suit_populated = true;
                     telemObjects[0].switch_populated = true;
-                    telemObjects[0].errorScript = errorScript;
+                    
                 } 
             }
         }
@@ -490,7 +490,7 @@ public class TelemWebRequest : MonoBehaviour
 
 public class StableCheckObject
 {
-    public ErrorHandler errorScript;
+    //public ErrorHandler errorScript;
 
     // vars
     public string name = "EMPTY";
@@ -527,13 +527,15 @@ public class StableCheckObject
                 if (obj.flags[id] == -1)
                 {
                     DebugManager.Instance.LogUnityConsole(this.GetType().Name, "Warning: " + name + " low");
-                    errorScript.HandleError(0, "Warning: " + name + " low");
+                    ErrorHandler.Instance.HandleError(0, "Warning: " + name + " low");
+
+                  
                     errorReady = false;
                 }
                 else if (obj.flags[id] == 1)
                 {
                     DebugManager.Instance.LogUnityConsole(this.GetType().Name, "Warning: " + name + " high");
-                    errorScript.HandleError(0, "Warning: " + name + " high");
+                    ErrorHandler.Instance.HandleError(0, "Warning: " + name + " high");
                     errorReady = false;
                 }
 
@@ -575,11 +577,6 @@ public class StableCheckObject
         counter = 0;
 
         errorCounterTemp = 0;
-    }
-
-    public StableCheckObject(ErrorHandler _errorScript)
-    {
-        errorScript = _errorScript;
     }
 }
 
@@ -640,7 +637,7 @@ public class TelemDatabaseEntry
 public class TelemObject
  {
 
-    public ErrorHandler errorScript;
+    //public ErrorHandler errorScript;
     // Stablility flags
     //static public bool heart_bpm_Flag = false;
     public int[] flags = new int[TelemWebRequest.NUM_OF_TELEM_VALUES];
@@ -1171,19 +1168,12 @@ public class TelemObject
         return JsonUtility.FromJson<TelemObject>(jsonString);
     }
 
-    public TelemObject(ErrorHandler _errorScript)
-    {
-        // set these to null for checking if the script looses connection to the server
-        suit_populated = false;
-        switch_populated = false;
-        errorScript = _errorScript;
-    }
-
     public TelemObject()
     {
         // set these to null for checking if the script looses connection to the server
         suit_populated = false;
         switch_populated = false;
+        //errorScript = _errorScript;
     }
 }
 
