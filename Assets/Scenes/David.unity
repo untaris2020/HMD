@@ -5920,6 +5920,12 @@ PrefabInstance:
       propertyPath: _camera
       value: 
       objectReference: {fileID: 2022749499}
+    - target: {fileID: 7628259576536362468, guid: f6884cfcea15b5b44a5aa8b3a220c207,
+        type: 3}
+      propertyPath: waypoint_mesh
+      value: 
+      objectReference: {fileID: 1365476325174732, guid: 955bb973fab837e42a19113450468a69,
+        type: 3}
     - target: {fileID: 5093924096542512290, guid: f6884cfcea15b5b44a5aa8b3a220c207,
         type: 3}
       propertyPath: panels.Array.size

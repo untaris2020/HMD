@@ -17,11 +17,16 @@ public class NavManager : MonoBehaviour
 
     // Nav System
     public MLPersistentBehavior persistentBehavior;
+    public GameObject waypoint_mesh;
+    List<GameObject> waypoint_meshes = new List<GameObject>();
+
     GameObject _content = null;
     List<MLPersistentBehavior> _pointBehaviors = new List<MLPersistentBehavior>();
 
 
     List<UserPosition> userPositions = new List<UserPosition>();
+
+    List<Waypoint> waypoints = new List<Waypoint>();
 
 
     public GameObject _cube, _camera;
@@ -82,13 +87,14 @@ public class NavManager : MonoBehaviour
             UserPosition tmpPos = new UserPosition(DateTime.Now, _camera.transform.position);
             //_cube.transform.rotation = _camera.transform.rotation;
 
-            DebugManager.Instance.LogUnityConsole("NavManager", "New Coordniate: " + tmpPos.position);
+            //DebugManager.Instance.LogUnityConsole("NavManager", "New Coordniate: " + tmpPos.position);
             userPositions[userPosCounter] = tmpPos;
 
             if (userPosCounter >= (BACKUPTIMESECONDS/TICKTIME)-1)
             {
                 // save to backup
                 // for now just deleate coords
+                ShowAllUserPositions(true);
                 InitUserPositions();
                 userPosCounter = 0;
 
@@ -106,6 +112,27 @@ public class NavManager : MonoBehaviour
         {
             userPositions.Add(new UserPosition());
         }
+    }
+
+    private void ShowAllUserPositions(bool state)
+    {
+        foreach (GameObject obj in waypoint_meshes)
+        {
+            Destroy(obj);
+        }
+        
+        waypoint_meshes.Clear();
+
+
+        if (state)
+        {
+            foreach (UserPosition pos in userPositions)
+            {
+                GameObject temp = Instantiate(waypoint_mesh, pos.position, Quaternion.identity);
+                waypoint_meshes.Add(temp);
+            }
+        }
+        
     }
 
 
@@ -145,32 +172,32 @@ public class NavManager : MonoBehaviour
         /// Instantiates a new object with MLPersistentBehavior. The MLPersistentBehavior is
         /// responsible for restoring and saving itself.
         /// </summary>
-        String timeStamp = DateTime.Now.ToString();
+    //    String timeStamp = DateTime.Now.ToString();
     
 
-    void CreateContent(Vector3 position, Quaternion rotation)
-        {
-            GameObject gameObj = Instantiate(_content, position, rotation);
-            MLPersistentBehavior persistentBehavior = gameObj.GetComponent<MLPersistentBehavior>();
-            persistentBehavior.UniqueId = Guid.NewGuid().ToString();
-            _pointBehaviors.Add(persistentBehavior);
-            //AddContentListeners(persistentBehavior);
-        }
+    //void CreateContent(Vector3 position, Quaternion rotation)
+    //    {
+    //        GameObject gameObj = Instantiate(_content, position, rotation);
+    //        MLPersistentBehavior persistentBehavior = gameObj.GetComponent<MLPersistentBehavior>();
+    //        persistentBehavior.UniqueId = Guid.NewGuid().ToString();
+    //        _pointBehaviors.Add(persistentBehavior);
+    //        //AddContentListeners(persistentBehavior);
+    //    }
 
-        /// <summary>
-        /// Removes the points and destroys its binding to prevent future restoration
-        /// </summary>
-        /// <param name="gameObj">Game Object to be removed</param>
-        void RemoveContent(GameObject gameObj)
-        {
-            MLPersistentBehavior persistentBehavior = gameObj.GetComponent<MLPersistentBehavior>();
-            //RemoveContentListeners(persistentBehavior);
-            _pointBehaviors.Remove(persistentBehavior);
-            persistentBehavior.DestroyBinding();
-            //Instantiate(_destroyedContentEffect, persistentBehavior.transform.position, Quaternion.identity);
+    //    /// <summary>
+    //    /// Removes the points and destroys its binding to prevent future restoration
+    //    /// </summary>
+    //    /// <param name="gameObj">Game Object to be removed</param>
+    //    void RemoveContent(GameObject gameObj)
+    //    {
+    //        MLPersistentBehavior persistentBehavior = gameObj.GetComponent<MLPersistentBehavior>();
+    //        //RemoveContentListeners(persistentBehavior);
+    //        _pointBehaviors.Remove(persistentBehavior);
+    //        persistentBehavior.DestroyBinding();
+    //        //Instantiate(_destroyedContentEffect, persistentBehavior.transform.position, Quaternion.identity);
 
-            Destroy(persistentBehavior.gameObject);
-        }
+    //        Destroy(persistentBehavior.gameObject);
+    //    }
 
 
 }
@@ -187,6 +214,24 @@ public class UserPosition
     }
 
     public UserPosition()
+    {
+        position = new Vector3(0f, 0f, 0f);
+        timestamp = new DateTime();
+    }
+}
+
+public class Waypoint
+{
+    public Vector3 position;
+    public DateTime timestamp;
+
+    public Waypoint(DateTime _timestamp, Vector3 _position)
+    {
+        timestamp = _timestamp;
+        position = _position;
+    }
+
+    public Waypoint()
     {
         position = new Vector3(0f, 0f, 0f);
         timestamp = new DateTime();
