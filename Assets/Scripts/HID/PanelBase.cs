@@ -45,6 +45,9 @@ public class PanelBase : MonoBehaviour
         Button1Press();
     }
 
+    // Getters
+    public int GetIndex() { return pageIndex; }
+
     // Update is called once per frame
     void Update()
     {
