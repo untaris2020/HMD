@@ -9,70 +9,58 @@ using System.Net.Sockets;
 using System.Collections;
 using System.Collections.Generic;
 
-
+#region TCPServer Class
 public class TCPServer : MonoBehaviour
 {
-    // Setting IP and PORT
-    public string IP = "172.20.128.55";
-    public int PORT = 4050;
+    #region Public Variables
+    public string IP;
+    public int PORT;
+    #endregion
 
-    // Setting Byte Size Parameters
-    private int maxByteSize = 30000;
-
-    // TCPListener to listen for incomming TCP connection requests.
-    private TcpListener tcpListener;
-
-    // Background thread for TcpServer workload.
-    private Thread tcpListenerThread;
-
-    // Create handle to connected tcp client.
+    #region Private Variables
+    private int maxByteSize = 30000; // Setting Byte Size Parameters
+    private TcpListener tcpListener; // TCPListener to listen for incomming TCP connection requests.
+    private Thread tcpListenerThread; // Background thread for TcpServer workload.
     private TcpClient tempTcpClient;
-    private TcpClient system;
-    private TcpClient EHS_IMU;
-    private TcpClient GLOVE_IMU;
-    private TcpClient TOGGLE_SCREEN;
-    private TcpClient HEAD_CAM;
-    private TcpClient GLOVE_CAM;
-    private TcpClient FORCE_SENSOR;
-
-
-    private bool rstSvr;
+    private packetICD icd; //Packet ICD Script
+    // Create handle to connected tcp client.
     private bool streaming;
-    private bool reqSent; 
-
+    private bool reqSent;
+   
     private delegate void funcDelegate1();
     private delegate void funcDelegate2();
+    #endregion
 
-    protected struct IMUMsg
-    {
-        public int seqID;
-        public int x;
-        public int y;
-        public int z;
-        public int xGyro;
-        public int yGyro;
-        public int zGyro;
-    }
+    public chestIMU chest_IMU; 
 
-    // Use this for initialization
+
+    #region Unity Methods
+    /// <summary>
+    /// Start function that starts the TCP Thread and initializes variables 
+    /// </summary>
     void Start()
     {
-        rstSvr = false;
+        //Get ICD Script also on EHS Obj
+        icd = GetComponent<packetICD>();
+
         tcpListenerThread = new Thread(new ThreadStart(ListenForIncommingRequests));
         tcpListenerThread.IsBackground = true;
-        tcpListenerThread.Start();	
+        tcpListenerThread.Start();
         streaming = false;
-        reqSent = false; 
+        reqSent = false;
 
         funcDelegate1 tmpDelegate0 = new funcDelegate1(startStream);
         funcDelegate2 tmpDelegate1 = new funcDelegate2(stopStream);
-        functionDebug.Instance.registerFunction("start",tmpDelegate0);
-        functionDebug.Instance.registerFunction("stop",tmpDelegate1);
+        functionDebug.Instance.registerFunction("start", tmpDelegate0);
+        functionDebug.Instance.registerFunction("stop", tmpDelegate1);
 
         //Note: Uncomment the line below if the script is always active. Otherwise the controlling script will call this method to begin streaming
         //startStream();
     }
 
+    /// <summary>
+    /// Update function that checks for message needing to be sent
+    /// </summary>
     private void Update()
     {
         if (streaming)
@@ -85,22 +73,36 @@ public class TCPServer : MonoBehaviour
             }
         }
     }
+    #endregion
 
-    public void startStream()
-    {
-        Debug.Log("Starting stream");
-        streaming = true; 
-    }
-
+    #region Public Methods
+    /// <summary>
+    /// stopStream: sets the streaming flag to false and pauses the stream 
+    /// Note this does not close the active stream just request the client not send packets 
+    /// </summary>
     public void stopStream()
     {
         streaming = false;
         //SendMsg("STOP");
         //restartServer();
-        reqSent = false; 
+        reqSent = false;
     }
 
-    // Runs in background TcpServerThread; Handles incomming TCPClient requests
+    /// <summary>
+    /// startStream: sets the streaming flag to true and begins the streaming process. 
+    /// Uncomment this function in start if you want it to stream right away. 
+    /// </summary>
+    public void startStream()
+    {
+        Debug.Log("Starting stream");
+        streaming = true;
+    }
+    #endregion
+
+    #region Private Methods
+    /// <summary>
+    /// Runs in background TcpServerThread; Handles incomming TCPClient requests
+    /// </summary>
     private void ListenForIncommingRequests()
     {
         try
@@ -109,7 +111,7 @@ public class TCPServer : MonoBehaviour
             tcpListener = new TcpListener(IPAddress.Parse(IP), PORT);
             tcpListener.Start();
             Debug.Log("Server is listening\n");
-            
+
             while (true)
             {
                 tempTcpClient = tcpListener.AcceptTcpClient();
@@ -130,7 +132,7 @@ public class TCPServer : MonoBehaviour
     private void HandleClientComm(object client)
     {
         Byte[] bytes = new Byte[maxByteSize];
-        NetworkStream stream = tempTcpClient.GetStream();
+        NetworkStream stream =  ((TcpClient)client).GetStream();
         int length;
         // Read incomming stream into byte arrary.
         while ((length = stream.Read(bytes, 0, bytes.Length)) != 0)
@@ -174,7 +176,6 @@ public class TCPServer : MonoBehaviour
 
             foreach (var pack in packets)
             {
-
                 idx = pack.IndexOf("<BEG>");
                 if (idx != -1)
                 {
@@ -186,7 +187,7 @@ public class TCPServer : MonoBehaviour
                     messages.Add(pack);
                 }
             }
-            
+
             //Identify Client Msg here
             foreach (var msg in messages)
             {
@@ -200,149 +201,147 @@ public class TCPServer : MonoBehaviour
                     Debug.Log("ID: " + id);
                 }
                 //handle processing
-                if (id == "0")
+                if (Int32.TryParse(id, out int msgID))
                 {
-
-                }
-                else if (id == "1")
-                {
-                    if()
-                    Debug.Log("1 connected");
-                    body = msg.Substring(idx+1);
-                    Debug.Log("Receieved Msg = " + body);
-                }
-                else if (id == "2")
-                {
-
-                }
-                else if (id == "3")
-                {
-
-                }
-                else if (id == "4")
-                {
-
-                }
-                else if (id == "5")
-                {
-
-                }
-                else if (id == "6")
-                {
-
+                    body = msg.Substring(idx + 1);
+                    switch (msgID)
+                    {    
+                        case (int)packetICD.Type.SYSTEM:
+                            if(body == "REG")
+                            {
+                                //First time registration 
+                                Debug.Log("Creating Class");
+                                chest_IMU = new chestIMU((TcpClient)client); 
+                            }
+                            else
+                            {
+                                //normal packet -- check if its already connected 
+                                if (chest_IMU != null)
+                                {
+                                    Debug.Log("Alredy have connected cli");
+                                    chest_IMU.processPacket(body);
+                                }
+                                else
+                                {
+                                    Debug.Log("BIG OOF...");
+                                }
+                            }
+                            break;
+                        case (int)packetICD.Type.CHEST_IMU:
+                            if(body == "REG") //First time connection 
+                                chest_IMU = new chestIMU((TcpClient)client); 
+                            else
+                            {
+                                //normal packet -- check if its already connected 
+                                if (chest_IMU != null)
+                                    chest_IMU.processPacket(body);
+                                else
+                                    Debug.Log("BIG OOF...");
+                            }
+                            break;
+                        case (int)packetICD.Type.GLOVE_IMU:
+                            if(body == "REG") //First time connection 
+                                chest_IMU = new chestIMU((TcpClient)client); 
+                            else
+                            {
+                                //normal packet -- check if its already connected 
+                                if (chest_IMU != null)
+                                    chest_IMU.processPacket(body);
+                                else
+                                    Debug.Log("BIG OOF...");
+                            }
+                            break;
+                        case (int)packetICD.Type.TOGGLE_SCREEN:
+                            if(body == "REG") //First time connection 
+                                chest_IMU = new chestIMU((TcpClient)client); 
+                            else
+                            {
+                                //normal packet -- check if its already connected 
+                                if (chest_IMU != null)
+                                    chest_IMU.processPacket(body);
+                                else
+                                    Debug.Log("BIG OOF...");
+                            }
+                            break;
+                        case (int)packetICD.Type.HEAD_CAM:
+                            if(body == "REG") //First time connection 
+                                chest_IMU = new chestIMU((TcpClient)client); 
+                            else
+                            {
+                                //normal packet -- check if its already connected 
+                                if (chest_IMU != null)
+                                    chest_IMU.processPacket(body);
+                                else
+                                    Debug.Log("BIG OOF...");
+                            }
+                            break;
+                        case (int)packetICD.Type.GLOVE_CAM:
+                            if(body == "REG") //First time connection 
+                                chest_IMU = new chestIMU((TcpClient)client); 
+                            else
+                            {
+                                //normal packet -- check if its already connected 
+                                if (chest_IMU != null)
+                                    chest_IMU.processPacket(body);
+                                else
+                                    Debug.Log("BIG OOF...");
+                            }
+                            break;
+                        case (int)packetICD.Type.FORCE_SENSOR:
+                            if(body == "REG") //First time connection 
+                                chest_IMU = new chestIMU((TcpClient)client); 
+                            else
+                            {
+                                //normal packet -- check if its already connected 
+                                if (chest_IMU != null)
+                                    chest_IMU.processPacket(body);
+                                else
+                                    Debug.Log("BIG OOF...");
+                            }
+                            break; 
+                        default:
+                            DebugManager.Instance.LogUnityConsole("ID Unknown: " + msgID);
+                            break;   
+                    }   
                 }
                 else
                 {
-                    Debug.Log("ID: " + id + "unknown");
-
-                }
-            }
-
-
-
-
-
-            /*
-            * 
-            * Insert Packet processing here 
-            *               
-            */
-
-            int tmpSeqID = -1; //temp seq ID that stores the most up to date seq 
-            IMUMsg imuPacket = new IMUMsg();
-            foreach (var msg in messages)
-            {
-
-                string[] tmp = msg.Split(new string[] { "$" }, StringSplitOptions.None);
-                if (tmp.Length == 7)
-                {
-                    if (Int32.Parse(tmp[0]) > tmpSeqID) //If it is a newer packet 
-                    {
-                        tmpSeqID = Int32.Parse(tmp[0]); //Update the current newest value 
-
-                        //Assign temp packet 
-                        IMUMsg tempPkt = new IMUMsg();
-                        tempPkt.seqID = Int32.Parse(tmp[0]);
-                        tempPkt.x = Int32.Parse(tmp[1]);
-                        tempPkt.y = Int32.Parse(tmp[2]);
-                        tempPkt.z = Int32.Parse(tmp[3]);
-                        tempPkt.xGyro = Int32.Parse(tmp[4]);
-                        tempPkt.yGyro = Int32.Parse(tmp[5]);
-                        tempPkt.zGyro = Int32.Parse(tmp[6]);
-
-                        imuPacket = tempPkt; //assign the most up to date packet 
-                    }
+                    DebugManager.Instance.LogSceneConsole("ERR: ID " + id + " could not be parsed to int");
                 }
             }
         }
-               
-       
     }
 
-     /// <summary>
-     /// Send message function that takes in a message string and sends to active client if one is available
-     /// </summary>
-     /// <param name="message"></param>
-    private void SendMsg(TcpClient cli,  string message)
-    { 		
-		if (cli == null)
-        {             
-			return;         
-		}  		
-		
-		try
-        { 			
-			// Get a stream object for writing. 			
-			NetworkStream stream = cli.GetStream(); 			
-			if (stream.CanWrite)
+    /// <summary>
+    /// Send message function that takes in a message string and sends to active client if one is available
+    /// </summary>
+    /// <param name="message"></param>
+    private void SendMsg(TcpClient cli, string message)
+    {
+        if (cli == null)
+        {
+            return;
+        }
+
+        try
+        {
+            // Get a stream object for writing. 			
+            NetworkStream stream = cli.GetStream();
+            if (stream.CanWrite)
             {
                 string serverMsg = "<BEG>" + message + "<EOF>";
-				// Convert string message to byte array.                 
-				byte[] serverMessageAsByteArray = Encoding.ASCII.GetBytes(message); 				
-				// Write byte array to socketConnection stream.               
-				stream.Write(serverMessageAsByteArray, 0, serverMessageAsByteArray.Length);               
-				Debug.Log("Server sent his message - should be received by client");           
-			}       
-		} 		
-		catch (SocketException socketException)
-        {             
-			Debug.Log("Socket exception: " + socketException);         
-		} 	
-	} 
-    private void processIMU(string body)
-    {
-        int tmpSeqID = -1; //temp seq ID that stores the most up to date seq 
-        IMUMsg imuPacket = new IMUMsg();
-        foreach (var msg in messages)
-        {
-
-            string[] tmp = msg.Split(new string[] { "$" }, StringSplitOptions.None);
-            if (tmp.Length == 7)
-            {
-                if (Int32.Parse(tmp[0]) > tmpSeqID) //If it is a newer packet 
-                {
-                    tmpSeqID = Int32.Parse(tmp[0]); //Update the current newest value 
-
-                    //Assign temp packet 
-                    IMUMsg tempPkt = new IMUMsg();
-                    tempPkt.seqID = Int32.Parse(tmp[0]);
-                    tempPkt.x = Int32.Parse(tmp[1]);
-                    tempPkt.y = Int32.Parse(tmp[2]);
-                    tempPkt.z = Int32.Parse(tmp[3]);
-                    tempPkt.xGyro = Int32.Parse(tmp[4]);
-                    tempPkt.yGyro = Int32.Parse(tmp[5]);
-                    tempPkt.zGyro = Int32.Parse(tmp[6]);
-
-                    imuPacket = tempPkt; //assign the most up to date packet 
-                }
+                // Convert string message to byte array.                 
+                byte[] serverMessageAsByteArray = Encoding.ASCII.GetBytes(message);
+                // Write byte array to socketConnection stream.               
+                stream.Write(serverMessageAsByteArray, 0, serverMessageAsByteArray.Length);
+                Debug.Log("Server sent his message - should be received by client");
             }
         }
+        catch (SocketException socketException)
+        {
+            Debug.Log("Socket exception: " + socketException);
+        }
     }
-}// END Server Class
-
-
-
-
-
-
-                    
+    #endregion
+}
+#endregion
