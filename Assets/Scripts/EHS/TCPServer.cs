@@ -23,15 +23,15 @@ public class TCPServer : MonoBehaviour
     private Thread tcpListenerThread; // Background thread for TcpServer workload.
     private TcpClient tempTcpClient;
     private packetICD icd; //Packet ICD Script
-    // Create handle to connected tcp client.
-    private bool streaming;
-    private bool reqSent;
-   
-    private delegate void funcDelegate1();
-    private delegate void funcDelegate2();
-    #endregion
 
-    public chestIMU chest_IMU; 
+
+    //Instatiated Object References
+    private GameObject IMU_CHEST;
+
+    #endregion
+    //Prefab references
+    public GameObject chestIMU_Prefab;
+
 
 
     #region Unity Methods
@@ -46,56 +46,6 @@ public class TCPServer : MonoBehaviour
         tcpListenerThread = new Thread(new ThreadStart(ListenForIncommingRequests));
         tcpListenerThread.IsBackground = true;
         tcpListenerThread.Start();
-        streaming = false;
-        reqSent = false;
-
-        funcDelegate1 tmpDelegate0 = new funcDelegate1(startStream);
-        funcDelegate2 tmpDelegate1 = new funcDelegate2(stopStream);
-        functionDebug.Instance.registerFunction("start", tmpDelegate0);
-        functionDebug.Instance.registerFunction("stop", tmpDelegate1);
-
-        //Note: Uncomment the line below if the script is always active. Otherwise the controlling script will call this method to begin streaming
-        //startStream();
-    }
-
-    /// <summary>
-    /// Update function that checks for message needing to be sent
-    /// </summary>
-    private void Update()
-    {
-        if (streaming)
-        {
-            if (!reqSent)
-            {
-                Debug.Log("Sending message ");
-                //SendMsg("START");
-                reqSent = true;
-            }
-        }
-    }
-    #endregion
-
-    #region Public Methods
-    /// <summary>
-    /// stopStream: sets the streaming flag to false and pauses the stream 
-    /// Note this does not close the active stream just request the client not send packets 
-    /// </summary>
-    public void stopStream()
-    {
-        streaming = false;
-        //SendMsg("STOP");
-        //restartServer();
-        reqSent = false;
-    }
-
-    /// <summary>
-    /// startStream: sets the streaming flag to true and begins the streaming process. 
-    /// Uncomment this function in start if you want it to stream right away. 
-    /// </summary>
-    public void startStream()
-    {
-        Debug.Log("Starting stream");
-        streaming = true;
     }
     #endregion
 
@@ -118,8 +68,6 @@ public class TCPServer : MonoBehaviour
                 Debug.Log("Connection");
                 Thread clientThread = new Thread(new ParameterizedThreadStart(HandleClientComm));
                 clientThread.Start(tempTcpClient);
-                Debug.Log("Maybe?");
-
             }
         }
         catch (SocketException socketException)
@@ -146,7 +94,6 @@ public class TCPServer : MonoBehaviour
             //Process client header here 
 
             //First I need to get my first <BEG> and my last full <EOF> so that I don't have discontinuity 
-
             int idx = clientMessage.IndexOf("<BEG>");
 
             if (idx != -1)
@@ -183,7 +130,6 @@ public class TCPServer : MonoBehaviour
                 }
                 else
                 {
-                    //its the full message already 
                     messages.Add(pack);
                 }
             }
@@ -211,92 +157,206 @@ public class TCPServer : MonoBehaviour
                             {
                                 //First time registration 
                                 Debug.Log("Creating Class");
-                                chest_IMU = new chestIMU((TcpClient)client); 
+                                if(IMU_CHEST == null)
+                                {
+                                    IMU_CHEST = Instantiate(chestIMU_Prefab, transform);
+                                    IMU_CHEST.GetComponent<IMUHandler>().initialize((TcpClient)client);
+                                }
+                                else
+                                {
+                                    //It exists 
+                                    Destroy(IMU_CHEST); 
+                                    //Then create again
+                                    IMU_CHEST = Instantiate(chestIMU_Prefab, transform);
+                                    IMU_CHEST.GetComponent<IMUHandler>().initialize((TcpClient)client);
+                                }
+
                             }
                             else
                             {
                                 //normal packet -- check if its already connected 
-                                if (chest_IMU != null)
+                                if (IMU_CHEST != null)
                                 {
                                     Debug.Log("Alredy have connected cli");
-                                    chest_IMU.processPacket(body);
+                                    IMU_CHEST.GetComponent<IMUHandler>().processPacket(body);
+                                }
+                            }
+                            break;
+
+                        case (int)packetICD.Type.CHEST_IMU:
+                            if(body == "REG")
+                            {
+                                Debug.Log("Creating Class");
+                                if(IMU_CHEST == null)
+                                {
+                                    IMU_CHEST = Instantiate(chestIMU_Prefab, transform);
+                                    IMU_CHEST.GetComponent<IMUHandler>().initialize((TcpClient)client);
                                 }
                                 else
                                 {
-                                    Debug.Log("BIG OOF...");
+                                    //It exists 
+                                    Destroy(IMU_CHEST); 
+                                    //Then create again
+                                    IMU_CHEST = Instantiate(chestIMU_Prefab, transform);
+                                    IMU_CHEST.GetComponent<IMUHandler>().initialize((TcpClient)client);
+                                }
+                            }
+                            else
+                            {
+                                //normal packet -- check if its already connected 
+                                if (IMU_CHEST != null)
+                                {
+                                    Debug.Log("Alredy have connected cli");
+                                    IMU_CHEST.GetComponent<IMUHandler>().processPacket(body);
                                 }
                             }
                             break;
-                        case (int)packetICD.Type.CHEST_IMU:
-                            if(body == "REG") //First time connection 
-                                chest_IMU = new chestIMU((TcpClient)client); 
-                            else
-                            {
-                                //normal packet -- check if its already connected 
-                                if (chest_IMU != null)
-                                    chest_IMU.processPacket(body);
-                                else
-                                    Debug.Log("BIG OOF...");
-                            }
-                            break;
+
                         case (int)packetICD.Type.GLOVE_IMU:
-                            if(body == "REG") //First time connection 
-                                chest_IMU = new chestIMU((TcpClient)client); 
+                            if(body == "REG")
+                            {
+                                if(IMU_CHEST == null)
+                                {
+                                    IMU_CHEST = Instantiate(chestIMU_Prefab, transform);
+                                    IMU_CHEST.GetComponent<IMUHandler>().initialize((TcpClient)client);
+                                }
+                                else
+                                {
+                                    Destroy(IMU_CHEST); 
+                                    IMU_CHEST = Instantiate(chestIMU_Prefab, transform);
+                                    IMU_CHEST.GetComponent<IMUHandler>().initialize((TcpClient)client);
+                                }
+                            }
                             else
                             {
-                                //normal packet -- check if its already connected 
-                                if (chest_IMU != null)
-                                    chest_IMU.processPacket(body);
-                                else
-                                    Debug.Log("BIG OOF...");
+                                if (IMU_CHEST != null)
+                                {
+                                    IMU_CHEST.GetComponent<IMUHandler>().processPacket(body);
+                                }
                             }
                             break;
+
                         case (int)packetICD.Type.TOGGLE_SCREEN:
-                            if(body == "REG") //First time connection 
-                                chest_IMU = new chestIMU((TcpClient)client); 
+                            if(body == "REG")
+                            {
+                                //First time registration 
+                                Debug.Log("Creating Class");
+                                if(IMU_CHEST == null)
+                                {
+                                    IMU_CHEST = Instantiate(chestIMU_Prefab, transform);
+                                    IMU_CHEST.GetComponent<IMUHandler>().initialize((TcpClient)client);
+                                }
+                                else
+                                {
+                                    //It exists 
+                                    Destroy(IMU_CHEST); 
+                                    //Then create again
+                                    IMU_CHEST = Instantiate(chestIMU_Prefab, transform);
+                                    IMU_CHEST.GetComponent<IMUHandler>().initialize((TcpClient)client);
+                                }
+
+                            }
                             else
                             {
                                 //normal packet -- check if its already connected 
-                                if (chest_IMU != null)
-                                    chest_IMU.processPacket(body);
-                                else
-                                    Debug.Log("BIG OOF...");
+                                if (IMU_CHEST != null)
+                                {
+                                    Debug.Log("Alredy have connected cli");
+                                    IMU_CHEST.GetComponent<IMUHandler>().processPacket(body);
+                                }
                             }
                             break;
+
                         case (int)packetICD.Type.HEAD_CAM:
-                            if(body == "REG") //First time connection 
-                                chest_IMU = new chestIMU((TcpClient)client); 
+                            if(body == "REG")
+                            {
+                                //First time registration 
+                                Debug.Log("Creating Class");
+                                if(IMU_CHEST == null)
+                                {
+                                    IMU_CHEST = Instantiate(chestIMU_Prefab, transform);
+                                    IMU_CHEST.GetComponent<IMUHandler>().initialize((TcpClient)client);
+                                }
+                                else
+                                {
+                                    //It exists 
+                                    Destroy(IMU_CHEST); 
+                                    //Then create again
+                                    IMU_CHEST = Instantiate(chestIMU_Prefab, transform);
+                                    IMU_CHEST.GetComponent<IMUHandler>().initialize((TcpClient)client);
+                                }
+
+                            }
                             else
                             {
                                 //normal packet -- check if its already connected 
-                                if (chest_IMU != null)
-                                    chest_IMU.processPacket(body);
-                                else
-                                    Debug.Log("BIG OOF...");
+                                if (IMU_CHEST != null)
+                                {
+                                    Debug.Log("Alredy have connected cli");
+                                    IMU_CHEST.GetComponent<IMUHandler>().processPacket(body);
+                                }
                             }
                             break;
+
                         case (int)packetICD.Type.GLOVE_CAM:
-                            if(body == "REG") //First time connection 
-                                chest_IMU = new chestIMU((TcpClient)client); 
+                            if(body == "REG")
+                            {
+                                //First time registration 
+                                Debug.Log("Creating Class");
+                                if(IMU_CHEST == null)
+                                {
+                                    IMU_CHEST = Instantiate(chestIMU_Prefab, transform);
+                                    IMU_CHEST.GetComponent<IMUHandler>().initialize((TcpClient)client);
+                                }
+                                else
+                                {
+                                    //It exists 
+                                    Destroy(IMU_CHEST); 
+                                    //Then create again
+                                    IMU_CHEST = Instantiate(chestIMU_Prefab, transform);
+                                    IMU_CHEST.GetComponent<IMUHandler>().initialize((TcpClient)client);
+                                }
+
+                            }
                             else
                             {
                                 //normal packet -- check if its already connected 
-                                if (chest_IMU != null)
-                                    chest_IMU.processPacket(body);
-                                else
-                                    Debug.Log("BIG OOF...");
+                                if (IMU_CHEST != null)
+                                {
+                                    Debug.Log("Alredy have connected cli");
+                                    IMU_CHEST.GetComponent<IMUHandler>().processPacket(body);
+                                }
                             }
                             break;
+
                         case (int)packetICD.Type.FORCE_SENSOR:
-                            if(body == "REG") //First time connection 
-                                chest_IMU = new chestIMU((TcpClient)client); 
+                           if(body == "REG")
+                           {
+                                //First time registration 
+                                Debug.Log("Creating Class");
+                                if(IMU_CHEST == null)
+                                {
+                                    IMU_CHEST = Instantiate(chestIMU_Prefab, transform);
+                                    IMU_CHEST.GetComponent<IMUHandler>().initialize((TcpClient)client);
+                                }
+                                else
+                                {
+                                    //It exists 
+                                    Destroy(IMU_CHEST); 
+                                    //Then create again
+                                    IMU_CHEST = Instantiate(chestIMU_Prefab, transform);
+                                    IMU_CHEST.GetComponent<IMUHandler>().initialize((TcpClient)client);
+                                }
+
+                           }
                             else
                             {
                                 //normal packet -- check if its already connected 
-                                if (chest_IMU != null)
-                                    chest_IMU.processPacket(body);
-                                else
-                                    Debug.Log("BIG OOF...");
+                                if (IMU_CHEST != null)
+                                {
+                                    Debug.Log("Alredy have connected cli");
+                                    IMU_CHEST.GetComponent<IMUHandler>().processPacket(body);
+                                }
                             }
                             break; 
                         default:
@@ -309,37 +369,6 @@ public class TCPServer : MonoBehaviour
                     DebugManager.Instance.LogSceneConsole("ERR: ID " + id + " could not be parsed to int");
                 }
             }
-        }
-    }
-
-    /// <summary>
-    /// Send message function that takes in a message string and sends to active client if one is available
-    /// </summary>
-    /// <param name="message"></param>
-    private void SendMsg(TcpClient cli, string message)
-    {
-        if (cli == null)
-        {
-            return;
-        }
-
-        try
-        {
-            // Get a stream object for writing. 			
-            NetworkStream stream = cli.GetStream();
-            if (stream.CanWrite)
-            {
-                string serverMsg = "<BEG>" + message + "<EOF>";
-                // Convert string message to byte array.                 
-                byte[] serverMessageAsByteArray = Encoding.ASCII.GetBytes(message);
-                // Write byte array to socketConnection stream.               
-                stream.Write(serverMessageAsByteArray, 0, serverMessageAsByteArray.Length);
-                Debug.Log("Server sent his message - should be received by client");
-            }
-        }
-        catch (SocketException socketException)
-        {
-            Debug.Log("Socket exception: " + socketException);
         }
     }
     #endregion

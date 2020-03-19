@@ -61,7 +61,18 @@ public class functionDebug : MonoBehaviour
         {
             functions.Add(cmd, function);
         }
-        
+    }
+
+    public void deregisterFunction(string cmd)
+    {
+        if(functions.ContainsKey(cmd))
+        {
+            functions.Remove(cmd);
+        }
+        else
+        {
+            DebugManager.Instance.LogUnityConsole("ERROR Removing Function: " + cmd);
+        }
     }
 
     void ReceiveMessages()

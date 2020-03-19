@@ -1351,7 +1351,23 @@ PrefabInstance:
       propertyPath: m_Enabled
       value: 1
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    - target: {fileID: -8957608909647819119, guid: ef7b0b778ef438d4fa839ceaf6afddbb,
+        type: 3}
+      propertyPath: IMUChestObj
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: -8957608909647819119, guid: ef7b0b778ef438d4fa839ceaf6afddbb,
+        type: 3}
+      propertyPath: IMUGloveObj
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: -8957608909647819119, guid: ef7b0b778ef438d4fa839ceaf6afddbb,
+        type: 3}
+      propertyPath: ForceSensorObj
+      value: 
+      objectReference: {fileID: 0}
+    m_RemovedComponents:
+    - {fileID: -8957608909647819119, guid: ef7b0b778ef438d4fa839ceaf6afddbb, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: ef7b0b778ef438d4fa839ceaf6afddbb, type: 3}
 --- !u!1 &404470191 stripped
 GameObject:
@@ -3215,8 +3231,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7060fff05bd4acf47b8c0f1f44118d16, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  IP: 192.168.1.123
-  PORT: 4050
+  IP: 127.0.0.1
+  PORT: 6002
 --- !u!114 &1832656934
 MonoBehaviour:
   m_ObjectHideFlags: 0
