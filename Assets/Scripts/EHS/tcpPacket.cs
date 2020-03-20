@@ -8,32 +8,26 @@ using UnityEngine;
 
 public class tcpPacket
 {
-    protected bool streaming;
     
     /// <summary>
     /// Private data types
-    /// streaming if data should be sent 
     /// Connected value if stream is active
     /// Cli data type that stores active socket connection
     /// </summary>
     
     private bool connected;
-    private TcpClient cli;
+    protected TcpClient cli;
 
     /// <summary>
     /// Default constructor 
     /// </summary>
     /// <param name="client"></param>
-    public tcpPacket()
+    public tcpPacket(TcpClient client)
     {
-        streaming = false;
         connected = false;
+        cli = client;
     }
 
-    public virtual void initialize(TcpClient client)
-    {
-        cli = client; 
-    }
 
     /// <summary>
     /// processPacket virtual function that must be override to parse TCPPacket
@@ -84,20 +78,17 @@ public class tcpPacket
     }
 
     /// <summary>
-    /// startStream: sets the streaming flag to true and begins the streaming process. 
     /// Uncomment this function in start if you want it to stream right away. 
     /// </summary>
     public virtual void startStream()
     {
-       
+        return;
     }
 
     #region setters and getters
-    public bool getStreaming() { return streaming; }
     public bool getConnected() { return connected; }
     public TcpClient getCli() { return cli; }
 
-    public void setStreaming(bool stream) { streaming = stream; }
     public void setConnected(bool connect) { connected = connect; }
     public void setCli(TcpClient client) { cli = client; }
     #endregion

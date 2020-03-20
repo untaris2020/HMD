@@ -13,7 +13,7 @@ public class IMUHandler : tcpPacket
     private delegate void functionDelegate();
 
     //IMU Packet Information 
-    private int seqID; 
+    private int seqID;
     private Queue x;
     private Queue y;
     private Queue z;
@@ -21,8 +21,8 @@ public class IMUHandler : tcpPacket
     private Queue yGyro;
     private Queue zGyro;
 
-    IMUHandler()
-    { 
+    public IMUHandler(TcpClient client) : base(client)
+    {
         //Fixme -- I need to update this to values that are guaranteed not to be produced from IMU 
         seqID = -1;
         x = new Queue();
@@ -31,21 +31,24 @@ public class IMUHandler : tcpPacket
         xGyro = new Queue();
         yGyro = new Queue();
         zGyro = new Queue();
-    }
 
-    ~IMUHandler()
-    {
-        functionDebug.Instance.deregisterFunction("chestIMUstart");
-        functionDebug.Instance.deregisterFunction("chestIMUstop");
-    }
-
-    public override void initialize(TcpClient client)
-    {
-        base.initialize(client);
         functionDelegate stopDelegate = new functionDelegate(stopStream);
         functionDelegate startDelegate = new functionDelegate(startStream);
         functionDebug.Instance.registerFunction("chestIMUstart", startDelegate);
-        functionDebug.Instance.registerFunction("chestIMUstop", stopDelegate);\
+        functionDebug.Instance.registerFunction("chestIMUstop", stopDelegate);
+    }
+
+    public void restartIMUHandler(TcpClient client)
+    {
+        //Flush Queues 
+        seqID = -1;
+        x.Clear();
+        y.Clear();
+        z.Clear();
+        xGyro.Clear();
+        yGyro.Clear();
+        zGyro.Clear();
+        cli = client;
     }
 
     public override int processPacket(string packet)
@@ -56,9 +59,9 @@ public class IMUHandler : tcpPacket
         try
         {
             if (tmp.Length == 7)
-            {               
+            {
                 //If seqID has overflown we need to reset
-                if(seqID >= 2147483647)
+                if (seqID >= 2147483647)
                 {
                     seqID = -1;
                 }
@@ -87,25 +90,35 @@ public class IMUHandler : tcpPacket
                         yGyro.Dequeue();
                     if (zGyro.Count > QUEUE_SIZE)
                         zGyro.Dequeue();
+
+                    imuDataSmoothing();
                 }
             }
         }
-        catch(FormatException e)
+        catch (FormatException e)
         {
             DebugManager.Instance.LogUnityConsole(e.Message);
             return -1;
         }
-       
+
         return 1;
+    }
+
+    private void imuDataSmoothing()
+    {
+        //For now this function simply takes the freshest packet and updates frame with it but custom smoothing logic inserts here 
+        
+        //Convert to Quanterion
+
+
     }
     public override void stopStream()
     {
-        streaming = false;
         sendMsg("STOP");
     }
     public override void startStream()
     {
         Debug.Log("Starting stream");
-        streaming = true;
+        sendMsg("START");
     }
 }

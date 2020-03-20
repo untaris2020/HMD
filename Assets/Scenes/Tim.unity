@@ -1286,6 +1286,22 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 0}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: IMUChestObj
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: IMUGloveObj
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: ForceSensorObj
+      value: 
+      objectReference: {fileID: 0}
     - target: {fileID: 7050440603885791927, guid: ef7b0b778ef438d4fa839ceaf6afddbb,
         type: 3}
       propertyPath: m_Name
@@ -1346,28 +1362,7 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: -8957608909647819119, guid: ef7b0b778ef438d4fa839ceaf6afddbb,
-        type: 3}
-      propertyPath: m_Enabled
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: -8957608909647819119, guid: ef7b0b778ef438d4fa839ceaf6afddbb,
-        type: 3}
-      propertyPath: IMUChestObj
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: -8957608909647819119, guid: ef7b0b778ef438d4fa839ceaf6afddbb,
-        type: 3}
-      propertyPath: IMUGloveObj
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: -8957608909647819119, guid: ef7b0b778ef438d4fa839ceaf6afddbb,
-        type: 3}
-      propertyPath: ForceSensorObj
-      value: 
-      objectReference: {fileID: 0}
-    m_RemovedComponents:
-    - {fileID: -8957608909647819119, guid: ef7b0b778ef438d4fa839ceaf6afddbb, type: 3}
+    m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: ef7b0b778ef438d4fa839ceaf6afddbb, type: 3}
 --- !u!1 &404470191 stripped
 GameObject:
