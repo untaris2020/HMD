@@ -171,7 +171,7 @@ public class NavManager : MonoBehaviour
         rearviewOFFButton.GetComponent<Renderer>().material = buttonMat;
 
         // spawn camera
-        camerasManager.spawnCam(); 
+        camerasManager.spawnCam();
     }
 
     public void PressRearviewOFF()
