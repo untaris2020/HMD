@@ -16,8 +16,6 @@ public class EHSManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-       IMUChest = Instantiate(IMUChestObj, new Vector3(0, 0, 0), Quaternion.identity, gameObject.transform) as GameObject;
-       IMUGlove = Instantiate(IMUGloveObj, new Vector3(0, 0, 0), Quaternion.identity, gameObject.transform) as GameObject;
-       ForceSensor = Instantiate(ForceSensorObj, new Vector3(0, 0, 0), Quaternion.identity, gameObject.transform) as GameObject;
+
     }
 }

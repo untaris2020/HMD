@@ -77,3 +77,6 @@ crashlytics-build.properties
 
 #.out temp filter
 .out*
+
+#project settings
+[Pp]rojectSettings/

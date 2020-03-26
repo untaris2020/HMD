@@ -84,8 +84,9 @@ public class HeadLockScript : MonoBehaviour
     }
 
 
-    public bool updateHIDwithIMU(IMUJson imuData)
+    public bool updateHIDwithIMU(float xQuan, float yQuan, float zQuan, float wQuan)
     {
+        //Switching this to event driven 
         //This can be expanded to an event driven system for runtime resets. 
         if(firstTime)
         {
@@ -107,7 +108,7 @@ public class HeadLockScript : MonoBehaviour
 
         this.transform.position = Vector3.Slerp(this.transform.position, Camera.transform.position, speed);
 
-        Quaternion rot = new Quaternion(-imuData.yQuan, -imuData.zQuan, imuData.xQuan, imuData.wQuan);
+        Quaternion rot = new Quaternion(xQuan, yQuan, zQuan, wQuan);
 
         rot *= Quaternion.Euler(-90, 0, 0);
 
