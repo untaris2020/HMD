@@ -8,6 +8,7 @@ public class NavManager : MonoBehaviour
 {
     // TODO 
     // 1) create backup system
+    // 2) fix persistant behivior
 
     public GameObject rearviewONButton, rearviewOFFButton, gloveONButton, gloveOFFButton;
     public Material buttonMat, buttonHoverMat, headerMat, headerHoverMat;
@@ -33,8 +34,9 @@ public class NavManager : MonoBehaviour
     
 
     private IEnumerator coroutine;
-    private float TICKTIME = 0.5f;   //was 10.0f
-    private float BACKUPTIMESECONDS = 10.0f;   // amount of time between backups was 300 (5mins)
+    private float TICKTIME = 0.50f;   //was 10.0f
+    private float BACKUPTIMESECONDS = 5.0f;   // amount of time between backups was 300 (5mins)
+    private int NUMOFOBJECTS = 0; 
     private int userPosCounter;
 
     //private IEnumerator coroutine;
@@ -43,6 +45,7 @@ public class NavManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        NUMOFOBJECTS = (int)(BACKUPTIMESECONDS / TICKTIME);
         // Allocate space
         InitUserPositions();
 
@@ -61,12 +64,11 @@ public class NavManager : MonoBehaviour
         MyDelegate RearviewOFF = new MyDelegate(PressRearviewOFF);
         ht.registerCollider(rearviewOFFButton.GetComponent<Collider>().name,RearviewOFF);
 
-
-        //Set Worldcenter
-
+        // set worldcenter
         _cube.transform.position = _camera.transform.position + _camera.transform.forward * 2.0f;
         DebugManager.Instance.LogUnityConsole("NavManager", "Setting World Center: " + _cube.transform.position);
-        persistentBehavior.UpdateBinding();
+        
+        //persistentBehavior.UpdateBinding();
     }
 
     private void OnDestroy() {
@@ -76,12 +78,12 @@ public class NavManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-
+        
     }
 
     private IEnumerator GetUserPOSLoop(float waitTime)
     {
-
+        
         while (true)
         {
             UserPosition tmpPos = new UserPosition(DateTime.Now, _camera.transform.position);
@@ -90,11 +92,14 @@ public class NavManager : MonoBehaviour
             //DebugManager.Instance.LogUnityConsole("NavManager", "New Coordniate: " + tmpPos.position);
             userPositions[userPosCounter] = tmpPos;
 
-            if (userPosCounter >= (BACKUPTIMESECONDS/TICKTIME)-1)
+            if (userPosCounter >= (NUMOFOBJECTS)-1)
             {
                 // save to backup
                 // for now just deleate coords
                 ShowAllUserPositions(true);
+                
+                
+                
                 InitUserPositions();
                 userPosCounter = 0;
 
@@ -108,7 +113,7 @@ public class NavManager : MonoBehaviour
     {
         DebugManager.Instance.LogBoth("Clearing User Coordniates...");
         userPositions.Clear();
-        for (int i=0; i<BACKUPTIMESECONDS/TICKTIME; i++)
+        for (int i=0; i<NUMOFOBJECTS; i++)
         {
             userPositions.Add(new UserPosition());
         }
@@ -131,8 +136,32 @@ public class NavManager : MonoBehaviour
                 GameObject temp = Instantiate(waypoint_mesh, pos.position, Quaternion.identity);
                 waypoint_meshes.Add(temp);
             }
+        }   
+    }
+
+    private void ReturnToHome(bool state)
+    {
+        foreach (GameObject obj in waypoint_meshes)
+        {
+            Destroy(obj);
         }
         
+        waypoint_meshes.Clear();
+
+        if (state)
+        {
+            foreach (UserPosition pos in userPositions)
+            {
+                GameObject temp = Instantiate(waypoint_mesh, pos.position, Quaternion.identity);
+
+                // change marker opacity based on most recent marker
+                var col = temp.GetComponent<Renderer>().material.color;
+                //NUMOFOBJECTS
+                col.a = 1.0f / (float)(DateTime.Now - pos.timestamp).TotalSeconds;
+
+                waypoint_meshes.Add(temp);
+            }
+        }  
     }
 
 

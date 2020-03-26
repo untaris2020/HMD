@@ -42,7 +42,7 @@ public class PanelBase : MonoBehaviour
 
         pageIndex = 0;
 
-        Button1Press();
+        Button0Press();
     }
 
     // Getters
