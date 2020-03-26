@@ -25,9 +25,7 @@ try:
             break
         else:
             # Send data
-            print("Sending data")
             sent = sock.sendto(message.encode(), server_address)
-            print("Data sent")
 finally:
     print ( 'closing socket')
     sock.close()

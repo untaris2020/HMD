@@ -3,6 +3,7 @@ using UnityEngine;
 using UnityEngine.XR.MagicLeap;
 public class HeadLockScript : MonoBehaviour
 { 
+    public static HeadLockScript Instance;
 
     #region Public Variables
     private GameObject Camera;
@@ -11,12 +12,16 @@ public class HeadLockScript : MonoBehaviour
     public float speed = 12f;
     public AudioClip reset;
     AudioSource source;
-    private bool firstTime; 
+    private bool firstTime;
+
+    private bool updateWithIMU;
 
     public float VOL = 1.7f;
-
+    
     private bool buttonPressed = false;
 
+    private Vector3 rot;
+    private Vector3 prevRot; 
     public enum State
     {
         STATIC = 1,
@@ -29,6 +34,11 @@ public class HeadLockScript : MonoBehaviour
     private ControllerConnectionHandler _controllerConnectionHandler;
 
     #endregion
+
+    private void Awake()
+    { 
+        Instance = this;
+    }
 
     public void Start()
     {
@@ -81,42 +91,30 @@ public class HeadLockScript : MonoBehaviour
                 }
             }
         }
+        else if(updateWithIMU)
+        {
+            if(firstTime)
+            {
+                DefaultRot = Camera.transform.rotation;
+                firstTime = false; 
+            }
+            speed = Time.deltaTime * 12.0f;
+            this.transform.position = Vector3.Slerp(this.transform.position, Camera.transform.position, speed);
+            
+            
+            Quaternion rotation = Quaternion.Euler(rot);
+            rotation *= Quaternion.Euler(-90, 0, 0);
+            rotation = rotation *  Quaternion.Inverse(DefaultRot); 
+            this.transform.rotation = Quaternion.Slerp(this.transform.rotation, rotation, speed); 
+            updateWithIMU = false;
+        }
     }
 
 
-    public bool updateHIDwithIMU(float xQuan, float yQuan, float zQuan, float wQuan)
+    public void updateHIDwithIMU(float xGyro, float yGyro, float zGyro)
     {
-        //Switching this to event driven 
-        //This can be expanded to an event driven system for runtime resets. 
-        if(firstTime)
-        {
-            //Get the default rotation value from the headset  
-            //Quaternion temprot = new Quaternion(-imuData.yQuan, -imuData.zQuan, imuData.xQuan, imuData.wQuan);
-
-            //Get the difference that should be applied every time. 
-            DefaultRot = Camera.transform.rotation;
-            firstTime = false; 
-        }
-
-        //Debug.Log("Updating HID...");
-
-        // For Control, raw input is enough
-
-        //Vector3 tempAccel = new Vector3(imuData.xAccel, imuData.yAccel, imuData.zAccel);
-
-        speed = Time.deltaTime * 12.0f;
-
-        this.transform.position = Vector3.Slerp(this.transform.position, Camera.transform.position, speed);
-
-        Quaternion rot = new Quaternion(xQuan, yQuan, zQuan, wQuan);
-
-        rot *= Quaternion.Euler(-90, 0, 0);
-
-        rot = rot *  Quaternion.Inverse(DefaultRot); 
-
-        this.transform.rotation = Quaternion.Slerp(this.transform.rotation, rot, speed);
-
-        return false;
+        rot = new Vector3(xGyro, yGyro, zGyro);
+        updateWithIMU = true; 
     }
 
 

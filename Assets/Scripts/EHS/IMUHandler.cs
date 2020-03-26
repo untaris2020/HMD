@@ -8,53 +8,25 @@ using UnityEngine;
 
 public class IMUHandler : tcpPacket
 {
-    public static int QUEUE_SIZE = 10;
-
-    private delegate void functionDelegate();
+    private packetICD.IMU_Mode MODE; 
 
     //IMU Packet Information 
-    private int seqID;
-    private Queue x;
-    private Queue y;
-    private Queue z;
-    private Queue xGyro;
-    private Queue yGyro;
-    private Queue zGyro;
+    private float x;
+    private float y;
+    private float z;
+    private float w;
+    private float xAccel;
+    private float yAccel;
+    private float zAccel; 
 
-    public IMUHandler(TcpClient client) : base(client)
+    public IMUHandler(TcpClient client, packetICD.IMU_Mode mode, string NAME) : base(client, NAME)
     {
-        //Fixme -- I need to update this to values that are guaranteed not to be produced from IMU 
-        seqID = -1;
-        x = new Queue();
-        y = new Queue();
-        z = new Queue();
-        xGyro = new Queue();
-        yGyro = new Queue();
-        zGyro = new Queue();
-
-        functionDelegate stopDelegate = new functionDelegate(stopStream);
-        functionDelegate startDelegate = new functionDelegate(startStream);
-        functionDebug.Instance.registerFunction("chestIMUstart", startDelegate);
-        functionDebug.Instance.registerFunction("chestIMUstop", stopDelegate);
+        MODE = mode; 
     }
 
-    public void restartIMUHandler(TcpClient client)
-    {
-        //Flush Queues 
-        seqID = -1;
-        x.Clear();
-        y.Clear();
-        z.Clear();
-        xGyro.Clear();
-        yGyro.Clear();
-        zGyro.Clear();
-        cli = client;
-    }
 
     public override int processPacket(string packet)
     {
-        Debug.Log("MSG FOR IMU: " + packet);
-
         string[] tmp = packet.Split(new string[] { "$" }, StringSplitOptions.None);
         try
         {
@@ -70,26 +42,12 @@ public class IMUHandler : tcpPacket
                 {
                     //Update class to most recent values 
                     seqID = Int32.Parse(tmp[0]);
-                    x.Enqueue(float.Parse(tmp[1]));
-                    y.Enqueue(float.Parse(tmp[2]));
-                    z.Enqueue(float.Parse(tmp[3]));
-                    xGyro.Enqueue(float.Parse(tmp[4]));
-                    yGyro.Enqueue(float.Parse(tmp[5]));
-                    zGyro.Enqueue(float.Parse(tmp[6]));
-
-                    //Dequeue old elements 
-                    if (x.Count > QUEUE_SIZE)
-                        x.Dequeue();
-                    if (y.Count > QUEUE_SIZE)
-                        y.Dequeue();
-                    if (z.Count > QUEUE_SIZE)
-                        z.Dequeue();
-                    if (xGyro.Count > QUEUE_SIZE)
-                        xGyro.Dequeue();
-                    if (yGyro.Count > QUEUE_SIZE)
-                        yGyro.Dequeue();
-                    if (zGyro.Count > QUEUE_SIZE)
-                        zGyro.Dequeue();
+                    xAccel = (float.Parse(tmp[1]));
+                    yAccel = (float.Parse(tmp[2]));
+                    zAccel = (float.Parse(tmp[3]));
+                    x = (float.Parse(tmp[4]));
+                    y = (float.Parse(tmp[5]));
+                    z = (float.Parse(tmp[6]));
 
                     imuDataSmoothing();
                 }
@@ -107,18 +65,17 @@ public class IMUHandler : tcpPacket
     private void imuDataSmoothing()
     {
         //For now this function simply takes the freshest packet and updates frame with it but custom smoothing logic inserts here 
-        
-        //Convert to Quanterion
+         
+        //In here the logic for which values get sent also need to be adjusted based on default. For instance the chest is tilted so the axis are all wrong 
+        if(MODE == packetICD.IMU_Mode.CHEST)
+        {
+            HeadLockScript.Instance.updateHIDwithIMU(z,x,y);
+        }
+        else if(MODE == packetICD.IMU_Mode.GLOVE)
+        {
+            //For now do nothing 
+        }
+       
 
-
-    }
-    public override void stopStream()
-    {
-        sendMsg("STOP");
-    }
-    public override void startStream()
-    {
-        Debug.Log("Starting stream");
-        sendMsg("START");
     }
 }

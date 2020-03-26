@@ -1449,7 +1449,7 @@ GameObject:
   - component: {fileID: 687147714}
   - component: {fileID: 687147713}
   m_Layer: 0
-  m_Name: rearviewCam
+  m_Name: camCanvas
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1784,7 +1784,22 @@ PrefabInstance:
     - target: {fileID: 6303407141151369368, guid: f6884cfcea15b5b44a5aa8b3a220c207,
         type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3676151079351893990, guid: f6884cfcea15b5b44a5aa8b3a220c207,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7192622056306585517, guid: f6884cfcea15b5b44a5aa8b3a220c207,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 132521879710225487, guid: f6884cfcea15b5b44a5aa8b3a220c207,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1668743444356515500, guid: f6884cfcea15b5b44a5aa8b3a220c207,
         type: 3}
@@ -2091,6 +2106,21 @@ PrefabInstance:
       propertyPath: m_textInfo.pageCount
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 2466079245981323112, guid: f6884cfcea15b5b44a5aa8b3a220c207,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1759968021690790077, guid: f6884cfcea15b5b44a5aa8b3a220c207,
+        type: 3}
+      propertyPath: m_Camera
+      value: 
+      objectReference: {fileID: 1851845007}
+    - target: {fileID: 1901739743004615125, guid: f6884cfcea15b5b44a5aa8b3a220c207,
+        type: 3}
+      propertyPath: ImageHolder
+      value: 
+      objectReference: {fileID: 687147711}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: f6884cfcea15b5b44a5aa8b3a220c207, type: 3}
 --- !u!1 &1245023798 stripped
@@ -2187,7 +2217,7 @@ PrefabInstance:
     - target: {fileID: 2636536580721908023, guid: 748bf258d96344b41b4aabd21e8751e5,
         type: 3}
       propertyPath: m_Name
-      value: RearviewCamRawImage
+      value: CamRawImage
       objectReference: {fileID: 0}
     - target: {fileID: 2636536580721908023, guid: 748bf258d96344b41b4aabd21e8751e5,
         type: 3}
@@ -3226,20 +3256,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7060fff05bd4acf47b8c0f1f44118d16, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  IP: 127.0.0.1
+  IP: 24.62.101.96
   PORT: 6002
---- !u!114 &1832656934
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1832656932}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3f6cb64ca43df41458f3f87448eaf244, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!20 &1851845007 stripped
 Camera:
   m_CorrespondingSourceObject: {fileID: 20294507499185110, guid: 24158fb1437dc8e418d893939758764d,

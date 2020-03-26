@@ -18,6 +18,18 @@ public class packetICD : MonoBehaviour
         GLOVE_CAM = 5, 
         FORCE_SENSOR = 6
     }
+
+    public enum IMU_Mode
+    {
+        CHEST = 0,
+        GLOVE = 1,
+    }
+
+    public enum CAM_Mode
+    {
+        HEAD = 0,
+        GLOVE = 1,
+    }
     
     public struct Header
     {

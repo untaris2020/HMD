@@ -171,7 +171,7 @@ public class NavManager : MonoBehaviour
         rearviewOFFButton.GetComponent<Renderer>().material = buttonMat;
 
         // spawn camera
-        camerasManager.SpawnRearviewCam();
+        camerasManager.spawnCam(); 
     }
 
     public void PressRearviewOFF()
@@ -180,19 +180,23 @@ public class NavManager : MonoBehaviour
         rearviewONButton.GetComponent<Renderer>().material = buttonMat;
         
         //Despawn camera
-        camerasManager.DestroyRearviewCam();
+        camerasManager.destroyCam();
     }
 
     public void PressGloveON()
     {
         gloveONButton.GetComponent<Renderer>().material = buttonHoverMat;
         gloveOFFButton.GetComponent<Renderer>().material = buttonMat;
+
+        camerasManager.spawnCam();
     }
 
     public void PressGloveOFF()
     {
         gloveOFFButton.GetComponent<Renderer>().material = buttonHoverMat;
         gloveONButton.GetComponent<Renderer>().material = buttonMat;
+
+        camerasManager.destroyCam();
     }
 
     //ML Code

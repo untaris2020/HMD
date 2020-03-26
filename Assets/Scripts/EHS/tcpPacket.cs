@@ -17,17 +17,30 @@ public class tcpPacket
     
     private bool connected;
     protected TcpClient cli;
-
+    protected int seqID;
+    private delegate void functionDelegate();
     /// <summary>
     /// Default constructor 
     /// </summary>
     /// <param name="client"></param>
-    public tcpPacket(TcpClient client)
+    public tcpPacket(TcpClient client, string NAME)
     {
+        functionDelegate stopDelegate = new functionDelegate(stopStream);
+        functionDelegate startDelegate = new functionDelegate(startStream);
+        functionDebug.Instance.registerFunction(NAME + "start", startDelegate);
+        functionDebug.Instance.registerFunction(NAME + "stop", stopDelegate);
+        seqID = -1; 
         connected = false;
         cli = client;
     }
 
+    public virtual void restartHandler(TcpClient client)
+    {
+        //Flush Queues 
+        seqID = -1;
+        //Must Happen
+        cli = client;
+    }
 
     /// <summary>
     /// processPacket virtual function that must be override to parse TCPPacket
@@ -52,7 +65,6 @@ public class tcpPacket
         }
         try
         {
-            Debug.Log("Sending");
             // Get a stream object for writing. 			
             NetworkStream stream = cli.GetStream();
             if (stream.CanWrite)
@@ -62,7 +74,6 @@ public class tcpPacket
                 byte[] serverMessageAsByteArray = Encoding.ASCII.GetBytes(message);
                 // Write byte array to socketConnection stream.               
                 stream.Write(serverMessageAsByteArray, 0, serverMessageAsByteArray.Length);
-                DebugManager.Instance.LogUnityConsole("Server sent his message - should be received by client");
             }
         }
         catch (SocketException socketException)
@@ -74,7 +85,7 @@ public class tcpPacket
     }
     public virtual void stopStream()
     {
-        return;
+        sendMsg("STOP");
     }
 
     /// <summary>
@@ -82,7 +93,7 @@ public class tcpPacket
     /// </summary>
     public virtual void startStream()
     {
-        return;
+        sendMsg("START");
     }
 
     #region setters and getters
