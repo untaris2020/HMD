@@ -15,6 +15,7 @@ public class NavManager : MonoBehaviour
     public CamerasManager camerasManager;
 
     public delegate void MyDelegate();
+    private delegate void functionDelegate();
 
     // Nav System
     public MLPersistentBehavior persistentBehavior;
@@ -53,6 +54,15 @@ public class NavManager : MonoBehaviour
 
         HeadTracking ht = GameObject.Find("SceneManager").GetComponent<HeadTracking>();
 
+        functionDelegate startRear = new functionDelegate(PressRearviewON);
+        functionDelegate stopRear = new functionDelegate(PressRearviewOFF);
+        functionDebug.Instance.registerFunction("startRearCam", startRear);
+        functionDebug.Instance.registerFunction("stopRearCam", stopRear);
+
+        functionDelegate startGlove = new functionDelegate(PressGloveON);
+        functionDelegate stopGlove = new functionDelegate(PressGloveOFF);
+        functionDebug.Instance.registerFunction("startGloveCam", startGlove);
+        functionDebug.Instance.registerFunction("stopGloveCam", stopGlove);
         
         coroutine = GetUserPOSLoop(TICKTIME);
         StartCoroutine(coroutine);
@@ -172,6 +182,7 @@ public class NavManager : MonoBehaviour
 
         // spawn camera
         camerasManager.spawnCam();
+        TCPServer.Instance.getHeadCam().startStream();
     }
 
     public void PressRearviewOFF()
@@ -181,6 +192,7 @@ public class NavManager : MonoBehaviour
         
         //Despawn camera
         camerasManager.destroyCam();
+        TCPServer.Instance.getHeadCam().stopStream();
     }
 
     public void PressGloveON()
@@ -189,6 +201,7 @@ public class NavManager : MonoBehaviour
         gloveOFFButton.GetComponent<Renderer>().material = buttonMat;
 
         camerasManager.spawnCam();
+        TCPServer.Instance.getGloveCam().startStream();
     }
 
     public void PressGloveOFF()
@@ -197,6 +210,7 @@ public class NavManager : MonoBehaviour
         gloveONButton.GetComponent<Renderer>().material = buttonMat;
 
         camerasManager.destroyCam();
+        TCPServer.Instance.getGloveCam().stopStream();
     }
 
     //ML Code
