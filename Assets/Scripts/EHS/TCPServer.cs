@@ -12,6 +12,8 @@ using System.Collections.Generic;
 #region TCPServer Class
 public class TCPServer : MonoBehaviour
 {
+    public static TCPServer Instance;
+
     private string BEG = "<BEG>";
     private string EOF = "<EOF>";
 
@@ -32,14 +34,29 @@ public class TCPServer : MonoBehaviour
     private IMUHandler IMU_GLOVE;
     private CameraHandler HEAD_CAM; 
     private CameraHandler GLOVE_CAM; 
-    private TcpClient SYSTEM; 
+    private TcpClient SYSTEM;
     #endregion
 
+    public CameraHandler getHeadCam()
+    {
+        return HEAD_CAM;
+    }
+        
+    public CameraHandler getGloveCam()
+    {
+        return GLOVE_CAM;
+    }
 
     #region Unity Methods
     /// <summary>
     /// Start function that starts the TCP Thread and initializes variables 
     /// </summary>
+    private void Awake()
+    { 
+        Instance = this;
+    }
+
+
     void Start()
     {
         //Get ICD Script also on EHS Obj

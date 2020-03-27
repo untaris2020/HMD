@@ -109,7 +109,7 @@ public class functionDebug : MonoBehaviour
         }
         else
         {
-            //DebugManager.Instance.LogBoth("funcDebug:", "CMD \"" + recvMsg + "\" unknown");
+            DebugManager.Instance.LogBoth("funcDebug:", "CMD \"" + recvMsg + "\" unknown");
         }
         messageReceived = false; 
         listener.BeginReceive(new System.AsyncCallback(ReceiveCallback), s); 
