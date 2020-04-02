@@ -5,7 +5,7 @@
 
 /ProjectSettings/ProjectSettings.asset
 /Assets/Plugins/Lumin/Editor/x64
-
+/Assets/Plugins/*
 
 /[Ll]ibrary/
 /[Tt]emp/
