@@ -6008,6 +6008,11 @@ PrefabInstance:
       propertyPath: _camera
       value: 
       objectReference: {fileID: 2022749499}
+    - target: {fileID: 7628259576536362468, guid: f6884cfcea15b5b44a5aa8b3a220c207,
+        type: 3}
+      propertyPath: camerasManager
+      value: 
+      objectReference: {fileID: 2018759667}
     - target: {fileID: 5093924096542512290, guid: f6884cfcea15b5b44a5aa8b3a220c207,
         type: 3}
       propertyPath: panels.Array.size
@@ -6118,6 +6123,18 @@ GameObject:
     type: 3}
   m_PrefabInstance: {fileID: 2018759658}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &2018759667 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 1901739743004615125, guid: f6884cfcea15b5b44a5aa8b3a220c207,
+    type: 3}
+  m_PrefabInstance: {fileID: 2018759658}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2018759661}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d4ac446dfce8f3a4583a324e17e8d6d8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &2022749499 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 1011244501761250, guid: 24158fb1437dc8e418d893939758764d,

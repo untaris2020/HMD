@@ -377,7 +377,6 @@ public class TelemWebRequest : MonoBehaviour
 
     private void Tick()
     {
-        DebugManager.Instance.LogUnityConsole("tick");
        // DebugManager.Instance.LogUnityConsole("Loop         : " + counter);
 
         // counter == 0 is the script connecting to the server

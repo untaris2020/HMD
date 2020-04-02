@@ -37,10 +37,11 @@ public class NavManager : MonoBehaviour
     
 
     private IEnumerator coroutine;
-    private float TICKTIME = 0.50f;   //was 10.0f
-    private float BACKUPTIMESECONDS = 5.0f;   // amount of time between backups was 300 (5mins)
+    private float TICKTIME = 1.0f;   //was 10.0f
+    private float BACKUPTIMESECONDS = 20.0f;   // amount of time between backups was 300 (5mins)
     private int NUMOFOBJECTS = 0; 
     private int userPosCounter;
+    private bool update_waypoints_rth = false;
 
 
     // Start is called before the first frame update
@@ -82,16 +83,26 @@ public class NavManager : MonoBehaviour
         DebugManager.Instance.LogUnityConsole("NavManager", "Setting World Center: " + _cube.transform.position);
         
         //persistentBehavior.UpdateBinding();
+        ReturnToHome(true);
     }
 
-    private void OnDestroy() {
+    private void OnDestroy() 
+    {
         
     }
 
     // Update is called once per frame
     void Update()
     {
-        
+        if (update_waypoints_rth)
+        {
+            foreach (GameObject obj in waypoint_meshes)
+            {
+                var col = obj.GetComponent<Renderer>().material.color;
+                col.a = 1.0f / ((float)(_camera.transform.position - obj.transform.position).magnitude / 10.0f);
+                obj.GetComponent<Renderer>().material.color = col;
+            }
+        }
     }
 
     private IEnumerator GetUserPOSLoop(float waitTime)
@@ -100,17 +111,21 @@ public class NavManager : MonoBehaviour
         while (true)
         {
             UserPosition tmpPos = new UserPosition(DateTime.Now, _camera.transform.position);
+
+            
             //_cube.transform.rotation = _camera.transform.rotation;
 
             //DebugManager.Instance.LogUnityConsole("NavManager", "New Coordniate: " + tmpPos.position);
             userPositions[userPosCounter] = tmpPos;
 
+            // Make a waypoint game object
+            GameObject temp = Instantiate(waypoint_mesh, tmpPos.position, Quaternion.identity);
+            waypoint_meshes.Add(temp);
+
             if (userPosCounter >= (NUMOFOBJECTS)-1)
             {
                 // save to backup
                 // for now just deleate coords
-                ShowAllUserPositions(true);
-                
                 
                 
                 InitUserPositions();
@@ -126,6 +141,13 @@ public class NavManager : MonoBehaviour
     {
         DebugManager.Instance.LogBoth("Clearing User Coordniates...");
         userPositions.Clear();
+
+        foreach (GameObject obj in waypoint_meshes)
+        {
+            Destroy(obj);
+        }
+        waypoint_meshes.Clear();
+
         for (int i=0; i<NUMOFOBJECTS; i++)
         {
             userPositions.Add(new UserPosition());
@@ -134,47 +156,19 @@ public class NavManager : MonoBehaviour
 
     private void ShowAllUserPositions(bool state)
     {
-        foreach (GameObject obj in waypoint_meshes)
-        {
-            Destroy(obj);
-        }
-        
-        waypoint_meshes.Clear();
-
-
         if (state)
         {
-            foreach (UserPosition pos in userPositions)
+            foreach (GameObject obj in waypoint_meshes)
             {
-                GameObject temp = Instantiate(waypoint_mesh, pos.position, Quaternion.identity);
-                waypoint_meshes.Add(temp);
+                obj.SetActive(state);
             }
-        }   
+        }
     }
 
     private void ReturnToHome(bool state)
     {
-        foreach (GameObject obj in waypoint_meshes)
-        {
-            Destroy(obj);
-        }
-        
-        waypoint_meshes.Clear();
-
-        if (state)
-        {
-            foreach (UserPosition pos in userPositions)
-            {
-                GameObject temp = Instantiate(waypoint_mesh, pos.position, Quaternion.identity);
-
-                // change marker opacity based on most recent marker
-                var col = temp.GetComponent<Renderer>().material.color;
-                //NUMOFOBJECTS
-                col.a = 1.0f / (float)(DateTime.Now - pos.timestamp).TotalSeconds;
-
-                waypoint_meshes.Add(temp);
-            }
-        }  
+        ShowAllUserPositions(state);
+        update_waypoints_rth = state;
     }
 
 
