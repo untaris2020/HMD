@@ -8,7 +8,9 @@ using UnityEngine;
 
 public class IMUHandler : tcpPacket
 {
-    private packetICD.IMU_Mode MODE; 
+    public packetICD.IMU_Mode MODE;
+
+    private string NAME; 
 
     //IMU Packet Information 
     private float x;
@@ -19,11 +21,25 @@ public class IMUHandler : tcpPacket
     private float yAccel;
     private float zAccel; 
 
-    public IMUHandler(TcpClient client, packetICD.IMU_Mode mode, string NAME) : base(client, NAME)
-    {
-        MODE = mode; 
-    }
+    private delegate void functionDelegate();
 
+    public void start()
+    {
+        seqID = -1; 
+        connected = false;
+        if (MODE == packetICD.IMU_Mode.CHEST)
+        {
+            NAME = "chestIMU";
+        }
+        else
+        {
+            NAME = "chestIMU";
+        }
+        functionDelegate stopDelegate = new functionDelegate(stopStream);
+        functionDelegate startDelegate = new functionDelegate(startStream);
+        functionDebug.Instance.registerFunction(NAME + "start", startDelegate);
+        functionDebug.Instance.registerFunction(NAME + "stop", stopDelegate);
+    }
 
     public override int processPacket(string packet)
     {
@@ -69,7 +85,7 @@ public class IMUHandler : tcpPacket
         //In here the logic for which values get sent also need to be adjusted based on default. For instance the chest is tilted so the axis are all wrong 
         if(MODE == packetICD.IMU_Mode.CHEST)
         {
-            HeadLockScript.Instance.updateHIDwithIMU(z,x,y);
+            HeadLockScript.Instance.updateHIDwithIMU(x,z,y);
         }
         else if(MODE == packetICD.IMU_Mode.GLOVE)
         {

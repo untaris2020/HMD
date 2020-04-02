@@ -8,6 +8,7 @@ using System.Threading;
 using System.Net.Sockets;
 using System.Collections;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
 
 #region TCPServer Class
 public class TCPServer : MonoBehaviour
@@ -30,22 +31,13 @@ public class TCPServer : MonoBehaviour
 
 
     //Instatiated Object References
-    private IMUHandler IMU_CHEST;
-    private IMUHandler IMU_GLOVE;
-    private CameraHandler HEAD_CAM; 
-    private CameraHandler GLOVE_CAM; 
-    private TcpClient SYSTEM;
-    #endregion
+    public IMUHandler IMU_CHEST;
+    public IMUHandler IMU_GLOVE;
+    public CameraHandler HEAD_CAM; 
+    public CameraHandler GLOVE_CAM;
 
-    public CameraHandler getHeadCam()
-    {
-        return HEAD_CAM;
-    }
-        
-    public CameraHandler getGloveCam()
-    {
-        return GLOVE_CAM;
-    }
+    //public GameObject SYSTEM;
+    #endregion
 
     #region Unity Methods
     /// <summary>
@@ -98,9 +90,6 @@ public class TCPServer : MonoBehaviour
     {
         //VARIABLE DECLARATION FOR PARSE
         string parsed = "";
-        string Beginning = "";
-        string Middle = "";
-        string End = "";
         string msg;
 
         Byte[] bytes = new Byte[maxByteSize];
@@ -115,181 +104,96 @@ public class TCPServer : MonoBehaviour
             // Convert byte array to string message.
             string clientMessage = Encoding.ASCII.GetString(incommingData);
 
-            //Process client msg
-            // START OF THE PARSER CODE FOR THE CAMERA TO PUT EACH OF THE FRAMES TOGETHER
+            
+            //Check if valid packet is received 
+            parsed += clientMessage;
 
-            // 1st Stage of Parsing. Checks if each of the packets has a <BEG> or <EOF>.
-            // If either one is detected it is split into smaller packets to be put back together.
-            if(clientMessage.Contains(BEG) == true)
+            Regex reg = new Regex(@"<BEG>(\d*)[$](.*)<EOF>");
+
+            if (reg.IsMatch(clientMessage)) //Got a match
             {
-                string[] eof = {EOF};
-                string[] words = clientMessage.Split(eof, System.StringSplitOptions.RemoveEmptyEntries);
-                parsed = words[0];
+                string[] remover = { BEG, EOF };
+                string[] words = (parsed.Split(remover, System.StringSplitOptions.RemoveEmptyEntries));
 
-            }
-            else
-            {
-                string[] beg = {BEG};
-                string[] words = clientMessage.Split(beg, System.StringSplitOptions.RemoveEmptyEntries);
-                parsed = words[0];
+                parsed = "";
 
-            }
+                msg = words[0];
 
-            // 2nd Stage of Parsing. Checks if the smaller packet starts with a "<BEG>". If it does start with a "<BEG>"
-            // It is stored into the Beginning Temporary variable. If the smaller packet does not begin with a "<BEG>" it
-            // moves to the else statement. In the else statement we then check if the smaller packet doesnt have a "<EOF>".
-            // If it doesnt have a "<EOF>" it is stored in the temp varaible Middle. (This continues to concantinate until
-            // a smaller packet with a "<EOF>" is detected. If a packet is detected with a "<EOF>" then we know that it was
-            // the last of the frame. Therefore we can put the frame together and send it to be displayed. We also reset the
-            // temporary variables for the next frame.
+                /*PARSING COMPLETE*/
 
-            if (parsed.Contains(BEG))
-            {
-                Beginning = parsed;
-            }
-            else
-            {
-                if(!parsed.Contains(EOF))
+                //Identify Client Msg here
+
+                //Parse out msg string
+                string id = "";
+                string body = "";
+                int idx = msg.IndexOf("$");
+                if (idx != -1)
                 {
-                    Middle += parsed;
+                    id = msg.Substring(0, idx);
+                }
+                //handle processing
+                if (Int32.TryParse(id, out int msgID))
+                {
+                    body = msg.Substring(idx + 1);
+                    switch (msgID)
+                    {
+                        case (int)packetICD.Type.SYSTEM:
+                            break;
+                        case (int)packetICD.Type.CHEST_IMU:
+                            if (body == "REG")
+                            {
+                                IMU_CHEST.initialize((TcpClient)client);
+                            }
+                            else
+                            {
+                                IMU_CHEST.processPacket(body);
+                            }
+                            break;
+                        case (int)packetICD.Type.GLOVE_IMU:
+                            if (body == "REG")
+                            {
+                                IMU_GLOVE.initialize((TcpClient)client);
+                            }
+                            else
+                            {
+                                IMU_GLOVE.GetComponent<IMUHandler>().processPacket(body);
+                            }
+                            break;
+                        case (int)packetICD.Type.TOGGLE_SCREEN:
+                            break;
+                        case (int)packetICD.Type.HEAD_CAM:
+                            if (body == "REG")
+                            {
+                                HEAD_CAM.initialize((TcpClient)client);
+                            }
+                            else
+                            {
+                                HEAD_CAM.processPacket(body);
+                            }
+                            break;
+                        case (int)packetICD.Type.GLOVE_CAM:
+                            if (body == "REG")
+                            {
+                                GLOVE_CAM.initialize((TcpClient)client);
+                            }
+                            else
+                            {
+                                GLOVE_CAM.processPacket(body);
+                            }
+                            break;
+                        case (int)packetICD.Type.FORCE_SENSOR:
+                            break;
+                        default:
+                            DebugManager.Instance.LogUnityConsole("ID Unknown: " + msgID);
+                            break;
+                    }
                 }
                 else
                 {
-                    End = parsed;
-
-                    string[] remover = { BEG, EOF };
-                    string[] words = (Beginning + Middle + End).Split(remover, System.StringSplitOptions.RemoveEmptyEntries);
-
-                    msg = words[0]; 
-
-                    Beginning = "";
-                    Middle = "";
-                    End = "";
-
-                    /*PARSING COMPLETE*/ 
-
-                    //Identify Client Msg here
-
-                    //Parse out msg string
-                    string id = "";
-                    string body = "";
-                    int idx = msg.IndexOf("$");
-                    if (idx != -1)
-                    {
-                        id = msg.Substring(0, idx);
-                        Debug.Log("ID: " + id);
-                    }
-                    //handle processing
-                    if (Int32.TryParse(id, out int msgID))
-                    {
-                        body = msg.Substring(idx + 1);
-                        switch (msgID)
-                        {    
-                            case (int)packetICD.Type.SYSTEM:
-                                break;
-                            case (int)packetICD.Type.CHEST_IMU:
-                                if(body == "REG")
-                                {
-                                    if (IMU_CHEST == null)
-                                    {
-                                        IMU_CHEST = new IMUHandler((TcpClient)client, packetICD.IMU_Mode.CHEST, "chestIMU");
-                                    }
-                                    else
-                                    {
-                                        IMU_CHEST.restartHandler((TcpClient)client);
-                                    }
-                                }
-                                else
-                                {
-                                    //normal packet -- check if its already connected 
-                                    if (IMU_CHEST != null)
-                                    {
-                                        IMU_CHEST.processPacket(body);
-                                    }
-                                }
-                                break;
-                            case (int)packetICD.Type.GLOVE_IMU:
-                                if(body == "REG")
-                                {
-                                    if (IMU_GLOVE == null)
-                                    {
-                                        IMU_GLOVE = new IMUHandler((TcpClient)client, packetICD.IMU_Mode.GLOVE, "gloveIMU");
-                                    }
-                                    else
-                                    {
-                                        IMU_GLOVE.restartHandler((TcpClient)client);
-                                    }
-                                }
-                                else
-                                {
-                                    //normal packet -- check if its already connected 
-                                    if (IMU_GLOVE != null)
-                                    {
-                                        IMU_GLOVE.processPacket(body);
-                                    }
-                                }
-                                break;
-                            case (int)packetICD.Type.TOGGLE_SCREEN:
-                                break;
-                            case (int)packetICD.Type.HEAD_CAM:
-                                if(body == "REG")
-                                {
-                                    if (HEAD_CAM == null)
-                                    {
-                                        HEAD_CAM = new CameraHandler((TcpClient)client, packetICD.CAM_Mode.HEAD, "headCAM");
-                                    }
-                                    else
-                                    {
-                                        HEAD_CAM.restartHandler((TcpClient)client);
-                                    }
-                                }
-                                else
-                                {
-                                    //normal packet -- check if its already connected 
-                                    if (HEAD_CAM != null)
-                                    {
-                                        HEAD_CAM.processPacket(body);
-                                    }
-                                }
-                                break;
-                            case (int)packetICD.Type.GLOVE_CAM:
-                                if(body == "REG")
-                                {
-                                    if (GLOVE_CAM == null)
-                                    {
-                                        GLOVE_CAM = new CameraHandler((TcpClient)client, packetICD.CAM_Mode.HEAD, "gloveCAM");
-                                    }
-                                    else
-                                    {
-                                        GLOVE_CAM.restartHandler((TcpClient)client);
-                                    }
-                                }
-                                else
-                                {
-                                    //normal packet -- check if its already connected 
-                                    if (GLOVE_CAM != null)
-                                    {
-                                        GLOVE_CAM.processPacket(body);
-                                    }
-                                }
-                                break;
-                            case (int)packetICD.Type.FORCE_SENSOR:                           
-                                break; 
-                            default:
-                                DebugManager.Instance.LogUnityConsole("ID Unknown: " + msgID);
-                                break;   
-                        }   
-                    }
-                    else
-                    {
-                        DebugManager.Instance.LogSceneConsole("ERR: ID " + id + " could not be parsed to int");
-                    }
-                }
-
+                    DebugManager.Instance.LogSceneConsole("ERR: ID " + id + " could not be parsed to int");
                 }
             }
-
-            
+        }            
     }
     #endregion
 }

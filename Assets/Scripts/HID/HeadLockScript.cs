@@ -104,6 +104,7 @@ public class HeadLockScript : MonoBehaviour
             
             Quaternion rotation = Quaternion.Euler(rot);
             rotation *= Quaternion.Euler(-90, 0, 0);
+            rotation *= Quaternion.Euler(0, -90, 0);
             rotation = rotation *  Quaternion.Inverse(DefaultRot); 
             this.transform.rotation = Quaternion.Slerp(this.transform.rotation, rotation, speed); 
             updateWithIMU = false;

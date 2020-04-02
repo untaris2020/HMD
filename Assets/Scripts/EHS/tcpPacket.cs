@@ -6,7 +6,7 @@ using System.Net.Sockets;
 using System.Text;
 using UnityEngine;
 
-public class tcpPacket
+public class tcpPacket:MonoBehaviour
 {
     
     /// <summary>
@@ -15,33 +15,18 @@ public class tcpPacket
     /// Cli data type that stores active socket connection
     /// </summary>
     
-    private bool connected;
+    protected bool connected;
     protected TcpClient cli;
     protected int seqID;
-    private delegate void functionDelegate();
-    /// <summary>
-    /// Default constructor 
-    /// </summary>
-    /// <param name="client"></param>
-    public tcpPacket(TcpClient client, string NAME)
+    
+    public virtual void initialize(TcpClient client)
     {
-        functionDelegate stopDelegate = new functionDelegate(stopStream);
-        functionDelegate startDelegate = new functionDelegate(startStream);
-        functionDebug.Instance.registerFunction(NAME + "start", startDelegate);
-        functionDebug.Instance.registerFunction(NAME + "stop", stopDelegate);
-        seqID = -1; 
-        connected = false;
-        cli = client;
-    }
-
-    public virtual void restartHandler(TcpClient client)
-    {
-        //Flush Queues 
         seqID = -1;
-        //Must Happen
         cli = client;
+        connected = true;
     }
 
+    
     /// <summary>
     /// processPacket virtual function that must be override to parse TCPPacket
     /// </summary>
@@ -60,7 +45,6 @@ public class tcpPacket
     {
         if (cli == null)
         {
-            Debug.Log("SEND MSG: CLient is null\n");
             return -1;
         }
         try
@@ -74,6 +58,7 @@ public class tcpPacket
                 byte[] serverMessageAsByteArray = Encoding.ASCII.GetBytes(message);
                 // Write byte array to socketConnection stream.               
                 stream.Write(serverMessageAsByteArray, 0, serverMessageAsByteArray.Length);
+                Debug.Log("Stream Write Returned");
             }
         }
         catch (SocketException socketException)

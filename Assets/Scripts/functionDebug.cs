@@ -30,7 +30,7 @@ public class functionDebug : MonoBehaviour
     UdpState s;
 
     private void Awake()
-    { 
+    {
         Instance = this;
         messageReceived = false;
     }
@@ -50,13 +50,13 @@ public class functionDebug : MonoBehaviour
     {
         if(messageReceived)
         {
-            runFunction();
+           runFunction();
         }
     }
 
     public void registerFunction(string cmd, Delegate function)
     {     
-        //DebugManager.Instance.LogBoth("funcDebug:","Adding Function: " + cmd);
+        DebugManager.Instance.LogBoth("funcDebug:","Adding Function: " + cmd);
         if(!(functions.ContainsKey(cmd)))
         {
             functions.Add(cmd, function);

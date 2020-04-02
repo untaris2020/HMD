@@ -22,7 +22,7 @@ public class NavManager : MonoBehaviour
     public GameObject waypoint_mesh;
     List<GameObject> waypoint_meshes = new List<GameObject>();
 
-    GameObject _content = null;
+    //GameObject _content = null;
     List<MLPersistentBehavior> _pointBehaviors = new List<MLPersistentBehavior>();
 
 
@@ -30,6 +30,8 @@ public class NavManager : MonoBehaviour
 
     List<Waypoint> waypoints = new List<Waypoint>();
 
+    private CameraHandler GLOVE_CAM;
+    private CameraHandler REAR_CAM;
 
     public GameObject _cube, _camera;
     
@@ -40,8 +42,6 @@ public class NavManager : MonoBehaviour
     private int NUMOFOBJECTS = 0; 
     private int userPosCounter;
 
-    //private IEnumerator coroutine;
-    private int counter = 0;
 
     // Start is called before the first frame update
     void Start()
@@ -53,6 +53,9 @@ public class NavManager : MonoBehaviour
         userPosCounter = 0;
 
         HeadTracking ht = GameObject.Find("SceneManager").GetComponent<HeadTracking>();
+
+        REAR_CAM = GameObject.Find("HEAD_CAM").GetComponent<CameraHandler>();
+        GLOVE_CAM = GameObject.Find("HEAD_CAM").GetComponent<CameraHandler>();
 
         functionDelegate startRear = new functionDelegate(PressRearviewON);
         functionDelegate stopRear = new functionDelegate(PressRearviewOFF);
@@ -182,7 +185,16 @@ public class NavManager : MonoBehaviour
 
         // spawn camera
         camerasManager.spawnCam();
-        TCPServer.Instance.getHeadCam().startStream();
+        
+        if(REAR_CAM.getConnected())
+        {
+            Debug.Log("START STREAM");
+            REAR_CAM.startStream();
+        }
+        else
+        {
+            DebugManager.Instance.LogSceneConsole("ERROR: CAMERA DISCONNECTED");
+        }
     }
 
     public void PressRearviewOFF()
@@ -192,7 +204,14 @@ public class NavManager : MonoBehaviour
         
         //Despawn camera
         camerasManager.destroyCam();
-        TCPServer.Instance.getHeadCam().stopStream();
+        if(REAR_CAM.getConnected())
+        {
+            REAR_CAM.stopStream();
+        }
+        else
+        {
+            DebugManager.Instance.LogSceneConsole("ERROR: CAMERA DISCONNECTED");
+        }
     }
 
     public void PressGloveON()
@@ -201,7 +220,14 @@ public class NavManager : MonoBehaviour
         gloveOFFButton.GetComponent<Renderer>().material = buttonMat;
 
         camerasManager.spawnCam();
-        TCPServer.Instance.getGloveCam().startStream();
+        if(GLOVE_CAM.getConnected())
+        {
+            GLOVE_CAM.startStream();
+        }
+        else
+        {
+            DebugManager.Instance.LogSceneConsole("ERROR: CAMERA DISCONNECTED");
+        }
     }
 
     public void PressGloveOFF()
@@ -210,7 +236,14 @@ public class NavManager : MonoBehaviour
         gloveONButton.GetComponent<Renderer>().material = buttonMat;
 
         camerasManager.destroyCam();
-        TCPServer.Instance.getGloveCam().stopStream();
+        if(GLOVE_CAM.getConnected())
+        {
+            GLOVE_CAM.stopStream();
+        }
+        else
+        {
+            DebugManager.Instance.LogSceneConsole("ERROR: CAMERA DISCONNECTED");
+        }
     }
 
     //ML Code
