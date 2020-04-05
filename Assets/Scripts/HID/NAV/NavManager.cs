@@ -3,6 +3,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.XR.MagicLeap;
+using UnityEngine.UI;
+using TMPro;
 
 public class NavManager : MonoBehaviour
 {
@@ -10,7 +12,7 @@ public class NavManager : MonoBehaviour
     // 1) create backup system
     // 2) fix persistant behivior
 
-    public GameObject rearviewONButton, rearviewOFFButton, gloveONButton, gloveOFFButton;
+    public GameObject rearviewONButton, rearviewOFFButton, gloveONButton, gloveOFFButton, rthButton, showallButton;
     public Material buttonMat, buttonHoverMat, headerMat, headerHoverMat;
     public CamerasManager camerasManager;
 
@@ -42,6 +44,10 @@ public class NavManager : MonoBehaviour
     private int NUMOFOBJECTS = 0; 
     private int userPosCounter;
     private bool update_waypoints_rth = false;
+    private bool rth_status = false;
+    private bool showall_status = false;
+    public TextMeshProUGUI rth_text;
+    public TextMeshProUGUI showall_text;
 
 
     // Start is called before the first frame update
@@ -67,23 +73,33 @@ public class NavManager : MonoBehaviour
         functionDelegate stopGlove = new functionDelegate(PressGloveOFF);
         functionDebug.Instance.registerFunction("startGloveCam", startGlove);
         functionDebug.Instance.registerFunction("stopGloveCam", stopGlove);
+
+        functionDelegate rth = new functionDelegate(PressRTH);
+        functionDelegate showall = new functionDelegate(PressShowAll);
+        functionDebug.Instance.registerFunction("toggleRTH", rth);
+        functionDebug.Instance.registerFunction("toggleShowAll", showall);
         
         coroutine = GetUserPOSLoop(TICKTIME);
         StartCoroutine(coroutine);
 
         // This might be broken, make unique MyDelegates
         MyDelegate RearviewON = new MyDelegate(PressRearviewON);
-        ht.registerCollider(rearviewONButton.GetComponent<Collider>().name,RearviewON);
+        ht.registerCollider(rearviewONButton.GetComponent<Collider>().name, RearviewON);
 
         MyDelegate RearviewOFF = new MyDelegate(PressRearviewOFF);
-        ht.registerCollider(rearviewOFFButton.GetComponent<Collider>().name,RearviewOFF);
+        ht.registerCollider(rearviewOFFButton.GetComponent<Collider>().name, RearviewOFF);
+
+        MyDelegate RTH = new MyDelegate(PressRTH);
+        ht.registerCollider(rthButton.GetComponent<Collider>().name, RTH);
+
+        MyDelegate ShowAll = new MyDelegate(PressShowAll);
+        ht.registerCollider(showallButton.GetComponent<Collider>().name, ShowAll);
 
         // set worldcenter
         _cube.transform.position = _camera.transform.position + _camera.transform.forward * 2.0f;
         DebugManager.Instance.LogUnityConsole("NavManager", "Setting World Center: " + _cube.transform.position);
         
         //persistentBehavior.UpdateBinding();
-        ReturnToHome(true);
     }
 
     private void OnDestroy() 
@@ -94,7 +110,7 @@ public class NavManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (update_waypoints_rth)
+        if (rth_status)
         {
             foreach (GameObject obj in waypoint_meshes)
             {
@@ -105,11 +121,26 @@ public class NavManager : MonoBehaviour
         }
     }
 
+    private int counterr = 0;
     private IEnumerator GetUserPOSLoop(float waitTime)
     {
         
         while (true)
         {
+            // temp code to test
+            if (counterr == 0)
+                PressRTH();
+            if (counterr == 10)
+                PressRTH();
+            if (counterr == 20)
+                PressShowAll();
+            if (counterr == 30)
+                PressShowAll();
+
+
+            counterr++;
+            // end temp code
+
             UserPosition tmpPos = new UserPosition(DateTime.Now, _camera.transform.position);
 
             
@@ -119,7 +150,7 @@ public class NavManager : MonoBehaviour
             userPositions[userPosCounter] = tmpPos;
 
             // Make a waypoint game object
-            GameObject temp = Instantiate(waypoint_mesh, tmpPos.position, Quaternion.identity);
+            GameObject temp = Instantiate(waypoint_mesh, tmpPos.position, Quaternion.identity, _cube.transform);
             waypoint_meshes.Add(temp);
 
             if (userPosCounter >= (NUMOFOBJECTS)-1)
@@ -154,21 +185,52 @@ public class NavManager : MonoBehaviour
         }
     }
 
-    private void ShowAllUserPositions(bool state)
+    public void PressRTH()
     {
-        if (state)
+        rth_status = !rth_status;
+        showall_status = false;
+        UpdateStatusText();
+
+        foreach (GameObject obj in waypoint_meshes)
         {
-            foreach (GameObject obj in waypoint_meshes)
-            {
-                obj.SetActive(state);
-            }
+            obj.SetActive(rth_status);
+        }
+
+    }
+
+    public void PressShowAll()
+    {
+        showall_status = !showall_status;
+        rth_status = false;
+        UpdateStatusText();
+
+        foreach (GameObject obj in waypoint_meshes)
+        {
+            obj.SetActive(showall_status);
         }
     }
 
-    private void ReturnToHome(bool state)
+    private void UpdateStatusText()
     {
-        ShowAllUserPositions(state);
-        update_waypoints_rth = state;
+        if (rth_status)
+        {
+            rth_text.SetText("ON");
+            rth_text.color = new Color32(0, 255, 0, 255);   // green
+        } else
+        {
+            rth_text.SetText("OFF");
+            rth_text.color = new Color32(255, 0, 0, 255);   // red
+        }
+
+        if (showall_status)
+        {
+            showall_text.SetText("ON");
+            showall_text.color = new Color32(0, 255, 0, 255);   // green
+        } else
+        {
+            showall_text.SetText("OFF");
+            showall_text.color = new Color32(255, 0, 0, 255);   // red
+        }
     }
 
 
