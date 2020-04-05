@@ -13,10 +13,6 @@
 Assets/TextMesh Pro/
 Assets/TextMesh Pro.meta
 
-#Ignore Magic Leap Preinstalled Packages 
-Assets/MagicLeap.meta
-Assets/MagicLeap
-
 #Ignore the Plugins Directory 
 Assets/Plugins
 
@@ -32,11 +28,6 @@ Assets/XR.meta
 LICENSE.txt
 NOTICE.txt
 
-#ignore Packages
-Packages
-
-#ignore Project settings 
-ProjectSettings
 
 # Uncomment this line if you wish to ignore the asset store tools plugin
 # /[Aa]ssets/AssetStoreTools*
