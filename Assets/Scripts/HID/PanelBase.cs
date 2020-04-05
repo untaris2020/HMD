@@ -6,6 +6,8 @@ public class PanelBase : MonoBehaviour
 {
     // Start is called before the first frame update
     // Start is called before the first frame update
+    public bool Verbose;
+
     public StyleSheet style;
 
     public GameObject[] panels;
@@ -77,8 +79,11 @@ public class PanelBase : MonoBehaviour
     public void LoadPage(int page)
     {
         pageIndex = page;
-
-        DebugManager.Instance.LogUnityConsole(this.GetType().Name, "Page " + page + " Loaded.");
+        
+        if(Verbose)
+        {
+            DebugManager.Instance.LogUnityConsole(this.GetType().Name, "Page " + page + " Loaded.");
+        }
 
         // Set all buttons material to inactive
         foreach (GameObject obj in panels)

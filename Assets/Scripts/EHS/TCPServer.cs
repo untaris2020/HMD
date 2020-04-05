@@ -69,12 +69,11 @@ public class TCPServer : MonoBehaviour
             // Create listener on localhost.
             tcpListener = new TcpListener(IPAddress.Parse(IP), PORT);
             tcpListener.Start();
-            Debug.Log("Server is listening\n");
 
             while (true)
             {
                 tempTcpClient = tcpListener.AcceptTcpClient();
-                Debug.Log("Connection");
+                DebugManager.Instance.LogBoth("New Client Connection: " + ((IPEndPoint)tempTcpClient.Client.RemoteEndPoint).Address.ToString());
                 Thread clientThread = new Thread(new ParameterizedThreadStart(HandleClientComm));
                 clientThread.Start(tempTcpClient);
             }

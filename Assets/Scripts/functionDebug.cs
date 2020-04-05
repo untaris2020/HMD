@@ -19,6 +19,8 @@ public class functionDebug : MonoBehaviour
 
     // Start is called before the first frame update
 
+    public bool Verbose;
+
     public int listenPort = 10102;
     public string IP = "127.0.0.1";
     private bool messageReceived;
@@ -55,8 +57,12 @@ public class functionDebug : MonoBehaviour
     }
 
     public void registerFunction(string cmd, Delegate function)
-    {     
-        DebugManager.Instance.LogBoth("funcDebug:","Adding Function: " + cmd);
+    {    
+        if(Verbose)
+        {
+            DebugManager.Instance.LogBoth("funcDebug:","Adding Function: " + cmd);
+        }
+        
         if(!(functions.ContainsKey(cmd)))
         {
             functions.Add(cmd, function);
@@ -94,9 +100,6 @@ public class functionDebug : MonoBehaviour
         byte[] receiveBytes = u.EndReceive(ar, ref e);
         string received = Encoding.ASCII.GetString(receiveBytes);
 
-
-        //FIXME -- This causes function to return and it shouldn't
-        //DebugManager.Instance.LogBoth("funcDebug:", "Received: " + received);
         messageReceived = true;
         recvMsg = received;
     }
