@@ -16,6 +16,9 @@ Assets/TextMesh Pro.meta
 #Ignore the Plugins Directory 
 Assets/Plugins
 
+#ignore XRPackage Setting
+ProjectSettings/XRPackageSettings.asset
+
 #Ignore new test scene
 Assets/Scenes/HelloCube.unity
 Assets/Scenes/HelloCube.unity.meta
