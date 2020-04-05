@@ -6,7 +6,7 @@ UNT ARIS 2020 HMD
 
 ## Versions
 
-V 0.0.1
+V 0.2.1
 
 ### Unity
 
@@ -14,13 +14,10 @@ V 0.0.1
 
 ### MLSDK
 
-v0.22.0
+v0.24.1
 
 ### LuminOS
 
-0.97.x
+0.98.x
 
-## Downloading
-
-## Instructions After Downloading
 
