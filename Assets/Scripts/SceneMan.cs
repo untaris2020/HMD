@@ -6,7 +6,7 @@ using System.Net.Sockets;
 using System.Timers;
 
 
-public class SceneManager : MonoBehaviour
+public class SceneMan : MonoBehaviour
 {
     public GameObject HID;
     private GameObject HIDInstance;

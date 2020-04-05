@@ -24,7 +24,7 @@ public class forceSensorManager : MonoBehaviour
     private string msg;
     private bool connection; 
 
-    private SceneManager scene;
+    private SceneMan scene;
 
     EndPoint Remote; 
 
@@ -36,7 +36,7 @@ public class forceSensorManager : MonoBehaviour
     // Use this for initialization
     void Start()
     {
-        scene = (GameObject.Find("SceneManager")).GetComponent(typeof(SceneManager)) as SceneManager;
+        scene = (GameObject.Find("SceneManager")).GetComponent(typeof(SceneMan)) as SceneMan;
         headTrack = (GameObject.Find("SceneManager")).GetComponent(typeof(HeadTracking)) as HeadTracking;
         tcpListenerThread = new Thread(new ThreadStart(ListenForIncommingRequests));
         tcpListenerThread.IsBackground = true;

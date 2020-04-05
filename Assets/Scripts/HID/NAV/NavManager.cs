@@ -18,12 +18,12 @@ public class NavManager : MonoBehaviour
     private delegate void functionDelegate();
 
     // Nav System
-    public MLPersistentBehavior persistentBehavior;
+    //public MLPersistentBehavior persistentBehavior;
     public GameObject waypoint_mesh;
     List<GameObject> waypoint_meshes = new List<GameObject>();
 
     //GameObject _content = null;
-    List<MLPersistentBehavior> _pointBehaviors = new List<MLPersistentBehavior>();
+    //List<MLPersistentBehavior> _pointBehaviors = new List<MLPersistentBehavior>();
 
 
     List<UserPosition> userPositions = new List<UserPosition>();
