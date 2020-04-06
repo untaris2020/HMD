@@ -1,233 +1,97 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
 using System.Net;
 using System.Net.Sockets;
-using System.Threading;
 using System.Text;
-using UnityEngine.Networking;
-using System.Timers;
+using UnityEngine;
 
-using System;
-using System.IO;
-
-public class IMUHandler : MonoBehaviour
+public class IMUHandler : tcpPacket
 {
-    private HeadLockScript headlock;
-     
-    private TcpListener tcpListener;
-    private Thread tcpListenerThread;
-    private TcpClient connectedTcpClient;
+    public packetICD.IMU_Mode MODE;
 
-    private bool updateSceneFlag;
-    private bool debug;
-    private string msg;
-    private bool connection;
-    private bool updateGloveData;
-    private bool watchDogTimer; 
+    private string NAME; 
 
-    private long packetCount;
-    
-    private IEnumerator coroutine;
+    //IMU Packet Information 
+    private float x;
+    private float y;
+    private float z;
+    private float w;
+    private float xAccel;
+    private float yAccel;
+    private float zAccel; 
 
-    private System.Timers.Timer aTimer;
-    private SceneManager scene;
+    private delegate void functionDelegate();
 
-    EndPoint Remote; 
-
-    byte[] data = new byte[1024];
-
-    private IMUJson currimuJsonPacket;
-
-    public int port = 5070;
-    public int TIMEOUT = 2000;
-    private int recv;
-
-    public enum subSystem
+    public void start()
     {
-        CHEST = 1,
-        GLOVE = 2, 
+        seqID = -1; 
+        connected = false;
+        if (MODE == packetICD.IMU_Mode.CHEST)
+        {
+            NAME = "chestIMU";
+        }
+        else
+        {
+            NAME = "chestIMU";
+        }
+        functionDelegate stopDelegate = new functionDelegate(stopStream);
+        functionDelegate startDelegate = new functionDelegate(startStream);
+        functionDebug.Instance.registerFunction(NAME + "start", startDelegate);
+        functionDebug.Instance.registerFunction(NAME + "stop", stopDelegate);
     }
 
-    public subSystem EHS_SUB_SYSTEM; 
-    // Start is called before the first frame update
-    // Use this for initialization
-    void Start()
+    public override int processPacket(string packet)
     {
-        scene = (GameObject.Find("SceneManager")).GetComponent(typeof(SceneManager)) as SceneManager;
-        headlock = (GameObject.Find("HID")).GetComponent(typeof(HeadLockScript)) as HeadLockScript;
-        tcpListenerThread = new Thread(new ThreadStart(ListenForIncommingRequests));
-        tcpListenerThread.IsBackground = true;
-        tcpListenerThread.Start();
-        updateSceneFlag = false;
-        connection = false;
-        debug = false;
-        updateGloveData = false;
-        watchDogTimer = true; 
-        packetCount = 0;
-
-        coroutine = diconnectEvent(2.0f);
-        StartCoroutine(coroutine);
-    }
-
-    void Update()
-    {
-        if(updateSceneFlag)
-        {
-            watchDogTimer = true;
-            updateScene(currimuJsonPacket);
-            updateSceneFlag = false;
-            
-        }
-        if(connection)
-        {
-            if(EHS_SUB_SYSTEM == subSystem.CHEST)
-            {
-                DebugManager.Instance.SetParam("chest_IMU", "CON");
-            }
-            else if(EHS_SUB_SYSTEM == subSystem.GLOVE)
-            {
-                DebugManager.Instance.SetParam("hand_IMU", "CON");
-            }
-            
-            connection = false;
-        }
-        if(EHS_SUB_SYSTEM == subSystem.CHEST)
-        {
-            DebugManager.Instance.SetParam("chest_IMU_PC", packetCount.ToString());
-        }
-        else if(EHS_SUB_SYSTEM == subSystem.GLOVE)
-        {
-            DebugManager.Instance.SetParam("hand_IMU_PC", packetCount.ToString());
-        }
-        if(debug)
-        {
-            DebugManager.Instance.LogBoth(this.GetType().Name, msg);
-            msg = "";
-            debug = false;
-        }
-        if(updateGloveData)
-        {
-            DebugManager.Instance.SetParam("w", currimuJsonPacket.wQuan.ToString("0.0000"));
-            DebugManager.Instance.SetParam("x", currimuJsonPacket.xQuan.ToString("0.0000"));
-            DebugManager.Instance.SetParam("y", currimuJsonPacket.yQuan.ToString("0.0000"));
-            DebugManager.Instance.SetParam("z", currimuJsonPacket.zQuan.ToString("0.0000"));
-        }
-    }
-
-
-    private IEnumerator diconnectEvent(float waitTime)
-    {
-        if(!watchDogTimer)
-        {
-            DebugManager.Instance.LogBoth(this.GetType().Name, "IMU DISCONNECTED...");
-
-            //Disconnection event 
-            tcpListenerThread.Abort();
-            tcpListener.Stop();
-            connectedTcpClient.Close();
-
-            //resarting thread
-            tcpListenerThread = new Thread(new ThreadStart(ListenForIncommingRequests));
-            tcpListenerThread.IsBackground = true;
-            tcpListenerThread.Start();
-
-        }
-        watchDogTimer = false;
-        yield return new WaitForSeconds(waitTime);
-    }
-
-     // Runs in background TcpServerThread; Handles incomming TCPClient requests 	
-    private void ListenForIncommingRequests()
-    {
+        string[] tmp = packet.Split(new string[] { "$" }, StringSplitOptions.None);
         try
         {
-            // Create listener on localhost. 			
-            tcpListener = new TcpListener(IPAddress.Parse(scene.IP), port);
-            tcpListener.Start();
-            Byte[] bytes = new Byte[20000];
-            while (true)
+            if (tmp.Length == 7)
             {
-                using(connectedTcpClient = tcpListener.AcceptTcpClient())
+                //If seqID has overflown we need to reset
+                if (seqID >= 2147483647)
                 {
-                    //Connected here
-                    connection = true; 
-                    // Get a stream object for reading 					
-                    using (NetworkStream stream = connectedTcpClient.GetStream())
-                    {
-                        
-                        msg = "Connection received from IMU...";
-                        debug = true;
-                      
-                        int length;
-                        // Read incomming stream into byte arrary. 						
-                        while ((length = stream.Read(bytes, 0, bytes.Length)) != 0)
-                        {
-                            //var incommingData = new byte[length];
-                           // Array.Copy(bytes, 0, incommingData, 0, length);
-                            // Convert byte array to string message.
-                            string clientMessage = Encoding.UTF8.GetString(bytes);;
+                    seqID = -1;
+                }
 
-                            string[] packets = clientMessage.Split('}');
+                if (Int32.Parse(tmp[0]) > seqID) //If it is a newer packet 
+                {
+                    //Update class to most recent values 
+                    seqID = Int32.Parse(tmp[0]);
+                    xAccel = (float.Parse(tmp[1]));
+                    yAccel = (float.Parse(tmp[2]));
+                    zAccel = (float.Parse(tmp[3]));
+                    x = (float.Parse(tmp[4]));
+                    y = (float.Parse(tmp[5]));
+                    z = (float.Parse(tmp[6]));
 
-                            if(packets.Length > 0)
-                            {
-                                string packet = packets[0];
-
-                                //Appending } back again 
-                                packet = packet + "}";
-
-                                packetCount++;
-
-                                //Now we need to convert to a json from a string
-                                currimuJsonPacket = JsonUtility.FromJson<IMUJson>(packet);
-
-                                if(EHS_SUB_SYSTEM == subSystem.CHEST)
-                                {
-                                    updateSceneFlag = true; 
-                                }
-                                else if(EHS_SUB_SYSTEM == subSystem.GLOVE)
-                                {
-                                    updateGloveData = true; 
-                                }
-                            }
-                        }
-                    }
+                    imuDataSmoothing();
                 }
             }
         }
-        catch (SocketException socketException)
+        catch (FormatException e)
         {
-            msg = "SocketException " + socketException.ToString();
-            debug = true; 
-            //Debug.Log("SocketException " + socketException.ToString());
+            DebugManager.Instance.LogUnityConsole(e.Message);
+            return -1;
         }
+
+        return 1;
     }
-   
-    public void updateScene( IMUJson imuJsonPacket)
+
+    private void imuDataSmoothing()
     {
-        if (headlock != null)
+        //For now this function simply takes the freshest packet and updates frame with it but custom smoothing logic inserts here 
+         
+        //In here the logic for which values get sent also need to be adjusted based on default. For instance the chest is tilted so the axis are all wrong 
+        if(MODE == packetICD.IMU_Mode.CHEST)
         {
-            if (headlock.updateHIDwithIMU(imuJsonPacket))
-            {
-                Debug.Log("ERROR");
-            }
+            HeadLockScript.Instance.updateHIDwithIMU(x,z,y);
         }
+        else if(MODE == packetICD.IMU_Mode.GLOVE)
+        {
+            //For now do nothing 
+        }
+       
+
     }
 }
-
-
-
-[System.Serializable]
-public class IMUJson
-{
-    public float xAccel;
-    public float yAccel;
-    public float zAccel;
-    public float wQuan;
-    public float xQuan;
-    public float yQuan;
-    public float zQuan;
-}
-
-

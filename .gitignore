@@ -5,7 +5,8 @@
 
 /ProjectSettings/ProjectSettings.asset
 /Assets/Plugins/Lumin/Editor/x64
-
+/Assets/Plugins/
+/Assets/XR
 
 /[Ll]ibrary/
 /[Tt]emp/
@@ -77,3 +78,6 @@ crashlytics-build.properties
 
 #.out temp filter
 .out*
+
+#project settings
+[Pp]rojectSettings/

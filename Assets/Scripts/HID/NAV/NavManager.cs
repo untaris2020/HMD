@@ -3,24 +3,28 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.XR.MagicLeap;
+using UnityEngine.UI;
+using TMPro;
 
 public class NavManager : MonoBehaviour
 {
     // TODO 
     // 1) create backup system
+    // 2) fix persistant behivior
 
-    public GameObject rearviewONButton, rearviewOFFButton, gloveONButton, gloveOFFButton;
+    public GameObject rearviewONButton, rearviewOFFButton, gloveONButton, gloveOFFButton, rthButton, showallButton;
     public Material buttonMat, buttonHoverMat, headerMat, headerHoverMat;
     public CamerasManager camerasManager;
 
     public delegate void MyDelegate();
+    private delegate void functionDelegate();
 
     // Nav System
     public MLPersistentBehavior persistentBehavior;
     public GameObject waypoint_mesh;
     List<GameObject> waypoint_meshes = new List<GameObject>();
 
-    GameObject _content = null;
+    //GameObject _content = null;
     List<MLPersistentBehavior> _pointBehaviors = new List<MLPersistentBehavior>();
 
 
@@ -28,21 +32,28 @@ public class NavManager : MonoBehaviour
 
     List<Waypoint> waypoints = new List<Waypoint>();
 
+    private CameraHandler GLOVE_CAM;
+    private CameraHandler REAR_CAM;
 
     public GameObject _cube, _camera;
     
 
     private IEnumerator coroutine;
-    private float TICKTIME = 0.5f;   //was 10.0f
-    private float BACKUPTIMESECONDS = 10.0f;   // amount of time between backups was 300 (5mins)
+    private float TICKTIME = 1.0f;   //was 10.0f
+    private float BACKUPTIMESECONDS = 20.0f;   // amount of time between backups was 300 (5mins)
+    private int NUMOFOBJECTS = 0; 
     private int userPosCounter;
+    private bool update_waypoints_rth = false;
+    private bool rth_status = false;
+    private bool showall_status = false;
+    public TextMeshProUGUI rth_text;
+    public TextMeshProUGUI showall_text;
 
-    //private IEnumerator coroutine;
-    private int counter = 0;
 
     // Start is called before the first frame update
     void Start()
     {
+        NUMOFOBJECTS = (int)(BACKUPTIMESECONDS / TICKTIME);
         // Allocate space
         InitUserPositions();
 
@@ -50,51 +61,104 @@ public class NavManager : MonoBehaviour
 
         HeadTracking ht = GameObject.Find("SceneManager").GetComponent<HeadTracking>();
 
+        REAR_CAM = GameObject.Find("HEAD_CAM").GetComponent<CameraHandler>();
+        GLOVE_CAM = GameObject.Find("HEAD_CAM").GetComponent<CameraHandler>();
+
+        functionDelegate startRear = new functionDelegate(PressRearviewON);
+        functionDelegate stopRear = new functionDelegate(PressRearviewOFF);
+        functionDebug.Instance.registerFunction("startRearCam", startRear);
+        functionDebug.Instance.registerFunction("stopRearCam", stopRear);
+
+        functionDelegate startGlove = new functionDelegate(PressGloveON);
+        functionDelegate stopGlove = new functionDelegate(PressGloveOFF);
+        functionDebug.Instance.registerFunction("startGloveCam", startGlove);
+        functionDebug.Instance.registerFunction("stopGloveCam", stopGlove);
+
+        functionDelegate rth = new functionDelegate(PressRTH);
+        functionDelegate showall = new functionDelegate(PressShowAll);
+        functionDebug.Instance.registerFunction("toggleRTH", rth);
+        functionDebug.Instance.registerFunction("toggleShowAll", showall);
         
         coroutine = GetUserPOSLoop(TICKTIME);
         StartCoroutine(coroutine);
 
         // This might be broken, make unique MyDelegates
         MyDelegate RearviewON = new MyDelegate(PressRearviewON);
-        ht.registerCollider(rearviewONButton.GetComponent<Collider>().name,RearviewON);
+        ht.registerCollider(rearviewONButton.GetComponent<Collider>().name, RearviewON);
 
         MyDelegate RearviewOFF = new MyDelegate(PressRearviewOFF);
-        ht.registerCollider(rearviewOFFButton.GetComponent<Collider>().name,RearviewOFF);
+        ht.registerCollider(rearviewOFFButton.GetComponent<Collider>().name, RearviewOFF);
 
+        MyDelegate RTH = new MyDelegate(PressRTH);
+        ht.registerCollider(rthButton.GetComponent<Collider>().name, RTH);
 
-        //Set Worldcenter
+        MyDelegate ShowAll = new MyDelegate(PressShowAll);
+        ht.registerCollider(showallButton.GetComponent<Collider>().name, ShowAll);
 
+        // set worldcenter
         _cube.transform.position = _camera.transform.position + _camera.transform.forward * 2.0f;
         DebugManager.Instance.LogUnityConsole("NavManager", "Setting World Center: " + _cube.transform.position);
-        persistentBehavior.UpdateBinding();
+        
+        //persistentBehavior.UpdateBinding();
     }
 
-    private void OnDestroy() {
+    private void OnDestroy() 
+    {
         
     }
 
     // Update is called once per frame
     void Update()
     {
-
+        if (rth_status)
+        {
+            foreach (GameObject obj in waypoint_meshes)
+            {
+                var col = obj.GetComponent<Renderer>().material.color;
+                col.a = 1.0f / ((float)(_camera.transform.position - obj.transform.position).magnitude / 10.0f);
+                obj.GetComponent<Renderer>().material.color = col;
+            }
+        }
     }
 
+    private int counterr = 0;
     private IEnumerator GetUserPOSLoop(float waitTime)
     {
-
+        
         while (true)
         {
+            // temp code to test
+            if (counterr == 0)
+                PressRTH();
+            if (counterr == 10)
+                PressRTH();
+            if (counterr == 20)
+                PressShowAll();
+            if (counterr == 30)
+                PressShowAll();
+
+
+            counterr++;
+            // end temp code
+
             UserPosition tmpPos = new UserPosition(DateTime.Now, _camera.transform.position);
+
+            
             //_cube.transform.rotation = _camera.transform.rotation;
 
             //DebugManager.Instance.LogUnityConsole("NavManager", "New Coordniate: " + tmpPos.position);
             userPositions[userPosCounter] = tmpPos;
 
-            if (userPosCounter >= (BACKUPTIMESECONDS/TICKTIME)-1)
+            // Make a waypoint game object
+            GameObject temp = Instantiate(waypoint_mesh, tmpPos.position, Quaternion.identity, _cube.transform);
+            waypoint_meshes.Add(temp);
+
+            if (userPosCounter >= (NUMOFOBJECTS)-1)
             {
                 // save to backup
                 // for now just deleate coords
-                ShowAllUserPositions(true);
+                
+                
                 InitUserPositions();
                 userPosCounter = 0;
 
@@ -108,31 +172,65 @@ public class NavManager : MonoBehaviour
     {
         DebugManager.Instance.LogBoth("Clearing User Coordniates...");
         userPositions.Clear();
-        for (int i=0; i<BACKUPTIMESECONDS/TICKTIME; i++)
+
+        foreach (GameObject obj in waypoint_meshes)
+        {
+            Destroy(obj);
+        }
+        waypoint_meshes.Clear();
+
+        for (int i=0; i<NUMOFOBJECTS; i++)
         {
             userPositions.Add(new UserPosition());
         }
     }
 
-    private void ShowAllUserPositions(bool state)
+    public void PressRTH()
     {
+        rth_status = !rth_status;
+        showall_status = false;
+        UpdateStatusText();
+
         foreach (GameObject obj in waypoint_meshes)
         {
-            Destroy(obj);
+            obj.SetActive(rth_status);
         }
-        
-        waypoint_meshes.Clear();
 
+    }
 
-        if (state)
+    public void PressShowAll()
+    {
+        showall_status = !showall_status;
+        rth_status = false;
+        UpdateStatusText();
+
+        foreach (GameObject obj in waypoint_meshes)
         {
-            foreach (UserPosition pos in userPositions)
-            {
-                GameObject temp = Instantiate(waypoint_mesh, pos.position, Quaternion.identity);
-                waypoint_meshes.Add(temp);
-            }
+            obj.SetActive(showall_status);
         }
-        
+    }
+
+    private void UpdateStatusText()
+    {
+        if (rth_status)
+        {
+            rth_text.SetText("ON");
+            rth_text.color = new Color32(0, 255, 0, 255);   // green
+        } else
+        {
+            rth_text.SetText("OFF");
+            rth_text.color = new Color32(255, 0, 0, 255);   // red
+        }
+
+        if (showall_status)
+        {
+            showall_text.SetText("ON");
+            showall_text.color = new Color32(0, 255, 0, 255);   // green
+        } else
+        {
+            showall_text.SetText("OFF");
+            showall_text.color = new Color32(255, 0, 0, 255);   // red
+        }
     }
 
 
@@ -142,7 +240,17 @@ public class NavManager : MonoBehaviour
         rearviewOFFButton.GetComponent<Renderer>().material = buttonMat;
 
         // spawn camera
-        camerasManager.SpawnRearviewCam();
+        camerasManager.spawnCam();
+        
+        if(REAR_CAM.getConnected())
+        {
+            Debug.Log("START STREAM");
+            REAR_CAM.startStream();
+        }
+        else
+        {
+            DebugManager.Instance.LogSceneConsole("ERROR: CAMERA DISCONNECTED");
+        }
     }
 
     public void PressRearviewOFF()
@@ -151,19 +259,47 @@ public class NavManager : MonoBehaviour
         rearviewONButton.GetComponent<Renderer>().material = buttonMat;
         
         //Despawn camera
-        camerasManager.DestroyRearviewCam();
+        camerasManager.destroyCam();
+        if(REAR_CAM.getConnected())
+        {
+            REAR_CAM.stopStream();
+        }
+        else
+        {
+            DebugManager.Instance.LogSceneConsole("ERROR: CAMERA DISCONNECTED");
+        }
     }
 
     public void PressGloveON()
     {
         gloveONButton.GetComponent<Renderer>().material = buttonHoverMat;
         gloveOFFButton.GetComponent<Renderer>().material = buttonMat;
+
+        camerasManager.spawnCam();
+        if(GLOVE_CAM.getConnected())
+        {
+            GLOVE_CAM.startStream();
+        }
+        else
+        {
+            DebugManager.Instance.LogSceneConsole("ERROR: CAMERA DISCONNECTED");
+        }
     }
 
     public void PressGloveOFF()
     {
         gloveOFFButton.GetComponent<Renderer>().material = buttonHoverMat;
         gloveONButton.GetComponent<Renderer>().material = buttonMat;
+
+        camerasManager.destroyCam();
+        if(GLOVE_CAM.getConnected())
+        {
+            GLOVE_CAM.stopStream();
+        }
+        else
+        {
+            DebugManager.Instance.LogSceneConsole("ERROR: CAMERA DISCONNECTED");
+        }
     }
 
     //ML Code

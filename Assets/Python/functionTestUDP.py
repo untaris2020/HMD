@@ -7,8 +7,6 @@ import sys
 #Enter the command to get the behavior 
 #The program will run until a q command is received (thus q is reserved and can't be used)
 
-
-
 # Create a UDP socket
 sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 
@@ -27,9 +25,7 @@ try:
             break
         else:
             # Send data
-            print("Sending data")
             sent = sock.sendto(message.encode(), server_address)
-            print("Data sent")
 finally:
     print ( 'closing socket')
     sock.close()

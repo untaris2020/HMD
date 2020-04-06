@@ -21,7 +21,7 @@ public class functionDebug : MonoBehaviour
 
     public int listenPort = 10102;
     public string IP = "127.0.0.1";
-    public static bool messageReceived = false;
+    private bool messageReceived;
     private string recvMsg; 
     private Dictionary<string, Delegate> functions = new Dictionary<string, Delegate>();
 
@@ -30,8 +30,9 @@ public class functionDebug : MonoBehaviour
     UdpState s;
 
     private void Awake()
-    { 
+    {
         Instance = this;
+        messageReceived = false;
     }
 
     private void OnDestroy()
@@ -49,18 +50,29 @@ public class functionDebug : MonoBehaviour
     {
         if(messageReceived)
         {
-            runFunction();
+           runFunction();
         }
     }
 
     public void registerFunction(string cmd, Delegate function)
-    {
+    {     
         DebugManager.Instance.LogBoth("funcDebug:","Adding Function: " + cmd);
         if(!(functions.ContainsKey(cmd)))
         {
             functions.Add(cmd, function);
         }
-        
+    }
+
+    public void deregisterFunction(string cmd)
+    {
+        if(functions.ContainsKey(cmd))
+        {
+            functions.Remove(cmd);
+        }
+        else
+        {
+            DebugManager.Instance.LogUnityConsole("ERROR Removing Function: " + cmd);
+        }
     }
 
     void ReceiveMessages()
@@ -71,7 +83,6 @@ public class functionDebug : MonoBehaviour
         s = new UdpState();
         s.u = listener;
         s.e = groupEP;
-        Debug.Log("STarting receive");
         listener.BeginReceive(new System.AsyncCallback(ReceiveCallback), s); 
     }
 
@@ -83,7 +94,9 @@ public class functionDebug : MonoBehaviour
         byte[] receiveBytes = u.EndReceive(ar, ref e);
         string received = Encoding.ASCII.GetString(receiveBytes);
 
-        DebugManager.Instance.LogBoth("funcDebug:", "Received: " + received);
+
+        //FIXME -- This causes function to return and it shouldn't
+        //DebugManager.Instance.LogBoth("funcDebug:", "Received: " + received);
         messageReceived = true;
         recvMsg = received;
     }

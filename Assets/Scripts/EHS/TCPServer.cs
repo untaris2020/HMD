@@ -8,203 +8,75 @@ using System.Threading;
 using System.Net.Sockets;
 using System.Collections;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
 
-
+#region TCPServer Class
 public class TCPServer : MonoBehaviour
 {
-    // Setting IP and PORT
-    public string IP = "172.20.128.55";
-    public int PORT = 4050;
+    public static TCPServer Instance;
 
-    // Setting Byte Size Parameters
-    private int maxByteSize = 30000;
+    private string BEG = "<BEG>";
+    private string EOF = "<EOF>";
 
-    // TCPListener to listen for incomming TCP connection requests.
-    private TcpListener tcpListener;
+    #region Public Variables
+    public string IP;
+    public int PORT;
+    #endregion
 
-    // Background thread for TcpServer workload.
-    private Thread tcpListenerThread;
+    #region Private Variables
+    private int maxByteSize = 30000; // Setting Byte Size Parameters
+    private TcpListener tcpListener; // TCPListener to listen for incomming TCP connection requests.
+    private Thread tcpListenerThread; // Background thread for TcpServer workload.
+    private TcpClient tempTcpClient;
 
-    // Create handle to connected tcp client.
-    private TcpClient connectedTcpClient;
 
-    private bool rstSvr;
-    private bool streaming;
-    private bool reqSent; 
+    //Instatiated Object References
+    public IMUHandler IMU_CHEST;
+    public IMUHandler IMU_GLOVE;
+    public CameraHandler HEAD_CAM; 
+    public CameraHandler GLOVE_CAM;
 
-    private delegate void funcDelegate();
+    //public GameObject SYSTEM;
+    #endregion
 
-    protected struct IMUMsg
-    {
-        public int seqID;
-        public int x;
-        public int y;
-        public int z;
-        public int xGyro;
-        public int yGyro;
-        public int zGyro;
+    #region Unity Methods
+    /// <summary>
+    /// Start function that starts the TCP Thread and initializes variables 
+    /// </summary>
+    private void Awake()
+    { 
+        Instance = this;
     }
 
-    // Use this for initialization
+
     void Start()
     {
-        rstSvr = false;
+        //Get ICD Script also on EHS Obj
         tcpListenerThread = new Thread(new ThreadStart(ListenForIncommingRequests));
         tcpListenerThread.IsBackground = true;
-        tcpListenerThread.Start();	
-        streaming = false;
-        reqSent = false; 
-
-        funcDelegate tmpDelegate0 = new funcDelegate(startStream);
-        funcDelegate tmpDelegate1 = new funcDelegate(stopStream);
-        functionDebug.Instance.registerFunction("start",tmpDelegate0);
-        functionDebug.Instance.registerFunction("stop",tmpDelegate1);
-
-        //Note: Uncomment the line below if the script is always active. Otherwise the controlling script will call this method to begin streaming
-        //startStream();
+        tcpListenerThread.Start();
     }
+    #endregion
 
-    private void Update()
-    {
-        if (streaming)
-        {
-            if (!reqSent)
-            {
-                Debug.Log("Sending message ");
-                SendMsg("START");
-                reqSent = true;
-            }
-        }
-    }
-
-    public void startStream()
-    {
-        Debug.Log("Starting stream");
-        streaming = true; 
-    }
-
-    public void stopStream()
-    {
-        streaming = false;
-        SendMsg("STOP");
-        //restartServer();
-        reqSent = false; 
-    }
-
-    // Runs in background TcpServerThread; Handles incomming TCPClient requests
+    #region Private Methods
+    /// <summary>
+    /// Runs in background TcpServerThread; Handles incomming TCPClient requests
+    /// </summary>
     private void ListenForIncommingRequests()
     {
         try
         {
-            Debug.Log("0");
-
             // Create listener on localhost.
             tcpListener = new TcpListener(IPAddress.Parse(IP), PORT);
             tcpListener.Start();
             Debug.Log("Server is listening\n");
-            Byte[] bytes = new Byte[maxByteSize];
-            Debug.Log("0.5");
+
             while (true)
             {
-                Debug.Log("1");
-                using (connectedTcpClient = tcpListener.AcceptTcpClient())
-                {
-                    Debug.Log("2");
-                    // Get a stream object for reading
-                    using (NetworkStream stream = connectedTcpClient.GetStream())
-                    {
-                        Debug.Log("3");
-                        int length;
-                        // Read incomming stream into byte arrary.
-                        while ((length = stream.Read(bytes, 0, bytes.Length)) != 0)
-                        {
-                            Debug.Log("4");
-                            var incommingData = new byte[length];
-                            Array.Copy(bytes, 0, incommingData, 0, length);
-
-                            // Convert byte array to string message.
-                            string clientMessage = Encoding.ASCII.GetString(incommingData);
-
-                            //Process client string here 
-
-                            //First I need to get my first <BEG> and my last full <EOF> so that I don't break
-
-                            int idx = clientMessage.IndexOf("<BEG>");
-
-                            if (idx != -1)
-                            {
-                                clientMessage = clientMessage.Substring(idx);
-                                idx = clientMessage.LastIndexOf("<EOF>");
-                                if (idx != -1)
-                                {
-                                    clientMessage = clientMessage.Substring(0, idx);
-                                }
-                                else
-                                {
-                                    continue;
-                                }
-                            }
-                            else
-                            {
-                                continue;
-                            }
-
-                            Debug.Log("Formatted Msg: " + clientMessage);
-
-                            //Every string will be wrapped in <BEG><EOF> tags so grab those to begin
-                            string[] packets = clientMessage.Split(new string[] { "<EOF>" }, StringSplitOptions.None);
-
-                            var messages = new List<string>();
-
-                            foreach (var pack in packets)
-                            {
-
-                                idx = pack.IndexOf("<BEG>");
-                                if (idx != -1)
-                                {
-                                    messages.Add(pack.Substring(idx + 5));
-                                }
-                                else
-                                {
-                                    //its the full message already 
-                                    messages.Add(pack);
-                                }
-                            }
-
-                            /*
-                                * 
-                                * Insert Packet processing here 
-                                *               
-                            */
-                            int tmpSeqID = -1; //temp seq ID that stores the most up to date seq 
-                            IMUMsg imuPacket = new IMUMsg();
-                            foreach (var msg in messages)
-                            {
-
-                                string[] tmp = msg.Split(new string[] { "$" }, StringSplitOptions.None);
-                                if (tmp.Length == 7)
-                                {
-                                    if (Int32.Parse(tmp[0]) > tmpSeqID) //If it is a newer packet 
-                                    {
-                                        tmpSeqID = Int32.Parse(tmp[0]); //Update the current newest value 
-
-                                        //Assign temp packet 
-                                        IMUMsg tempPkt = new IMUMsg();
-                                        tempPkt.seqID = Int32.Parse(tmp[0]);
-                                        tempPkt.x = Int32.Parse(tmp[1]);
-                                        tempPkt.y = Int32.Parse(tmp[2]);
-                                        tempPkt.z = Int32.Parse(tmp[3]);
-                                        tempPkt.xGyro = Int32.Parse(tmp[4]);
-                                        tempPkt.yGyro = Int32.Parse(tmp[5]);
-                                        tempPkt.zGyro = Int32.Parse(tmp[6]);
-
-                                        imuPacket = tempPkt; //assign the most up to date packet 
-                                    }
-                                }
-                            }
-                        }                          
-                    }
-                }
+                tempTcpClient = tcpListener.AcceptTcpClient();
+                Debug.Log("Connection");
+                Thread clientThread = new Thread(new ParameterizedThreadStart(HandleClientComm));
+                clientThread.Start(tempTcpClient);
             }
         }
         catch (SocketException socketException)
@@ -212,46 +84,117 @@ public class TCPServer : MonoBehaviour
             Debug.Log("SocketException " + socketException.ToString());
         }
     }
-    private void restartServer()
-    {
-        connectedTcpClient.Close();
-        tcpListener.Stop();
-        tcpListenerThread.Abort();
-        tcpListenerThread = new Thread (new ThreadStart(ListenForIncommingRequests)); 		
-		tcpListenerThread.IsBackground = true; 		
-		tcpListenerThread.Start();
-        rstSvr = false;
-        reqSent = false; 
-    }
 
-     /// <summary>
-     /// Send message function that takes in a message string and sends to active client if one is available
-     /// </summary>
-     /// <param name="message"></param>
-    private void SendMsg(string message)
-    { 		
-		if (connectedTcpClient == null)
-        {             
-			return;         
-		}  		
-		
-		try
-        { 			
-			// Get a stream object for writing. 			
-			NetworkStream stream = connectedTcpClient.GetStream(); 			
-			if (stream.CanWrite)
+
+    private void HandleClientComm(object client)
+    {
+        //VARIABLE DECLARATION FOR PARSE
+        string parsed = "";
+        string msg;
+
+        Byte[] bytes = new Byte[maxByteSize];
+        NetworkStream stream =  ((TcpClient)client).GetStream();
+        int length;
+        // Read incomming stream into byte arrary.
+        while ((length = stream.Read(bytes, 0, bytes.Length)) != 0)
+        {
+            var incommingData = new byte[length];
+            Array.Copy(bytes, 0, incommingData, 0, length);
+
+            // Convert byte array to string message.
+            string clientMessage = Encoding.ASCII.GetString(incommingData);
+
+            
+            //Check if valid packet is received 
+            parsed += clientMessage;
+
+            Regex reg = new Regex(@"<BEG>(\d*)[$](.*)<EOF>");
+
+            if (reg.IsMatch(clientMessage)) //Got a match
             {
-                string serverMsg = "<BEG>" + message + "<EOF>";
-				// Convert string message to byte array.                 
-				byte[] serverMessageAsByteArray = Encoding.ASCII.GetBytes(message); 				
-				// Write byte array to socketConnection stream.               
-				stream.Write(serverMessageAsByteArray, 0, serverMessageAsByteArray.Length);               
-				Debug.Log("Server sent his message - should be received by client");           
-			}       
-		} 		
-		catch (SocketException socketException)
-        {             
-			Debug.Log("Socket exception: " + socketException);         
-		} 	
-	} 
-}// END Server Class
+                string[] remover = { BEG, EOF };
+                string[] words = (parsed.Split(remover, System.StringSplitOptions.RemoveEmptyEntries));
+
+                parsed = "";
+
+                msg = words[0];
+
+                /*PARSING COMPLETE*/
+
+                //Identify Client Msg here
+
+                //Parse out msg string
+                string id = "";
+                string body = "";
+                int idx = msg.IndexOf("$");
+                if (idx != -1)
+                {
+                    id = msg.Substring(0, idx);
+                }
+                //handle processing
+                if (Int32.TryParse(id, out int msgID))
+                {
+                    body = msg.Substring(idx + 1);
+                    switch (msgID)
+                    {
+                        case (int)packetICD.Type.SYSTEM:
+                            break;
+                        case (int)packetICD.Type.CHEST_IMU:
+                            if (body == "REG")
+                            {
+                                IMU_CHEST.initialize((TcpClient)client);
+                            }
+                            else
+                            {
+                                IMU_CHEST.processPacket(body);
+                            }
+                            break;
+                        case (int)packetICD.Type.GLOVE_IMU:
+                            if (body == "REG")
+                            {
+                                IMU_GLOVE.initialize((TcpClient)client);
+                            }
+                            else
+                            {
+                                IMU_GLOVE.GetComponent<IMUHandler>().processPacket(body);
+                            }
+                            break;
+                        case (int)packetICD.Type.TOGGLE_SCREEN:
+                            break;
+                        case (int)packetICD.Type.HEAD_CAM:
+                            if (body == "REG")
+                            {
+                                HEAD_CAM.initialize((TcpClient)client);
+                            }
+                            else
+                            {
+                                HEAD_CAM.processPacket(body);
+                            }
+                            break;
+                        case (int)packetICD.Type.GLOVE_CAM:
+                            if (body == "REG")
+                            {
+                                GLOVE_CAM.initialize((TcpClient)client);
+                            }
+                            else
+                            {
+                                GLOVE_CAM.processPacket(body);
+                            }
+                            break;
+                        case (int)packetICD.Type.FORCE_SENSOR:
+                            break;
+                        default:
+                            DebugManager.Instance.LogUnityConsole("ID Unknown: " + msgID);
+                            break;
+                    }
+                }
+                else
+                {
+                    DebugManager.Instance.LogSceneConsole("ERR: ID " + id + " could not be parsed to int");
+                }
+            }
+        }            
+    }
+    #endregion
+}
+#endregion

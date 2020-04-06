@@ -527,7 +527,7 @@ public class StableCheckObject
                 if (obj.flags[id] == -1)
                 {
                     DebugManager.Instance.LogUnityConsole(this.GetType().Name, "Warning: " + name + " low");
-                    ErrorHandler.Instance.HandleError(0, "Warning: " + name + " low");
+                    //ErrorHandler.Instance.HandleError(0, "Warning: " + name + " low");
 
                   
                     errorReady = false;
@@ -535,7 +535,7 @@ public class StableCheckObject
                 else if (obj.flags[id] == 1)
                 {
                     DebugManager.Instance.LogUnityConsole(this.GetType().Name, "Warning: " + name + " high");
-                    ErrorHandler.Instance.HandleError(0, "Warning: " + name + " high");
+                    //ErrorHandler.Instance.HandleError(0, "Warning: " + name + " high");
                     errorReady = false;
                 }
 
