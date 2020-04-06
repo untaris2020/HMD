@@ -1,4 +1,7 @@
-# Magic Leap Unity Project Template
+# ARIS HMD - HID Branch
+
+This Branch is now outdated
+All new changes are being tracked in master
 
 ## Project
 
