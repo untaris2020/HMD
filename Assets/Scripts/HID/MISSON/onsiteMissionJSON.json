@@ -1,0 +1,710 @@
+{
+   "SpaceWalkID":1,
+   "SuperMissions":[
+      {
+         "SuperMissionID":1,
+         "SuperMissionText":"IVA PROCEDURES",
+         "SuperMissionNumeral":"1",
+         "Missions":[
+            {
+               "MissionID":1,
+               "MissionText":"PREPARE UIA",
+               "MissionNumeral":"1.1",
+               "Tasks":[
+                  {
+                     "TaskID":1,
+                     "TaskText":"Ensure that...",
+                     "TaskNumeral":"1.1.1",
+                     "TaskProgram":"",
+                     "SubTasks":[
+                        {
+                           "SubTaskID":1,
+                           "SubTaskText":"POWER EV-1 and 2 are set to OFF",
+                           "SubTaskProgram":"LOAD,UIA,1_1_1_1,down"
+                        },
+                        {
+                           "SubTaskID":2,
+                           "SubTaskText":"POWER EV-1 and 2 EMU LEDs are OFF",
+                           "SubTaskProgram":"LOAD,UIA,1_1_1_2,down"
+                        },
+                        {
+                           "SubTaskID":3,
+                           "SubTaskText":"WATER SUPPLY EV-1 and 2 is set to CLOSE",
+                           "SubTaskProgram":"LOAD,UIA,1_1_1_3,down"
+                        },
+                        {
+                           "SubTaskID":4,
+                           "SubTaskText":"OXYGEN EV-1 and 2 are set to CLOSE",
+                           "SubTaskProgram":"LOAD,UIA,1_1_1_4,down"
+                        }
+                     ]
+                  },
+                  {
+                     "TaskID":2,
+                     "TaskText":"Depressurize the UIA O2 supply lines",
+                     "TaskNumeral":"1.1.2",
+                     "TaskProgram":"",
+                     "SubTasks":[
+                        {
+                           "SubTaskID":1,
+                           "SubTaskText":"Switch O2 Vent to OPEN",
+                           "SubTaskProgram":"LOAD,UIA,1_1_2_1,up"
+                        },
+                        {
+                           "SubTaskID":2,
+                           "SubTaskText":"When UIA Supply Press < 23 psi, proceed",
+                           "SubTaskProgram":""
+                        }
+                     ]
+                  },
+                  {
+                     "TaskID":3,
+                     "TaskText":"Close O2",
+                     "TaskNumeral":"1.1.3",
+                     "TaskProgram":"",
+                     "SubTasks":[
+                        {
+                           "SubTaskID":1,
+                           "SubTaskText":"Switch O2 Vent - CLOSE",
+                           "SubTaskProgram":"LOAD,UIA,1_1_3_1,down"
+                        }
+                     ]
+                  }
+               ]
+            },
+            {
+               "MissionID":2,
+               "MissionText":"FILL AND DUMP UIA AND SCU O2 LINES",
+               "MissionNumeral":"1.2",
+               "Tasks":[
+                  {
+                     "TaskID":1,
+                     "TaskText":"Pressurize EVA 1",
+                     "TaskNumeral":"1.2.1",
+                     "TaskProgram":"",
+                     "SubTasks":[
+                        {
+                           "SubTaskID":1,
+                           "SubTaskText":"Check that O2 VENT is set to CLOSED",
+                           "SubTaskProgram":"LOAD,UIA,1_2_1_1,down"
+                        },
+                        {
+                           "SubTaskID":2,
+                           "SubTaskText":"Switch OXYGEN EV-1 to OPEN",
+                           "SubTaskProgram":"LOAD,UIA,1_2_1_2,up"
+                        },
+                        {
+                           "SubTaskID":3,
+                           "SubTaskText":"When UIA Supply Press is greater than 3000 psi and stable, proceed",
+                           "SubTaskProgram":""
+                        }
+                     ]
+                  },
+                  {
+                     "TaskID":2,
+                     "TaskText":"Depressurize EVA 1",
+                     "TaskNumeral":"1.2.2",
+                     "TaskProgram":"",
+                     "SubTasks":[
+                        {
+                           "SubTaskID":1,
+                           "SubTaskText":"Switch OXYGEN EV-1 to CLOSE",
+                           "SubTaskProgram":"LOAD,UIA,1_2_2_1,down"
+                        },
+                        {
+                           "SubTaskID":2,
+                           "SubTaskText":"Switch O2 Vent to OPEN",
+                           "SubTaskProgram":"LOAD,UIA,1_2_2_2,up"
+                        },
+                        {
+                           "SubTaskID":3,
+                           "SubTaskText":"When UIA Supply Pressure is less than 23 and stable psi, proceed",
+                           "SubTaskProgram":""
+                        }
+                     ]
+                  },
+                  {
+                     "TaskID":3,
+                     "TaskText":"REPEAT - Pressurize EVA 1",
+                     "TaskNumeral":"1.2.3",
+                     "TaskProgram":"",
+                     "SubTasks":[
+                        {
+                           "SubTaskID":1,
+                           "SubTaskText":"Check that O2 VENT is set to CLOSED",
+                           "SubTaskProgram":"LOAD,UIA,1_2_1_1,down"
+                        },
+                        {
+                           "SubTaskID":2,
+                           "SubTaskText":"Switch OXYGEN EV-1 to OPEN",
+                           "SubTaskProgram":"LOAD,UIA,1_2_1_2,up"
+                        },
+                        {
+                           "SubTaskID":3,
+                           "SubTaskText":"When UIA Supply Press is greater than 3000 psi and stable, proceed",
+                           "SubTaskProgram":""
+                        }
+                     ]
+                  },
+                  {
+                     "TaskID":4,
+                     "TaskText":"REPEAT - Depressurize EVA 1",
+                     "TaskNumeral":"1.2.4",
+                     "TaskProgram":"",
+                     "SubTasks":[
+                        {
+                           "SubTaskID":1,
+                           "SubTaskText":"Switch OXYGEN EV-1 to CLOSE",
+                           "SubTaskProgram":"LOAD,UIA,1_2_2_1,down"
+                        },
+                        {
+                           "SubTaskID":2,
+                           "SubTaskText":"Switch O2 Vent to OPEN",
+                           "SubTaskProgram":"LOAD,UIA,1_2_2_2,up"
+                        },
+                        {
+                           "SubTaskID":3,
+                           "SubTaskText":"When UIA Supply Pressure is less than 23 and stable psi, proceed",
+                           "SubTaskProgram":""
+                        }
+                     ]
+                  }
+               ]
+            },
+            {
+               "MissionID":3,
+               "MissionText":"FINAL PRESSURIZATION",
+               "MissionNumeral":"1.3",
+               "Tasks":[
+                  {
+                     "TaskID":1,
+                     "TaskText":"Pressurize EVA 1",
+                     "TaskNumeral":"1.3.1",
+                     "TaskProgram":"",
+                     "SubTasks":[
+                        {
+                           "SubTaskID":1,
+                           "SubTaskText":"Check that O2 VENT is set to CLOSED",
+                           "SubTaskProgram":"LOAD,UIA,1_3_1_1,down"
+                        },
+                        {
+                           "SubTaskID":2,
+                           "SubTaskText":"Switch OXYGEN EV-1 to OPEN",
+                           "SubTaskProgram":"LOAD,UIA,1_3_1_2,up"
+                        },
+                        {
+                           "SubTaskID":3,
+                           "SubTaskText":"When UIA Supply Press is greater than 3000 psi and stable, proceed",
+                           "SubTaskProgram":""
+                        }
+                     ]
+                  },
+                  {
+                     "TaskID":2,
+                     "TaskText":"Close OXYGEN",
+                     "TaskNumeral":"1.3.2",
+                     "TaskProgram":"",
+                     "SubTasks":[
+                        {
+                           "SubTaskID":1,
+                           "SubTaskText":"Switch OXYGEN EV-1 to CLOSE",
+                           "SubTaskProgram":"LOAD,UIA,1_3_2_1,up"
+                        }
+                     ]
+                  }
+               ]
+            },
+            {
+               "MissionID":4,
+               "MissionText":"PREPARATION FOR DONNING",
+               "MissionNumeral":"1.4",
+               "Tasks":[
+                  {
+                     "TaskID":1,
+                     "TaskText":"EV-1 Powering up EMU",
+                     "TaskNumeral":"1.4.1",
+                     "TaskProgram":"",
+                     "SubTasks":[
+                        {
+                           "SubTaskID":1,
+                           "SubTaskText":"Check that UIA POWER EV-1 is set to OFF",
+                           "SubTaskProgram":"LOAD,UIA,1_4_1_1,down"
+                        },
+                        {
+                           "SubTaskID":2,
+                           "SubTaskText":"Check that UIA POWER EV-1 EMU LED is OFF",
+                           "SubTaskProgram":"LOAD,UIA,1_4_1_2,down"
+                        },
+                        {
+                           "SubTaskID":3,
+                           "SubTaskText":"Check that O2 supply press gauge is greater than 3000",
+                           "SubTaskProgram":""
+                        },
+                        {
+                           "SubTaskID":4,
+                           "SubTaskText":"Switch DCU POWER to BATT",
+                           "SubTaskProgram":"LOAD,DCU,1_4_1_4,up"
+                        },
+                        {
+                           "SubTaskID":5,
+                           "SubTaskText":"Switch UIA POWER EV-1 to ON",
+                           "SubTaskProgram":"LOAD,UIA,1_4_1_5,up"
+                        },
+                        {
+                           "SubTaskID":6,
+                           "SubTaskText":"Check that EV-1 EMU LED is ON",
+                           "SubTaskProgram":"LOAD,UIA,1_4_1_6,up"
+                        }
+                     ]
+                  },
+                  {
+                     "TaskID":2,
+                     "TaskText":"Don the EMU",
+                     "TaskNumeral":"1.4.2",
+                     "TaskProgram":"",
+                     "SubTasks":[
+                        {
+                           "SubTaskID":1,
+                           "SubTaskText":"Affix DCU to body",
+                           "SubTaskProgram":""
+                        }
+                     ]
+                  },
+                  {
+                     "TaskID":3,
+                     "TaskText":"Prepare DCU",
+                     "TaskNumeral":"1.4.3",
+                     "TaskProgram":"",
+                     "SubTasks":[
+                        {
+                           "SubTaskID":1,
+                           "SubTaskText":"Switch DCU POWER to SCU",
+                           "SubTaskProgram":"LOAD,DCU,1_4_3_1,down"
+                        },
+                        {
+                           "SubTaskID":2,
+                           "SubTaskText":"Switch DCU FAN to PRI",
+                           "SubTaskProgram":"LOAD,DCU,1_4_3_2,up"
+                        },
+                        {
+                           "SubTaskID":3,
+                           "SubTaskText":"Switch DCU RCA to CO2",
+                           "SubTaskProgram":"LOAD,DCU,1_4_3_3,up"
+                        },
+                        {
+                           "SubTaskID":4,
+                           "SubTaskText":"Switch Secondary O2 to OFF",
+                           "SubTaskProgram":"LOAD,DCU,1_4_3_4,down"
+                        },
+                        {
+                           "SubTaskID":5,
+                           "SubTaskText":"Switch PUMP to PRI",
+                           "SubTaskProgram":"LOAD,DCU,1_4_3_5,up"
+                        },
+                        {
+                           "SubTaskID":6,
+                           "SubTaskText":"Switch AUX LTC to ON",
+                           "SubTaskProgram":"LOAD,DCU,1_4_3_6,up"
+                        }
+                     ]
+                  }
+               ]
+            },
+            {
+               "MissionID":5,
+               "MissionText":"PROCEED TO TRANSLATION PROCEDURES",
+               "MissionNumeral":"1.5",
+               "Tasks":[
+                  {
+                     "TaskID":1,
+                     "TaskText":"Continue to translation proceedures",
+                     "TaskNumeral":"1.5.1",
+                     "TaskProgram":"",
+                     "SubTasks":[
+                        {
+                           "SubTaskID":1,
+                           "SubTaskText":"",
+                           "SubTaskProgram":""
+                        }
+                     ]
+                  }
+               ]
+            }
+         ]
+      },
+      {
+         "SuperMissionID":2,
+         "SuperMissionText":"TRANSLATION PROCEDURES",
+         "SuperMissionNumeral":"2",
+         "Missions":[
+            {
+               "MissionID":1,
+               "MissionText":"HEAD TO EVA WORKSITE",
+               "MissionNumeral":"2.1",
+               "Tasks":[
+                  {
+                     "TaskID":1,
+                     "TaskText":"Exit the airlock and begin translation toward the EVA worksite",
+                     "TaskNumeral":"2.1.1",
+                     "TaskProgram":"",
+                     "SubTasks":[
+                        {
+                           "SubTaskID":1,
+                           "SubTaskText":"Translate to handrail 1",
+                           "SubTaskProgram":"NAV,2.30,0.5,1.45"
+                        },
+                        {
+                           "SubTaskID":2,
+                           "SubTaskText":"Translate to handrail 2",
+                           "SubTaskProgram":"NAV,6.80,0.5,-1.55"
+                        },
+                        {
+                           "SubTaskID":3,
+                           "SubTaskText":"Translate to handrail 3",
+                           "SubTaskProgram":"NAV,8.75,0.5,1.55"
+                        },
+                        {
+                           "SubTaskID":4,
+                           "SubTaskText":"Translate to handrail 4",
+                           "SubTaskProgram":"NAV,9.8,0.5,-0.25"
+                        },
+                        {
+                           "SubTaskID":5,
+                           "SubTaskText":"Translate to handrail 5",
+                           "SubTaskProgram":"NAV,11.50,0.5,1.9"
+                        },
+                        {
+                           "SubTaskID":6,
+                           "SubTaskText":"Translate to handrail 6",
+                           "SubTaskProgram":"NAV,12.82,0.5,0.60"
+                        },
+                        {
+                           "SubTaskID":7,
+                           "SubTaskText":"Translate to the worksite",
+                           "SubTaskProgram":"NAV,15,0.5,2.5"
+                        }
+                     ]
+                  }
+               ]
+            }
+         ]
+      },
+      {
+         "SuperMissionID":3,
+         "SuperMissionText":"EVA PROCEDURES",
+         "SuperMissionNumeral":"3",
+         "Missions":[
+            {
+               "MissionID":1,
+               "MissionText":"REMOVE FAILED BMRRM",
+               "MissionNumeral":"3.1",
+               "Tasks":[
+                  {
+                     "TaskID":1,
+                     "TaskText":"Uninstall thermal cover",
+                     "TaskNumeral":"3.1.1",
+                     "TaskProgram":"",
+                     "SubTasks":[
+                        {
+                           "SubTaskID":1,
+                           "SubTaskText":"Detach flap 9",
+                           "SubTaskProgram":""
+                        },
+                        {
+                           "SubTaskID":2,
+                           "SubTaskText":"Detach flap 7",
+                           "SubTaskProgram":""
+                        },
+                        {
+                           "SubTaskID":3,
+                           "SubTaskText":"Detach flap 2",
+                           "SubTaskProgram":""
+                        },
+                        {
+                           "SubTaskID":4,
+                           "SubTaskText":"Detach flap 10",
+                           "SubTaskProgram":""
+                        },
+                        {
+                           "SubTaskID":5,
+                           "SubTaskText":"Detach flap 4",
+                           "SubTaskProgram":""
+                        },
+                        {
+                           "SubTaskID":6,
+                           "SubTaskText":"Detach flap 8",
+                           "SubTaskProgram":""
+                        },
+                        {
+                           "SubTaskID":7,
+                           "SubTaskText":"Detach flap 6",
+                           "SubTaskProgram":""
+                        }
+                     ]
+                  },
+                  {
+                     "TaskID":2,
+                     "TaskText":"Demate Connectors",
+                     "TaskNumeral":"3.1.2",
+                     "TaskProgram":"",
+                     "SubTasks":[
+                        {
+                           "SubTaskID":1,
+                           "SubTaskText":"J1 (PRIMARY POWER)",
+                           "SubTaskProgram":"LOAD,UIA,3_1_2_1,up"
+                        },
+                        {
+                           "SubTaskID":2,
+                           "SubTaskText":"J2 (SECONDARY POWER)",
+                           "SubTaskProgram":"LOAD,UIA,3_1_2_2,up"
+                        },
+                        {
+                           "SubTaskID":3,
+                           "SubTaskText":"J3 (1553 Ch. A)",
+                           "SubTaskProgram":"LOAD,UIA,3_1_2_3,up"
+                        },
+                        {
+                           "SubTaskID":4,
+                           "SubTaskText":"J4 (1553 Ch. B)",
+                           "SubTaskProgram":"LOAD,UIA,3_1_2_4,up"
+                        }
+                     ]
+                  },
+                  {
+                     "TaskID":3,
+                     "TaskText":"Drive Dual Latch fasteners to 'SAW LATCH' position (21-25 turns)",
+                     "TaskNumeral":"3.1.3",
+                     "TaskProgram":"",
+                     "SubTasks":[
+                        {
+                           "SubTaskID":1,
+                           "SubTaskText":"H2",
+                           "SubTaskProgram":"LOAD,UIA,3_1_3_1,up"
+                        },
+                        {
+                           "SubTaskID":2,
+                           "SubTaskText":"H3",
+                           "SubTaskProgram":"LOAD,UIA,3_1_3_2,up"
+                        },
+                        {
+                           "SubTaskID":3,
+                           "SubTaskText":"H4",
+                           "SubTaskProgram":"LOAD,UIA,3_1_3_3,up"
+                        }
+                     ]
+                  },
+                  {
+                     "TaskID":4,
+                     "TaskText":"Unfasten housing fasteners (10-12 turns each)",
+                     "TaskNumeral":"3.1.4",
+                     "TaskProgram":"",
+                     "SubTasks":[
+                        {
+                           "SubTaskID":1,
+                           "SubTaskText":"H6",
+                           "SubTaskProgram":"LOAD,UIA,3_1_4_1,up"
+                        },
+                        {
+                           "SubTaskID":2,
+                           "SubTaskText":"H7",
+                           "SubTaskProgram":"LOAD,UIA,3_1_4_2,up"
+                        },
+                        {
+                           "SubTaskID":3,
+                           "SubTaskText":"H8",
+                           "SubTaskProgram":"LOAD,UIA,3_1_4_3,up"
+                        },
+                        {
+                           "SubTaskID":4,
+                           "SubTaskText":"H9",
+                           "SubTaskProgram":"LOAD,UIA,3_1_4_4,up"
+                        }
+                     ]
+                  },
+                  {
+                     "TaskID":5,
+                     "TaskText":"Unfasten vise clamp bolt H5 (18-20 turns)",
+                     "TaskNumeral":"3.1.5",
+                     "TaskProgram":"",
+                     "SubTasks":[
+                        {
+                           "SubTaskID":1,
+                           "SubTaskText":"H5",
+                           "SubTaskProgram":""
+                        }
+                     ]
+                  },
+                  {
+                     "TaskID":6,
+                     "TaskText":"Unfasten Center Fastener H1 (zip nut)",
+                     "TaskNumeral":"3.1.6",
+                     "TaskProgram":"",
+                     "SubTasks":[
+                        {
+                           "SubTaskID":1,
+                           "SubTaskText":"H1",
+                           "SubTaskProgram":"LOAD,UIA,3_1_6_1,up"
+                        }
+                     ]
+                  }
+               ]
+            },
+            {
+               "MissionID":2,
+               "MissionText":"INSTALL REPLACEMENT BMRRM",
+               "MissionNumeral":"3.2",
+               "Tasks":[
+                  {
+                     "TaskID":1,
+                     "TaskText":"Fasten Center Fastener H1 (zip nut)",
+                     "TaskNumeral":"3.2.1",
+                     "TaskProgram":"",
+                     "SubTasks":[
+                        {
+                           "SubTaskID":1,
+                           "SubTaskText":"H1",
+                           "SubTaskProgram":"LOAD,UIA,3_2_1_1,up"
+                        }
+                     ]
+                  },
+                  {
+                     "TaskID":2,
+                     "TaskText":"Fasten Vice Clamp bolt H5 (18-20 turns)",
+                     "TaskNumeral":"3.2.2",
+                     "TaskProgram":"",
+                     "SubTasks":[
+                        {
+                           "SubTaskID":1,
+                           "SubTaskText":"H5",
+                           "SubTaskProgram":""
+                        }
+                     ]
+                  },
+                  {
+                     "TaskID":3,
+                     "TaskText":"Fasten housing fasteners (10-12 turns each)",
+                     "TaskNumeral":"3.2.3",
+                     "TaskProgram":"",
+                     "SubTasks":[
+                        {
+                           "SubTaskID":1,
+                           "SubTaskText":"H6",
+                           "SubTaskProgram":"LOAD,UIA,3_2_3_1,up"
+                        },
+                        {
+                           "SubTaskID":2,
+                           "SubTaskText":"H7",
+                           "SubTaskProgram":"LOAD,UIA,3_2_3_2,up"
+                        },
+                        {
+                           "SubTaskID":3,
+                           "SubTaskText":"H8",
+                           "SubTaskProgram":"LOAD,UIA,3_2_3_3,up"
+                        },
+                        {
+                           "SubTaskID":4,
+                           "SubTaskText":"H9",
+                           "SubTaskProgram":"LOAD,UIA,3_2_3_4,up"
+                        }
+                     ]
+                  },
+                  {
+                     "TaskID":4,
+                     "TaskText":"Fasten Dual Latch fasteners to 'BMRRM LATCH' position (21-25 turns)",
+                     "TaskNumeral":"3.2.4",
+                     "TaskProgram":"",
+                     "SubTasks":[
+                        {
+                           "SubTaskID":1,
+                           "SubTaskText":"H2",
+                           "SubTaskProgram":"LOAD,UIA,3_2_4_1,up"
+                        },
+                        {
+                           "SubTaskID":2,
+                           "SubTaskText":"H3",
+                           "SubTaskProgram":"LOAD,UIA,3_2_4_2,up"
+                        },
+                        {
+                           "SubTaskID":3,
+                           "SubTaskText":"H4",
+                           "SubTaskProgram":"LOAD,UIA,3_2_4_3,up"
+                        }
+                     ]
+                  },
+                  {
+                     "TaskID":5,
+                     "TaskText":"Mate Connectors",
+                     "TaskNumeral":"3.2.5",
+                     "TaskProgram":"",
+                     "SubTasks":[
+                        {
+                           "SubTaskID":1,
+                           "SubTaskText":"J4 (1553 Ch. B)",
+                           "SubTaskProgram":"LOAD,UIA,3_2_5_1,up"
+                        },
+                        {
+                           "SubTaskID":2,
+                           "SubTaskText":"J3 (1553 Ch. A)",
+                           "SubTaskProgram":"LOAD,UIA,3_2_5_2,up"
+                        },
+                        {
+                           "SubTaskID":3,
+                           "SubTaskText":"J2 (SECONDARY POWER)",
+                           "SubTaskProgram":"LOAD,UIA,3_2_5_3,up"
+                        },
+                        {
+                           "SubTaskID":4,
+                           "SubTaskText":"J1 (PRIMARY POWER)",
+                           "SubTaskProgram":"LOAD,UIA,3_2_5_4,up"
+                        }
+                     ]
+                  },
+                  {
+                     "TaskID":6,
+                     "TaskText":"Install thermal cover",
+                     "TaskNumeral":"3.2.6",
+                     "TaskProgram":"",
+                     "SubTasks":[
+                        {
+                           "SubTaskID":1,
+                           "SubTaskText":"Reattach flap 6",
+                           "SubTaskProgram":""
+                        },
+                        {
+                           "SubTaskID":2,
+                           "SubTaskText":"Reattach flap 8",
+                           "SubTaskProgram":""
+                        },
+                        {
+                           "SubTaskID":3,
+                           "SubTaskText":"Reattach flap 4",
+                           "SubTaskProgram":""
+                        },
+                        {
+                           "SubTaskID":4,
+                           "SubTaskText":"Reattach flap 10",
+                           "SubTaskProgram":""
+                        },
+                        {
+                           "SubTaskID":5,
+                           "SubTaskText":"Reattach flap 2",
+                           "SubTaskProgram":""
+                        },
+                        {
+                           "SubTaskID":6,
+                           "SubTaskText":"Reattach flap 7",
+                           "SubTaskProgram":""
+                        },
+                        {
+                           "SubTaskID":7,
+                           "SubTaskText":"Reattach flap 9",
+                           "SubTaskProgram":""
+                        }
+                     ]
+                  }
+               ]
+            }
+         ]
+      }
+   ]
+}
