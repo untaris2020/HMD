@@ -11,14 +11,23 @@ public class MissionPanelManager : PanelBase
     [SerializeField] private string MissionServerURL;
     private string InputJSON;
     public MissionContainer MissionContainerInstance;
+    public MissionPanelManager missionPanelManagerInstance;
     public TextAsset textFile;
-    public bool Local;
-    private const float tickTime = 1f;
+
+
 
     //Arrow game object
     public GameObject upArrow;
     public GameObject downArrow;
-
+    public GameObject button1C;
+    public GameObject button2C;
+    public GameObject button3C;
+    public GameObject button4C;
+    public GameObject button5C;
+    public GameObject panel1;
+    public GameObject panel2;
+    public GameObject panel3;
+    public GameObject panel4;
 
     //Text fields that need to be updated
     public TextMeshProUGUI button1;
@@ -27,6 +36,10 @@ public class MissionPanelManager : PanelBase
     public TextMeshProUGUI button4;
     public TextMeshProUGUI button5;
     public TextMeshProUGUI Title;
+    public TextMeshProUGUI Index;
+    public TextMeshProUGUI Page;
+
+
 
 
     //Set count of all tasks
@@ -42,6 +55,7 @@ public class MissionPanelManager : PanelBase
     bool MissionFlag = false;
     bool TaskFlag = false;
     bool SubTaskFlag = false;
+    bool displayPicture = false; //used for when we want to display pictures when subtask is selected
 
     //PanelFlags -- Tells me which panel is selected and what should be displayed
 
@@ -60,61 +74,37 @@ public class MissionPanelManager : PanelBase
 
     //public List<int> SuperMissions;
 
+    
+
     // Use this for initialization
     void Start()
     {
 
         
 
-        //createColliders();
+        createColliders();
         //Set default selections to 0 on start
         SuperMissionNumber = 0;
         MissionNumber = 0;
         TaskNumber = 0;
         SubTaskNumber = 0;
 
-        string InputJSON = textFile.text;
-
-        MissionContainerInstance = MissionContainer.CreateFromJSON(InputJSON);
+        
 
 
-        //SMissionCount = MissionContainerInstance.SuperMissions.Count;
-
-        /*
-        for (int i =0; i < SMissionCount; i++)
-        {
-            MissionCount.Add(MissionContainerInstance.SuperMissions[i].Missions.Count);
-            
-        }
-
-        for (int i = 0; i < SMissionCount; i++)
-        {
-            List<int> tempList = new List<int>();
-            for (int j=0; j < MissionCount[i]; j++)
-            {
-
-                tempList.Add(MissionContainerInstance.SuperMissions[i].Missions[j].Tasks.Count);
-
-            }
-            TaskCount.Add(tempList);
-        }
-
-        for (int i = 0; i < SMissionCount; i++)
-        {
-            List<int> tempList = new List<int>();
-            for (int j = 0; j < MissionCount[i]; j++)
-            {
-
-                tempList.Add(MissionContainerInstance.SuperMissions[i].Missions[j].Tasks.Count);
-
-            }
-            TaskCount.Add(tempList);
-        }
-        */
 
         //upArrow.SetActive(false);
     }
     
+    void Awake()
+    {
+        string InputJSON = textFile.text;
+        DebugManager.Instance.LogUnityConsole("JSON INPUT: " + InputJSON);
+
+        MissionContainerInstance = MissionContainer.CreateFromJSON(InputJSON);
+
+    }
+
     void Update()
     {
         if (SuperMissionFlag)
@@ -131,17 +121,32 @@ public class MissionPanelManager : PanelBase
         }
         else if (SubTaskFlag)
         {
-            Debug.Log("Subtasksrun?");
             displaySubTasks();
         }
         //MissionContainerInstance.printData();
         
     }
+
     public void displaySuperMissions()
     {
         int SMissionCount = MissionContainerInstance.SuperMissions.Count;
         Title.SetText("Super Missions");
         Debug.Log("SMission Count: " + SMissionCount);
+
+        if (SMissionCount - SMOffset <= 5)
+            downArrow.SetActive(false);
+        else
+            downArrow.SetActive(true);
+
+        //Need to only disable the arrow instead of the entire bar
+        /*if (SMOffset == 0)
+            upArrow.SetActive(false);
+        else
+            upArrow.SetActive(true);
+        */
+
+
+
         if(SMissionCount - SMOffset > 0)
             button1.SetText(MissionContainerInstance.SuperMissions[0 + SMOffset].SuperMissionText);
         if (SMissionCount - SMOffset > 1)
@@ -152,10 +157,56 @@ public class MissionPanelManager : PanelBase
             button4.SetText(MissionContainerInstance.SuperMissions[3 + SMOffset].SuperMissionText);
         if (SMissionCount - SMOffset > 4)
             button5.SetText(MissionContainerInstance.SuperMissions[4 + SMOffset].SuperMissionText);
+
+        if(SMissionCount - SMOffset == 1)
+        {
+            button2.SetText("");
+            button3.SetText("");
+            button4.SetText("");
+            button5.SetText("");
+        }
+        else if (SMissionCount - SMOffset == 2)
+        {
+            button3.SetText("");
+            button4.SetText("");
+            button5.SetText("");
+        }
+        else if (SMissionCount - SMOffset == 3)
+        {
+            button4.SetText("");
+            button5.SetText("");
+        }
+        else if (SMissionCount - SMOffset == 4)
+        {
+            button5.SetText("");
+        }
+
+        Index.SetText("Index");
+        int pages = 1;
+        if(SMissionCount > 5)
+            pages = SMissionCount % 5 + 1;
+   
+        if (SMOffset == 0)
+            Page.SetText("Page 1/" + pages);
+        else if (SMOffset == 5)
+            Page.SetText("Page 2/" + pages);
+        else if (SMOffset == 10)
+            Page.SetText("Page 3/" + pages);
+        else if (SMOffset == 15)
+            Page.SetText("Page 4/" + pages);
+
     }
+
     public void displayMissions()
     {
         int MissionCount = MissionContainerInstance.SuperMissions[SuperMissionNumber].Missions.Count;
+
+        if (MissionCount - MOffset <= 5)
+            downArrow.SetActive(false);
+        else
+            downArrow.SetActive(true);
+
+
         Title.SetText("Missions");
         if (MissionCount - MOffset > 0)
             button1.SetText(MissionContainerInstance.SuperMissions[SuperMissionNumber].Missions[0 + MOffset].MissionText);
@@ -167,10 +218,56 @@ public class MissionPanelManager : PanelBase
             button4.SetText(MissionContainerInstance.SuperMissions[SuperMissionNumber].Missions[3 + MOffset].MissionText);
         if (MissionCount - MOffset > 4)
             button5.SetText(MissionContainerInstance.SuperMissions[SuperMissionNumber].Missions[4 + MOffset].MissionText);
+
+        if (MissionCount - MOffset == 1)
+        {
+            button2.SetText("");
+            button3.SetText("");
+            button4.SetText("");
+            button5.SetText("");
+        }
+        else if (MissionCount - MOffset == 2)
+        {
+            button3.SetText("");
+            button4.SetText("");
+            button5.SetText("");
+        }
+        else if (MissionCount - MOffset == 3)
+        {
+            button4.SetText("");
+            button5.SetText("");
+        }
+        else if (MissionCount - MOffset == 4)
+        {
+            button5.SetText("");
+        }
+
+        Index.SetText(SuperMissionNumber + 1 + ".");
+
+        int pages = 1;
+        if (MissionCount > 5)
+            pages = MissionCount % 5 + 1;
+
+        if (MOffset == 0)
+            Page.SetText("Page 1/" + pages);
+        else if (MOffset == 5)
+            Page.SetText("Page 2/" + pages);
+        else if (MOffset == 10)
+            Page.SetText("Page 3/" + pages);
+        else if (MOffset == 15)
+            Page.SetText("Page 4/" + pages);
+
     }
+
     public void displayTasks()
     {
         int taskCount = MissionContainerInstance.SuperMissions[SuperMissionNumber].Missions[MissionNumber].Tasks.Count;
+
+        if (taskCount - TOffset <= 5)
+            downArrow.SetActive(false);
+        else
+            downArrow.SetActive(true);
+
         Title.SetText("Tasks");
         if (taskCount - TOffset > 0)
             button1.SetText(MissionContainerInstance.SuperMissions[SuperMissionNumber].Missions[MissionNumber].Tasks[0 + TOffset].TaskText);
@@ -182,10 +279,57 @@ public class MissionPanelManager : PanelBase
             button4.SetText(MissionContainerInstance.SuperMissions[SuperMissionNumber].Missions[MissionNumber].Tasks[3 + TOffset].TaskText);
         if (taskCount - TOffset > 4)
             button5.SetText(MissionContainerInstance.SuperMissions[SuperMissionNumber].Missions[MissionNumber].Tasks[4 + TOffset].TaskText);
+
+        if (taskCount - TOffset == 1)
+        {
+            button2.SetText("");
+            button3.SetText("");
+            button4.SetText("");
+            button5.SetText("");
+        }
+        else if (taskCount - TOffset == 2)
+        {
+            button3.SetText("");
+            button4.SetText("");
+            button5.SetText("");
+        }
+        else if (taskCount - TOffset == 3)
+        {
+            button4.SetText("");
+            button5.SetText("");
+        }
+        else if (taskCount - TOffset == 4)
+        {
+            button5.SetText("");
+        }
+
+        Index.SetText(SuperMissionNumber+1 + "." + (MissionNumber+1) + ".");
+
+        int pages = 1;
+        if (taskCount > 5)
+            pages = taskCount % 5 + 1;
+
+        if (TOffset == 0)
+            Page.SetText("Page 1/" + pages);
+        else if (TOffset == 5)
+            Page.SetText("Page 2/" + pages);
+        else if (TOffset == 10)
+            Page.SetText("Page 3/" + pages);
+        else if (TOffset == 15)
+            Page.SetText("Page 4/" + pages);
+
     }
+
     public void displaySubTasks()
     {
         int StaskCount = MissionContainerInstance.SuperMissions[SuperMissionNumber].Missions[MissionNumber].Tasks[TaskNumber].SubTasks.Count;
+
+        if (StaskCount - STOffset <= 5)
+            downArrow.SetActive(false);
+        else
+            downArrow.SetActive(true);
+
+
         Title.SetText("Sub-Tasks");
         Debug.Log("SubTask Count: " + StaskCount);
         if (StaskCount - STOffset > 0)
@@ -198,6 +342,45 @@ public class MissionPanelManager : PanelBase
             button4.SetText(MissionContainerInstance.SuperMissions[SuperMissionNumber].Missions[MissionNumber].Tasks[TaskNumber].SubTasks[3 + STOffset].SubTaskText);
         if (StaskCount - STOffset > 4)
             button5.SetText(MissionContainerInstance.SuperMissions[SuperMissionNumber].Missions[MissionNumber].Tasks[TaskNumber].SubTasks[4 + STOffset].SubTaskText);
+
+        if (StaskCount - STOffset == 1)
+        {
+            button2.SetText("");
+            button3.SetText("");
+            button4.SetText("");
+            button5.SetText("");
+        }
+        else if (StaskCount - STOffset == 2)
+        {
+            button3.SetText("");
+            button4.SetText("");
+            button5.SetText("");
+        }
+        else if (StaskCount - STOffset == 3)
+        {
+            button4.SetText("");
+            button5.SetText("");
+        }
+        else if (StaskCount - STOffset == 4)
+        {
+            button5.SetText("");
+        }
+
+        Index.SetText(SuperMissionNumber + 1 + "." + (MissionNumber + 1) + "." + (TaskNumber + 1) + ".");
+
+        int pages = 1;
+        if (StaskCount > 5)
+            pages = StaskCount % 5 + 1;
+
+        if (STOffset == 0)
+            Page.SetText("Page 1/" + pages);
+        else if (STOffset == 5)
+            Page.SetText("Page 2/" + pages);
+        else if (STOffset == 10)
+            Page.SetText("Page 3/" + pages);
+        else if (STOffset == 15)
+            Page.SetText("Page 4/" + pages);
+
     }
 
     public void createColliders()
@@ -211,13 +394,49 @@ public class MissionPanelManager : PanelBase
         functionDebug.Instance.registerFunction(this.GetType().Name + "_tab0", tmpDelegate0);
 
         Button0Delegate tmpDelegate1 = new Button0Delegate(backPage);
-        ht.registerCollider(upArrow.GetComponent<Collider>().name, tmpDelegate0);
-        functionDebug.Instance.registerFunction(this.GetType().Name + "_tab0", tmpDelegate0);
+        ht.registerCollider(upArrow.GetComponent<Collider>().name, tmpDelegate1);
+        functionDebug.Instance.registerFunction(this.GetType().Name + "_tab0", tmpDelegate1);
 
+        Button0Delegate tmpDelegate2 = new Button0Delegate(button1Press);
+        ht.registerCollider(button1C.GetComponent<Collider>().name, tmpDelegate2);
+        functionDebug.Instance.registerFunction(this.GetType().Name + "_tab0", tmpDelegate2);
+
+        Button0Delegate tmpDelegate3 = new Button0Delegate(button2Press);
+        ht.registerCollider(button2C.GetComponent<Collider>().name, tmpDelegate3);
+        functionDebug.Instance.registerFunction(this.GetType().Name + "_tab0", tmpDelegate3);
+
+        Button0Delegate tmpDelegate4 = new Button0Delegate(button3Press);
+        ht.registerCollider(button3C.GetComponent<Collider>().name, tmpDelegate4);
+        functionDebug.Instance.registerFunction(this.GetType().Name + "_tab0", tmpDelegate4);
+
+        Button0Delegate tmpDelegate5 = new Button0Delegate(button4Press);
+        ht.registerCollider(button4C.GetComponent<Collider>().name, tmpDelegate5);
+        functionDebug.Instance.registerFunction(this.GetType().Name + "_tab0", tmpDelegate5);
+
+        Button0Delegate tmpDelegate6 = new Button0Delegate(button5Press);
+        ht.registerCollider(button5C.GetComponent<Collider>().name, tmpDelegate6);
+        functionDebug.Instance.registerFunction(this.GetType().Name + "_tab0", tmpDelegate6);
+
+        Button0Delegate tmpDelegate7 = new Button0Delegate(panel1Press);
+        ht.registerCollider(panel1.GetComponent<Collider>().name, tmpDelegate7);
+        functionDebug.Instance.registerFunction(this.GetType().Name + "_tab0", tmpDelegate7);
+
+        Button0Delegate tmpDelegate8 = new Button0Delegate(panel2Press);
+        ht.registerCollider(panel2.GetComponent<Collider>().name, tmpDelegate8);
+        functionDebug.Instance.registerFunction(this.GetType().Name + "_tab0", tmpDelegate8);
+
+        Button0Delegate tmpDelegate9 = new Button0Delegate(panel3Press);
+        ht.registerCollider(panel3.GetComponent<Collider>().name, tmpDelegate9);
+        functionDebug.Instance.registerFunction(this.GetType().Name + "_tab0", tmpDelegate9);
+
+        Button0Delegate tmpDelegate10 = new Button0Delegate(panel4Press);
+        ht.registerCollider(panel4.GetComponent<Collider>().name, tmpDelegate10);
+        functionDebug.Instance.registerFunction(this.GetType().Name + "_tab0", tmpDelegate10);
     }
 
     public void nextPage()
     {
+
         if (SuperMissionFlag)
             SMOffset += 5;
         else if (MissionFlag)
@@ -240,6 +459,227 @@ public class MissionPanelManager : PanelBase
             STOffset -= 5;
         
 
+    }
+
+    public void button1Press()
+    {
+        Debug.Log("I was pressed");
+
+        if (SuperMissionFlag)
+        {
+            SuperMissionNumber = SMOffset;
+            MissionFlag = true;
+            SuperMissionFlag = false;
+        }
+        else if (MissionFlag)
+        {
+            MissionNumber = MOffset;
+            TaskFlag = true;
+            MissionFlag = false;
+        }
+        else if (TaskFlag)
+        {
+            TaskNumber = TOffset;
+            SubTaskFlag = true;
+            TaskFlag = false;
+        }
+        else //subtasks are currently being displayed
+        {
+            if (displayPicture)
+            {
+                displayPicture = !displayPicture;
+            }
+            else
+            {
+                SubTaskNumber = STOffset;
+                displayPicture = true;
+            }
+            
+
+        }
+        
+
+    }
+
+    public void button2Press()
+    {
+        if (SuperMissionFlag)
+        {
+            SuperMissionNumber = SMOffset + 1;
+            MissionFlag = true;
+            SuperMissionFlag = false;
+        }
+        else if (MissionFlag)
+        {
+            MissionNumber = MOffset + 1;
+            TaskFlag = true;
+            MissionFlag = false;
+        }
+        else if (TaskFlag)
+        {
+            TaskNumber = TOffset + 1;
+            SubTaskFlag = true;
+            TaskFlag = false;
+        }
+        else //subtasks are currently being displayed
+        {
+            if (displayPicture)
+            {
+                displayPicture = !displayPicture;
+            }
+            else
+            {
+                SubTaskNumber = STOffset + 1;
+                displayPicture = true;
+            }
+
+
+        }
+
+
+    }
+
+    public void button3Press()
+    {
+        if (SuperMissionFlag)
+        {
+            SuperMissionNumber = SMOffset + 2;
+            MissionFlag = true;
+            SuperMissionFlag = false;
+        }
+        else if (MissionFlag)
+        {
+            MissionNumber = MOffset + 2;
+            TaskFlag = true;
+            MissionFlag = false;
+        }
+        else if (TaskFlag)
+        {
+            TaskNumber = TOffset + 2;
+            SubTaskFlag = true;
+            TaskFlag = false;
+        }
+        else //subtasks are currently being displayed
+        {
+            if (displayPicture)
+            {
+                displayPicture = !displayPicture;
+            }
+            else
+            {
+                SubTaskNumber = STOffset + 2;
+                displayPicture = true;
+            }
+
+
+        }
+
+
+    }
+
+    public void button4Press()
+    {
+        if (SuperMissionFlag)
+        {
+            SuperMissionNumber = SMOffset + 3;
+            MissionFlag = true;
+            SuperMissionFlag = false;
+        }
+        else if (MissionFlag)
+        {
+            MissionNumber = MOffset + 3;
+            TaskFlag = true;
+            MissionFlag = false;
+        }
+        else if (TaskFlag)
+        {
+            TaskNumber = TOffset + 3;
+            SubTaskFlag = true;
+            TaskFlag = false;
+        }
+        else //subtasks are currently being displayed
+        {
+            if (displayPicture)
+            {
+                displayPicture = !displayPicture;
+            }
+            else
+            {
+                SubTaskNumber = STOffset + 3;
+                displayPicture = true;
+            }
+
+
+        }
+
+
+    }
+
+    public void button5Press()
+    {
+        if (SuperMissionFlag)
+        {
+            SuperMissionNumber = SMOffset + 4;
+            MissionFlag = true;
+            SuperMissionFlag = false;
+        }
+        else if (MissionFlag)
+        {
+            MissionNumber = MOffset + 4;
+            TaskFlag = true;
+            MissionFlag = false;
+        }
+        else if (TaskFlag)
+        {
+            TaskNumber = TOffset + 4;
+            SubTaskFlag = true;
+            TaskFlag = false;
+        }
+        else //subtasks are currently being displayed
+        {
+            if (displayPicture)
+            {
+                displayPicture = !displayPicture;
+            }
+            else
+            {
+                SubTaskNumber = STOffset + 4;
+                displayPicture = true;
+            }
+
+
+        }
+
+
+    }
+
+    public void panel1Press()
+    {
+        SuperMissionFlag = true;
+        MissionFlag = false;
+        TaskFlag = false;
+        SubTaskFlag = false;
+    }
+    public void panel2Press()
+    {
+        SuperMissionFlag = false;
+        MissionFlag = true;
+        TaskFlag = false;
+        SubTaskFlag = false;
+    }
+    public void panel3Press()
+    {
+        SuperMissionFlag = false;
+        MissionFlag = false;
+        TaskFlag = true;
+        SubTaskFlag = false;
+    }
+    public void panel4Press()
+    {
+        SuperMissionFlag = false;
+        MissionFlag = false;
+        TaskFlag = false;
+        SubTaskFlag = true;
     }
 
 
