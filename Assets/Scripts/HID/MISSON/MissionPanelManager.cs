@@ -6,15 +6,15 @@ using System.IO;
 using TMPro;
 using UnityEngine.UI;
 
-public class MissionPanelManager : PanelBase
+public class MissionPanelManager : MonoBehaviour 
 {
     [SerializeField] private string MissionServerURL;
     private string InputJSON;
     public MissionContainer MissionContainerInstance;
-    public MissionPanelManager missionPanelManagerInstance;
     public TextAsset textFile;
+    public StyleSheet style;
 
-
+    public delegate void Button0Delegate();
 
     //Arrow game object
     public GameObject upArrow;
@@ -24,10 +24,11 @@ public class MissionPanelManager : PanelBase
     public GameObject button3C;
     public GameObject button4C;
     public GameObject button5C;
-    public GameObject panel1;
-    public GameObject panel2;
-    public GameObject panel3;
-    public GameObject panel4;
+    public GameObject[] panels;
+    //public GameObject panel1;
+    //public GameObject panel2;
+    //public GameObject panel3;
+    //public GameObject panel4;
 
     //Text fields that need to be updated
     public TextMeshProUGUI button1;
@@ -89,9 +90,9 @@ public class MissionPanelManager : PanelBase
         TaskNumber = 0;
         SubTaskNumber = 0;
 
-        
 
 
+        panel1Press();
 
         //upArrow.SetActive(false);
     }
@@ -99,7 +100,7 @@ public class MissionPanelManager : PanelBase
     void Awake()
     {
         string InputJSON = textFile.text;
-        DebugManager.Instance.LogUnityConsole("JSON INPUT: " + InputJSON);
+        //DebugManager.Instance.LogUnityConsole("JSON INPUT: " + InputJSON);
 
         MissionContainerInstance = MissionContainer.CreateFromJSON(InputJSON);
 
@@ -418,19 +419,19 @@ public class MissionPanelManager : PanelBase
         functionDebug.Instance.registerFunction(this.GetType().Name + "_tab0", tmpDelegate6);
 
         Button0Delegate tmpDelegate7 = new Button0Delegate(panel1Press);
-        ht.registerCollider(panel1.GetComponent<Collider>().name, tmpDelegate7);
+        ht.registerCollider(panels[0].GetComponent<Collider>().name, tmpDelegate7);
         functionDebug.Instance.registerFunction(this.GetType().Name + "_tab0", tmpDelegate7);
 
         Button0Delegate tmpDelegate8 = new Button0Delegate(panel2Press);
-        ht.registerCollider(panel2.GetComponent<Collider>().name, tmpDelegate8);
+        ht.registerCollider(panels[1].GetComponent<Collider>().name, tmpDelegate8);
         functionDebug.Instance.registerFunction(this.GetType().Name + "_tab0", tmpDelegate8);
 
         Button0Delegate tmpDelegate9 = new Button0Delegate(panel3Press);
-        ht.registerCollider(panel3.GetComponent<Collider>().name, tmpDelegate9);
+        ht.registerCollider(panels[2].GetComponent<Collider>().name, tmpDelegate9);
         functionDebug.Instance.registerFunction(this.GetType().Name + "_tab0", tmpDelegate9);
 
         Button0Delegate tmpDelegate10 = new Button0Delegate(panel4Press);
-        ht.registerCollider(panel4.GetComponent<Collider>().name, tmpDelegate10);
+        ht.registerCollider(panels[3].GetComponent<Collider>().name, tmpDelegate10);
         functionDebug.Instance.registerFunction(this.GetType().Name + "_tab0", tmpDelegate10);
     }
 
@@ -459,6 +460,33 @@ public class MissionPanelManager : PanelBase
             STOffset -= 5;
         
 
+    }
+
+    public void LoadPage(int page)
+    {
+        // function overload
+        DebugManager.Instance.LogUnityConsole("Correct Load page");
+
+        DebugManager.Instance.LogUnityConsole(this.GetType().Name, "Page " + page + " Loaded.");
+        
+        //if(Verbose)
+        //{
+            
+        //}
+
+        // Set all buttons material to inactive
+        foreach (GameObject obj in panels)
+        {
+            obj.GetComponent<MeshRenderer>().material = style.ButtonInactiveMat;
+        }
+
+        // set current page as the active material
+        panels[page].GetComponent<MeshRenderer>().material = style.ButtonActiveMat;
+
+
+        // add any custom logic here if needed
+
+        //
     }
 
     public void button1Press()
@@ -655,6 +683,7 @@ public class MissionPanelManager : PanelBase
 
     public void panel1Press()
     {
+        LoadPage(0);
         SuperMissionFlag = true;
         MissionFlag = false;
         TaskFlag = false;
@@ -662,6 +691,7 @@ public class MissionPanelManager : PanelBase
     }
     public void panel2Press()
     {
+        LoadPage(1);
         SuperMissionFlag = false;
         MissionFlag = true;
         TaskFlag = false;
@@ -669,6 +699,7 @@ public class MissionPanelManager : PanelBase
     }
     public void panel3Press()
     {
+        LoadPage(2);
         SuperMissionFlag = false;
         MissionFlag = false;
         TaskFlag = true;
@@ -676,6 +707,7 @@ public class MissionPanelManager : PanelBase
     }
     public void panel4Press()
     {
+        LoadPage(3);
         SuperMissionFlag = false;
         MissionFlag = false;
         TaskFlag = false;
