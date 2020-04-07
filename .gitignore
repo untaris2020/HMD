@@ -24,6 +24,13 @@ Assets/Scenes/HelloCube.unity.meta
 Assets/XR
 Assets/XR.meta
 
+#Ignore plugins meta
+Assets/Plugins.meta
+
+#Ignore editor build settings
+ProjectSettings/EditorBuildSettings.asset
+
+
 #Ignore the License/Notice
 LICENSE.txt
 NOTICE.txt
