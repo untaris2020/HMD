@@ -35,7 +35,7 @@ public class NavManager : MonoBehaviour
     private CameraHandler GLOVE_CAM;
     private CameraHandler REAR_CAM;
 
-    public GameObject _cube, _camera;
+    public GameObject _cube, _camera, _arrow, _world_center;
     
 
     private IEnumerator coroutine;
@@ -96,10 +96,12 @@ public class NavManager : MonoBehaviour
         ht.registerCollider(showallButton.GetComponent<Collider>().name, ShowAll);
 
         // set worldcenter
-        _cube.transform.position = _camera.transform.position + _camera.transform.forward * 2.0f;
+        _world_center.transform.position = _camera.transform.position + _camera.transform.forward * 2.0f;
         DebugManager.Instance.LogUnityConsole("NavManager", "Setting World Center: " + _cube.transform.position);
-        
+
         //persistentBehavior.UpdateBinding();
+        UpdateStatusText();
+        
     }
 
     private void OnDestroy() 
@@ -118,28 +120,18 @@ public class NavManager : MonoBehaviour
                 col.a = 1.0f / ((float)(_camera.transform.position - obj.transform.position).magnitude / 10.0f);
                 obj.GetComponent<Renderer>().material.color = col;
             }
+
+            // update arrow position
+            //_arrow.transform.RotateAround(Quaternion.LookRotation(_arrow.transform.position - _world_center.transform.position));
+            _arrow.transform.LookAt(_world_center.transform);
         }
     }
 
-    private int counterr = 0;
     private IEnumerator GetUserPOSLoop(float waitTime)
     {
         
         while (true)
         {
-            // temp code to test
-            if (counterr == 0)
-                PressRTH();
-            if (counterr == 10)
-                PressRTH();
-            if (counterr == 20)
-                PressShowAll();
-            if (counterr == 30)
-                PressShowAll();
-
-
-            counterr++;
-            // end temp code
 
             UserPosition tmpPos = new UserPosition(DateTime.Now, _camera.transform.position);
 
@@ -150,7 +142,8 @@ public class NavManager : MonoBehaviour
             userPositions[userPosCounter] = tmpPos;
 
             // Make a waypoint game object
-            GameObject temp = Instantiate(waypoint_mesh, tmpPos.position, Quaternion.identity, _cube.transform);
+            GameObject temp = Instantiate(waypoint_mesh, tmpPos.position, Quaternion.identity, _world_center.transform);
+            temp.SetActive(rth_status || showall_status);
             waypoint_meshes.Add(temp);
 
             if (userPosCounter >= (NUMOFOBJECTS)-1)
@@ -189,6 +182,7 @@ public class NavManager : MonoBehaviour
     {
         rth_status = !rth_status;
         showall_status = false;
+        _arrow.SetActive(rth_status);
         UpdateStatusText();
 
         foreach (GameObject obj in waypoint_meshes)
@@ -200,6 +194,7 @@ public class NavManager : MonoBehaviour
 
     public void PressShowAll()
     {
+        // toggle function
         showall_status = !showall_status;
         rth_status = false;
         UpdateStatusText();
@@ -207,11 +202,19 @@ public class NavManager : MonoBehaviour
         foreach (GameObject obj in waypoint_meshes)
         {
             obj.SetActive(showall_status);
+            if (showall_status)
+            {
+                var col = obj.GetComponent<Renderer>().material.color;
+                col.a = 1.0f;
+                obj.GetComponent<Renderer>().material.color = col;
+            }
         }
     }
 
     private void UpdateStatusText()
     {
+        _arrow.SetActive(rth_status);
+
         if (rth_status)
         {
             rth_text.SetText("ON");
