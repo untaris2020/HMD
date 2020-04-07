@@ -39,8 +39,8 @@ public class NavManager : MonoBehaviour
     
 
     private IEnumerator coroutine;
-    private float TICKTIME = 1.0f;   //was 10.0f
-    private float BACKUPTIMESECONDS = 20.0f;   // amount of time between backups was 300 (5mins)
+    private float TICKTIME = 5.0f;   //was 10.0f
+    private float BACKUPTIMESECONDS = 600.0f;   // amount of time between backups was 300 (5mins)
     private int NUMOFOBJECTS = 0; 
     private int userPosCounter;
     private bool update_waypoints_rth = false;
