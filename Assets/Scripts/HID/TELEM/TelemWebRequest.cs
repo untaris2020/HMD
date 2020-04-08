@@ -14,9 +14,10 @@ using System.Text.RegularExpressions;
 
 public class TelemWebRequest : MonoBehaviour
 {
-    public const int NUM_OF_TELEM_VALUES = 15;
+    public const int NUM_OF_TELEM_VALUES = 25;
 
     //public ErrorHandler errorScript;
+    public TelemText telemText;
 
     string JSONString, JSONString2;
     public TelemObject[] telemObjects;
@@ -115,7 +116,8 @@ public class TelemWebRequest : MonoBehaviour
             int index = (int)telemHashtable[searchString];
             //DebugManager.Instance.LogUnityConsole("Index: " + index);
 
-            if (!(telemObjects[1] is null)) {
+            if (!(telemObjects[1] is null)) 
+            {
                 if (telemObjects[1].suit_populated)
                 {
                     return telemObjects[1].values[index];
@@ -128,7 +130,6 @@ public class TelemWebRequest : MonoBehaviour
 
         return "ERROR"; // error
     }
-
 
     void Start()
     {
@@ -154,6 +155,11 @@ public class TelemWebRequest : MonoBehaviour
         telemDatabase[12] = new TelemDatabaseEntry("t_battery", 1800, 12);
         telemDatabase[13] = new TelemDatabaseEntry("t_oxygen", 1800, 13);
         telemDatabase[14] = new TelemDatabaseEntry("t_water", 1800, 14);
+
+        // Switches
+        //telemDatabase[12] = new TelemDatabaseEntry("sspe", 15);
+        //telemDatabase[13] = new TelemDatabaseEntry("fan_error", 16);
+        //telemDatabase[14] = new TelemDatabaseEntry("vent_error", 17);
         
 
         telemHashtable.Add(0, "heart_rate");
@@ -171,6 +177,13 @@ public class TelemWebRequest : MonoBehaviour
         telemHashtable.Add(12, "t_battery");
         telemHashtable.Add(13, "t_oxygen");
         telemHashtable.Add(14, "t_water");
+        telemHashtable.Add(15, "sspe");
+        telemHashtable.Add(16, "fan_error");
+        telemHashtable.Add(17, "vent_error");
+        telemHashtable.Add(18, "vehicle_power");
+        telemHashtable.Add(19, "h2o_off");
+        telemHashtable.Add(20, "o2_off");
+        telemHashtable.Add(21, "sop_on");
 
         telemHashtable.Add("heart_rate", 0);
         telemHashtable.Add("cap_battery", 1);
@@ -187,6 +200,13 @@ public class TelemWebRequest : MonoBehaviour
         telemHashtable.Add("t_battery", 12);
         telemHashtable.Add("t_oxygen", 13);
         telemHashtable.Add("t_water", 14);
+        telemHashtable.Add("sspe", 15);
+        telemHashtable.Add("fan_error", 16);
+        telemHashtable.Add("vent_error", 17);
+        telemHashtable.Add("vehicle_power", 18);
+        telemHashtable.Add("h2o_off", 19);
+        telemHashtable.Add("o2_off", 20);
+        telemHashtable.Add("sop_on", 21);
 
         telemObjects = new TelemObject[numOfStoredValues];
         
@@ -476,6 +496,10 @@ public class TelemWebRequest : MonoBehaviour
         counter++;
 
         // Get the most reccent Telem/switch data and add to head of telemObjects array
+
+        // refresh the UI text
+        telemText.UpdateText();
+
         StartCoroutine(GetRequest(telemServerURL, switchServerURL));
     }
 
@@ -703,6 +727,14 @@ public class TelemObject
         values[12] = Convert.ToString(t_battery);
         values[13] = Convert.ToString(t_oxygen);
         values[14] = Convert.ToString(t_water);
+
+        values[15] = Convert.ToString(sspe);
+        values[16] = Convert.ToString(fan_error);
+        values[17] = Convert.ToString(vent_error);
+        values[18] = Convert.ToString(vehicle_power);
+        values[19] = Convert.ToString(h2o_off);
+        values[20] = Convert.ToString(o2_off);
+        values[21] = Convert.ToString(sop_on);
     }
 
     public void ConvertTimes()

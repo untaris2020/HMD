@@ -60,16 +60,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4c382bbc64d00954e8e7bd47b287fb42, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Verbose: 0
-  style: {fileID: 0}
-  panels: []
-  pages: []
   MissionServerURL: 
   MissionContainerInstance:
     SpaceWalkID: 0
     SuperMissions: []
-  missionPanelManagerInstance: {fileID: 0}
   textFile: {fileID: 4900000, guid: 16016c195e72d9541a00055bb96a41ae, type: 3}
+  style: {fileID: 7633208563387115851, guid: 30691d7d711b425408f2d5ab5dbdedcf, type: 3}
   upArrow: {fileID: 5061384395436555241}
   downArrow: {fileID: 5899539905610526916}
   button1C: {fileID: 9193822592251343333}
@@ -77,10 +73,11 @@ MonoBehaviour:
   button3C: {fileID: 8574523768295010247}
   button4C: {fileID: 6274880040767736529}
   button5C: {fileID: 2556982153381020198}
-  panel1: {fileID: 1746015169092646085}
-  panel2: {fileID: 189785286136753715}
-  panel3: {fileID: 1071994462647849510}
-  panel4: {fileID: 3628914251657313225}
+  panels:
+  - {fileID: 1746015169092646085}
+  - {fileID: 189785286136753715}
+  - {fileID: 1071994462647849510}
+  - {fileID: 3628914251657313225}
   button1: {fileID: 7526394990176009083}
   button2: {fileID: 5483470348642369249}
   button3: {fileID: 6997176953115272537}

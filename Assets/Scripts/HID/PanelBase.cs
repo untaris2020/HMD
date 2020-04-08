@@ -13,7 +13,7 @@ public class PanelBase : MonoBehaviour
     public GameObject[] panels;
     public GameObject[] pages;
 
-    private int pageIndex;
+    protected int pageIndex;
     //public string panelName; 
     public delegate void Button0Delegate();
     public delegate void Button1Delegate();

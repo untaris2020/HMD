@@ -9,8 +9,10 @@ public class TelemText : MonoBehaviour
     public StyleSheet style;
     public TelemWebRequest webRequest;
 
-    public TextMeshProUGUI[] names;
-    public TextMeshProUGUI[] data;
+    public TextMeshProUGUI[] suit_names;
+    public TextMeshProUGUI[] suit_data;
+    public TextMeshProUGUI[] switch_names;
+    public TextMeshProUGUI[] switch_data;
 
 
     // Start is called before the first frame update
@@ -19,11 +21,17 @@ public class TelemText : MonoBehaviour
         
     }
 
-    // Update is called once per frame
     void Update()
     {
 
-        foreach (TextMeshProUGUI obj in data)
+    }
+
+    // Update is called once per frame
+    public void UpdateText()
+    {
+
+        // SUIT
+        foreach (TextMeshProUGUI obj in suit_data)
         {
             //int temp = obj.name.Length;
             //Debug.Log("LEN: " + temp);
@@ -34,12 +42,34 @@ public class TelemText : MonoBehaviour
             //Debug.Log("REMOVE: " + removeHeader);
 
             obj.SetText(webRequest.GetDataFromString(removeHeader));
+
+            // set text color
            
         }
 
-        foreach (TextMeshProUGUI obj in names)
+        // SWITCH
+        foreach (TextMeshProUGUI obj in switch_data)
         {
-            // TODO: change name color based on error
+            //int temp = obj.name.Length;
+            //Debug.Log("LEN: " + temp);
+
+
+            //string removeHeader = obj.name.Substring(5, obj.name.Length - 5);
+            //removeHeader = removeHeader;
+            Debug.Log("SEARCH: " + obj.name);
+
+            obj.SetText(webRequest.GetDataFromString(obj.name));
+
+            if (obj.text == "false")
+            {
+                // red
+
+            } else
+            {
+                // green
+
+            }
+           
         }
     }
 }
