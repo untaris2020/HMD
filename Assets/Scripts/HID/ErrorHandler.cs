@@ -50,7 +50,12 @@ public class ErrorHandler : MonoBehaviour {
         HeadTracking ht = GameObject.Find("SceneManager").GetComponent<HeadTracking>();
         // Resiter Colliders
 
+        HandleError(0, "test1");
+        HandleError(1, "test2");
+        HandleError(0, "test3");
+        HandleError(1, "test4");
 
+        //HandleError(0, "test3");
         Button0Delegate tmpDelegate0 = new Button0Delegate(CloseErrorWindow);
         ht.registerCollider(errorPanel.GetComponent<Collider>().name, tmpDelegate0);
         functionDebug.Instance.registerFunction(this.GetType().Name + "_tab0", tmpDelegate0);
@@ -62,6 +67,7 @@ public class ErrorHandler : MonoBehaviour {
 	void Update () {
         if(((ErrorList.Count > 0) && (windowActive == false)) || isHigherPriority)
         {
+
             SpawnErrorWindow();
 
         }
@@ -81,22 +87,34 @@ public class ErrorHandler : MonoBehaviour {
         else if(Priority < PriorityList[0])
         {
             isHigherPriority = true;
-            ErrorList.Add(ErrorMsg);
-            PriorityList.Add(Priority);
+            ErrorList.Insert(0, ErrorMsg);
+            PriorityList.Insert(0, Priority);
 
         }
         else if(Priority > PriorityList[0])
         {
-            
-                int PrioLocation = PriorityList.IndexOf(Priority);
-                PriorityList.Insert(PrioLocation - 1, Priority);
-                ErrorList.Insert(PrioLocation - 1, ErrorMsg);
+                
+            int PrioLocation = PriorityList.IndexOf(Priority);
+            if (PrioLocation == -1)
+            {
+                 PriorityList.Add(Priority);
+                 ErrorList.Add(ErrorMsg);
+
+            }
+            else
+            {
+                PriorityList.Insert(PrioLocation, Priority);
+                ErrorList.Insert(PrioLocation, ErrorMsg);
+
+            }
+                    
 
         }
         else
         {
-            ErrorList.Add(ErrorMsg);
-            PriorityList.Add(Priority);
+            int PrioLocation = PriorityList.IndexOf(Priority);
+            ErrorList.Insert(PrioLocation, ErrorMsg);
+            PriorityList.Insert(PrioLocation, Priority);
 
         }
         return 0;
@@ -115,6 +133,8 @@ public class ErrorHandler : MonoBehaviour {
     public void CloseErrorWindow()
     {
         ErrorList.RemoveAt(0);
+        PriorityList.RemoveAt(0);
+        myText.SetText("");
         errorPanel.SetActive(false);
         windowActive = false;
         isHigherPriority = false;
