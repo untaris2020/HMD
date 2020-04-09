@@ -41,9 +41,18 @@ public class TelemText : MonoBehaviour
             //removeHeader = removeHeader;
             //Debug.Log("REMOVE: " + removeHeader);
 
-            obj.SetText(webRequest.GetDataFromString(removeHeader));
-
             // set text color
+
+            string[] returnStr = webRequest.GetDataFromString(removeHeader);
+            obj.SetText(returnStr[0]);
+
+            if (returnStr[1] == "red" || returnStr[0] == "false")
+            {
+                obj.color = new Color32(255, 0, 0, 255);   // red
+            } else if (returnStr[1] == "green" || returnStr[0] == "true")
+            {
+                obj.color = new Color32(0, 255, 0, 255);   // green
+            }
            
         }
 
@@ -57,19 +66,16 @@ public class TelemText : MonoBehaviour
             //string removeHeader = obj.name.Substring(5, obj.name.Length - 5);
             //removeHeader = removeHeader;
             //Debug.Log("SEARCH: " + obj.name);
+            string[] returnStr = webRequest.GetDataFromString(obj.name);
+            obj.SetText(returnStr[0]);
 
-            obj.SetText(webRequest.GetDataFromString(obj.name));
-
-            if (obj.text == "false")
+            if (returnStr[1] == "red" || returnStr[0] == "False")
             {
-                // red
-
-            } else
+                obj.color = new Color32(255, 0, 0, 255);   // red
+            } else if (returnStr[1] == "green" || returnStr[0] == "True")
             {
-                // green
-
+                obj.color = new Color32(0, 255, 0, 255);   // green
             }
-           
         }
     }
 }

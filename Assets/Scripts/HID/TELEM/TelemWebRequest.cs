@@ -109,8 +109,9 @@ public class TelemWebRequest : MonoBehaviour
         o2_off_Flag = false;
     }
 
-    public string GetDataFromString(string searchString)
+    public string[] GetDataFromString(string searchString)
     {
+        string[] tmpStringArr = { "Err", "Err" };
         if (!(telemHashtable[0] is null))
         {
             int index = (int)telemHashtable[searchString];
@@ -120,15 +121,30 @@ public class TelemWebRequest : MonoBehaviour
             {
                 if (telemObjects[1].suit_populated)
                 {
-                    return telemObjects[1].values[index];
+                    // check if error 
+                    if (telemObjects[1].flags[index] != 0)
+                    {
+                        // Value out of range
+
+                        // TODO: Spawn error
+                        tmpStringArr[1] = "red";
+                    } else
+                    {
+                        tmpStringArr[1] = "green";
+                    }
+
+                    tmpStringArr[0] = telemObjects[1].values[index];
+                    return tmpStringArr;
                 } else
                 {
-                    return "Data not populated";
+                    tmpStringArr[0] = "Data not populated";
+                    return tmpStringArr;
                 }
             }
         }
 
-        return "ERROR"; // error
+         tmpStringArr[0] = "ERROR"; // error
+        return tmpStringArr;
     }
 
     void Start()
@@ -768,9 +784,10 @@ public class TelemObject
         // t_battery 
             if (t_battery.Contains("-"))
             {
-            // ERROR: Battery time is negative
-            TelemWebRequest.t_batteryStatus = "red";
-            DebugManager.Instance.LogUnityConsole(this.GetType().Name, "ERROR: t_battery is negative");
+                // ERROR: Battery time is negative
+                TelemWebRequest.t_batteryStatus = "red";
+                flags[12] = -1;
+                DebugManager.Instance.LogUnityConsole(this.GetType().Name, "ERROR: t_battery is negative");
             }
             else 
             {
@@ -798,6 +815,7 @@ public class TelemObject
                  //   errorScript.HandleError(0,  "Warning: battey time has 30 hours left");
                     TelemWebRequest.t_batteryFlagTripped3 = true;
                     TelemWebRequest.t_batteryStatus = "red";
+                    flags[12] = -1;
                 }
             }
             
@@ -805,8 +823,9 @@ public class TelemObject
         // t_oxygen
             if (t_oxygen.Contains("-"))
             {
-            // ERROR: Oxygen time is negative
-            TelemWebRequest.t_oxStatus = "red";
+                // ERROR: Oxygen time is negative
+                TelemWebRequest.t_oxStatus = "red";
+                flags[13] = -1;
             }
             else
             {
@@ -832,6 +851,7 @@ public class TelemObject
                 {
                     TelemWebRequest.oxFlagTripped3 = true;
                     TelemWebRequest.t_oxStatus = "red";
+                    flags[13] = -1;
                     // Warning: oxygen time has 30 minutes left
                    // errorScript.HandleError(0,  "Warning: oxygen time has 30 minutes left");
                 }
@@ -841,8 +861,9 @@ public class TelemObject
         //// t_water
             if (t_water.Contains("-"))
             {
-            // ERROR: Water time is negative
+                // ERROR: Water time is negative
                 TelemWebRequest.t_waterStatus = "red";
+                flags[14] = -1;
             }
             else
             {
@@ -868,6 +889,7 @@ public class TelemObject
                 {
                     TelemWebRequest.waterFlagTripped3 = true;
                     TelemWebRequest.t_waterStatus = "red";
+                    flags[14] = -1;
                     // Warning: water time has 30 minutes left
                     //  errorScript.HandleError(0,  "Warning: water time has 30 minutes left");
                 }
