@@ -56,7 +56,7 @@ public class TelemText : MonoBehaviour
 
             //string removeHeader = obj.name.Substring(5, obj.name.Length - 5);
             //removeHeader = removeHeader;
-            Debug.Log("SEARCH: " + obj.name);
+            //Debug.Log("SEARCH: " + obj.name);
 
             obj.SetText(webRequest.GetDataFromString(obj.name));
 
