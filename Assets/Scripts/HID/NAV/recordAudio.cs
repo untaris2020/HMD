@@ -6,11 +6,9 @@ using UnityEngine;
 public class recordAudio : MonoBehaviour
 {
     public int MAX_RECORD_TIME = 300; 
-
+    private audioLoader al; 
     private AudioSource audioSource = null;
-   
     List<float> tempRecording = new List<float>();
-
     List<float[]> recordedClips = new List<float[]>();
 
     int idx; 
@@ -26,7 +24,7 @@ public class recordAudio : MonoBehaviour
     void Start()
     {
         idx = 0;
-
+        al = GetComponent<audioLoader>();
         audioSource = GetComponent<AudioSource>();
 
         //Check if there is at least one microphone connected  
@@ -68,9 +66,17 @@ public class recordAudio : MonoBehaviour
             Array.Copy(samples, ClipSamples, ClipSamples.Length - 1);
             audioSource.clip = AudioClip.Create("playRecordClip", ClipSamples.Length, 1, 44100, false);
             audioSource.clip.SetData(ClipSamples, 0);
-            SavWav.Save("recording" + idx, audioSource.clip);
+            SavWav.Save("recording" + idx + ".wav", audioSource.clip);
+            al.LoadNewAudio(audioSource.clip, DateTime.Now, ("Recording " + idx));
             idx += 1;
         }
     }
 
+     private string FormatTime(float time)
+     {
+        int minutes = (int)time/60;
+        int seconds = (int)time-60*minutes;
+        int milliseconds = (int) (1000 * (time - minutes * 60 - seconds));
+        return string.Format("{0:00}:{1:00}:{2:000}", minutes, seconds, milliseconds );
+     }
 }

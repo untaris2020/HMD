@@ -6,7 +6,6 @@ using TMPro;
 public class audioManager : MonoBehaviour
 {
     public GameObject recordButton;
-    public TextMeshProUGUI recordButtonText;
     public GameObject playbackTime;
     public GameObject recordingIndicator; 
 
@@ -21,9 +20,9 @@ public class audioManager : MonoBehaviour
     void Start()
     {
         HeadTracking ht = GameObject.Find("SceneManager").GetComponent<HeadTracking>();
-        ar = GameObject.Find("SceneManager").GetComponent<recordAudio>();
+        ar = this.GetComponent<recordAudio>();
         functionDelegate rec = new functionDelegate(recordingHit);    
-        ht.registerCollider(recordButton.GetComponent<Collider>().name, rec);
+        ht.registerCollider(recordButton.GetComponentInChildren<Collider>().name, rec);
         Time.timeScale = 1.0f;
         updateTime = 0f;
         prevTime = 0f;
@@ -64,7 +63,7 @@ public class audioManager : MonoBehaviour
             {
                 playbackTime.SetActive(false);
                 recordingIndicator.SetActive(false);
-                recordButtonText.SetText("START");
+                recordButton.GetComponentInChildren<TextMeshProUGUI>().SetText("START");
                 recording = false;
                 ar.stopRecording();
             }
@@ -72,7 +71,7 @@ public class audioManager : MonoBehaviour
             {
                 playbackTime.SetActive(true); 
                 recordingIndicator.SetActive(true);
-                recordButtonText.SetText("STOP");
+                recordButton.GetComponentInChildren<TextMeshProUGUI>().SetText("STOP");
                 playbackTime.GetComponent<TextMeshProUGUI>().SetText("REC TIME: 00:00");
                 recording = true;
                 startTime = Time.time;

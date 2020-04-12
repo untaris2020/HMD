@@ -14,7 +14,7 @@ public class NavManager : MonoBehaviour
 
     public GameObject rearviewONButton, rearviewOFFButton, gloveONButton, gloveOFFButton, rthButton, showallButton;
     public Material buttonMat, buttonHoverMat, headerMat, headerHoverMat;
-    public CamerasManager camerasManager;
+    private CamerasManager camerasManager;
 
     public delegate void MyDelegate();
     private delegate void functionDelegate();
@@ -53,6 +53,7 @@ public class NavManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        camerasManager = GetComponent<CamerasManager>();
         NUMOFOBJECTS = (int)(BACKUPTIMESECONDS / TICKTIME);
         // Allocate space
         InitUserPositions();
