@@ -40,9 +40,9 @@ public class audioLoader : MonoBehaviour
         HeadTracking ht = GameObject.Find("SceneManager").GetComponent<HeadTracking>();
 
         ButtonDelegate tmpDelegate = new ButtonDelegate(upArrowHit);
-        ht.registerCollider(upArrowCollider.GetComponentInChildren<MeshCollider>().name, tmpDelegate);
+        ht.registerCollider(upArrowCollider.GetComponent<Collider>().name, tmpDelegate);
         tmpDelegate = new ButtonDelegate(downArrowHit);
-        ht.registerCollider(downArrowCollider.GetComponentInChildren<MeshCollider>().name, tmpDelegate);
+        ht.registerCollider(downArrowCollider.GetComponent<Collider>().name, tmpDelegate);
 
         int i = 0;
         foreach(GameObject box in box_list)
