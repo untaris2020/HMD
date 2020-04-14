@@ -35,7 +35,7 @@ PrefabInstance:
     - target: {fileID: -4216859302048453862, guid: 517cac8db45acbc4b9904584c3176287,
         type: 3}
       propertyPath: m_LocalRotation.x
-      value: -0.7071068
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -4216859302048453862, guid: 517cac8db45acbc4b9904584c3176287,
         type: 3}
@@ -45,12 +45,12 @@ PrefabInstance:
     - target: {fileID: -4216859302048453862, guid: 517cac8db45acbc4b9904584c3176287,
         type: 3}
       propertyPath: m_LocalRotation.z
-      value: -0
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -4216859302048453862, guid: 517cac8db45acbc4b9904584c3176287,
         type: 3}
       propertyPath: m_LocalRotation.w
-      value: 0.7071068
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: -4216859302048453862, guid: 517cac8db45acbc4b9904584c3176287,
         type: 3}
@@ -105,7 +105,7 @@ PrefabInstance:
     - target: {fileID: -927199367670048503, guid: 517cac8db45acbc4b9904584c3176287,
         type: 3}
       propertyPath: m_Name
-      value: MSL_clean Variant
+      value: Curiosity
       objectReference: {fileID: 0}
     - target: {fileID: -744957739651402440, guid: 517cac8db45acbc4b9904584c3176287,
         type: 3}
