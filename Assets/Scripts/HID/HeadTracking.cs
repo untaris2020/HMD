@@ -36,7 +36,7 @@ public class HeadTracking : MonoBehaviour
 
     void Start()
     {
-        cam = GameObject.Find("Main Camera").GetComponent<Camera>();
+        cam = GameObject.Find("MainCamera").GetComponent<Camera>();
         source = GetComponent<AudioSource>();
     }
 
