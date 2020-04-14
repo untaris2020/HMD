@@ -192,16 +192,17 @@ MonoBehaviour:
   misc_text: {fileID: 7682833241953716171}
   instructions_text: {fileID: 2549301127095596090}
   models:
+  - {fileID: 9082365141971467060, guid: d33d39fa410e526449bb5e62164109ef, type: 3}
   - {fileID: 5320682543614932424, guid: 9f50731dd5ef47040ad4d5313f9659cf, type: 3}
-  - {fileID: -927199367670048503, guid: 22cf57fe3dac8c84286b09558a88c871, type: 3}
-  - {fileID: -927199367670048503, guid: 5f1fd5671bdc81f498909973f8327b13, type: 3}
-  - {fileID: -927199367670048503, guid: 8a95fa652913f1e44a5e7d40459d724a, type: 3}
-  - {fileID: -927199367670048503, guid: 517e1861d7330b640b390ce7d0beeb9d, type: 3}
-  - {fileID: -927199367670048503, guid: a84fe0e1ab69a9c438413890864403d7, type: 3}
-  - {fileID: -927199367670048503, guid: 3a61243cafb22db4899f948a35d3612d, type: 3}
-  - {fileID: -927199367670048503, guid: 476b9d0073815c344a1d7528eaa1bb71, type: 3}
-  - {fileID: -927199367670048503, guid: 70b04f74f0faf3243816efd3d0fad7ff, type: 3}
-  glove_model: {fileID: 0}
+  - {fileID: 4200457047329777450, guid: ed41b333617422142bee1c9e64892323, type: 3}
+  - {fileID: 6507085918737618289, guid: 35bbefc64147b9a49b82f2dc6db6c505, type: 3}
+  - {fileID: 8307368632025789050, guid: f919557e2c08d0b4ab6ceecf322f9555, type: 3}
+  - {fileID: 3543077607504576523, guid: c40508fb6cd744a42ac32fa9c584ef79, type: 3}
+  - {fileID: 4646830004614230785, guid: 79fa6d51a8e594f4e844980bdd56c75a, type: 3}
+  - {fileID: 1444708954042682045, guid: 62252284bd73baf4ebd2de153f849025, type: 3}
+  - {fileID: 4461325800554342707, guid: 88a1394bd5c68ac4b9d4c13773ac6db0, type: 3}
+  glove_model: {fileID: 9191836617769674111, guid: 7d5840a1bb911d84dafdc5cb00b1c5a1,
+    type: 3}
 --- !u!64 &2746876638956689645
 MeshCollider:
   m_ObjectHideFlags: 0
