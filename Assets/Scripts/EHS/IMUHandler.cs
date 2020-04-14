@@ -46,7 +46,7 @@ public class IMUHandler : tcpPacket
         string[] tmp = packet.Split(new string[] { "$" }, StringSplitOptions.None);
         try
         {
-            if (tmp.Length == 7)
+            if (tmp.Length == 8)
             {
                 //If seqID has overflown we need to reset
                 if (seqID >= 2147483647)
@@ -61,9 +61,10 @@ public class IMUHandler : tcpPacket
                     xAccel = (float.Parse(tmp[1]));
                     yAccel = (float.Parse(tmp[2]));
                     zAccel = (float.Parse(tmp[3]));
-                    x = (float.Parse(tmp[4]));
-                    y = (float.Parse(tmp[5]));
-                    z = (float.Parse(tmp[6]));
+                    w = (float.Parse(tmp[4]));
+                    x = (float.Parse(tmp[5]));
+                    y = (float.Parse(tmp[6]));
+                    z = (float.Parse(tmp[7]));
 
                     imuDataSmoothing();
                 }
@@ -85,7 +86,12 @@ public class IMUHandler : tcpPacket
         //In here the logic for which values get sent also need to be adjusted based on default. For instance the chest is tilted so the axis are all wrong 
         if(MODE == packetICD.IMU_Mode.CHEST)
         {
-            HeadLockScript.Instance.updateHIDwithIMU(x,z,y);
+            //In here we need to convert the IMU data into the proper format 
+
+
+
+
+            HeadLockScript.Instance.updateHIDwithIMU(w,x,y,z);
         }
         else if(MODE == packetICD.IMU_Mode.GLOVE)
         {

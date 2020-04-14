@@ -20,8 +20,7 @@ public class HeadLockScript : MonoBehaviour
     
     private bool buttonPressed = false;
 
-    private Vector3 rot;
-    private Vector3 prevRot; 
+    private Quaternion rot;
     public enum State
     {
         STATIC = 1,
@@ -95,26 +94,26 @@ public class HeadLockScript : MonoBehaviour
         {
             if(firstTime)
             {
-                DefaultRot = Camera.transform.rotation;
+                DefaultRot = rot;
                 firstTime = false; 
             }
             speed = Time.deltaTime * 12.0f;
             this.transform.position = Vector3.Slerp(this.transform.position, Camera.transform.position, speed);
-            
-            
-            Quaternion rotation = Quaternion.Euler(rot);
-            rotation *= Quaternion.Euler(-90, 0, 0);
-            rotation *= Quaternion.Euler(0, -90, 0);
-            rotation = rotation *  Quaternion.Inverse(DefaultRot); 
-            this.transform.rotation = Quaternion.Slerp(this.transform.rotation, rotation, speed); 
+
+            //Quaternion rotation = Quaternion.Euler(rot);
+            //rotation *= Quaternion.Euler(-90, 0, 0);
+           // rotation *= Quaternion.Euler(0, -90, 0);
+            rot = rot *  Quaternion.Inverse(DefaultRot);
+            //rot = rot 
+            this.transform.rotation = Quaternion.Slerp(this.transform.rotation, rot, speed); 
             updateWithIMU = false;
         }
     }
 
 
-    public void updateHIDwithIMU(float xGyro, float yGyro, float zGyro)
-    {
-        rot = new Vector3(xGyro, yGyro, zGyro);
+    public void updateHIDwithIMU(float w, float x, float y, float z)
+    { 
+        rot = new Quaternion(-x,-z,-y,w);
         updateWithIMU = true; 
     }
 

@@ -1323,7 +1323,6 @@ GameObject:
   - component: {fileID: 6212845614255782461}
   - component: {fileID: 8963191160835266063}
   - component: {fileID: 2191624751121782855}
-  - component: {fileID: 6066499899907271509}
   m_Layer: 5
   m_Name: Nav_pg1
   m_TagString: Untagged
@@ -1417,19 +1416,6 @@ MonoBehaviour:
   m_BlockingMask:
     serializedVersion: 2
     m_Bits: 4294967295
---- !u!114 &6066499899907271509
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7813069970455922152}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d4ac446dfce8f3a4583a324e17e8d6d8, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  ImageHolder: {fileID: 0}
 --- !u!1 &8517226871304650130
 GameObject:
   m_ObjectHideFlags: 0

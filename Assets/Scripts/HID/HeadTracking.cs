@@ -9,6 +9,8 @@ public class HeadTracking : MonoBehaviour
 {
     private Camera cam;
 
+    private string currentCollider = null; 
+
    // public Image Cursor; //parent object to move
     public GameObject Cursor;
 
@@ -57,42 +59,15 @@ public class HeadTracking : MonoBehaviour
         {
             string collidedName = hit.collider.name;
 
+            
+
             //Debug.Log("Collided Name: " + collidedName + " RES: " + colliderList.ContainsKey(collidedName));
             //Check dictionary for collided name here
             Cursor.transform.position = Vector3.Slerp(Cursor.transform.position, hit.point, speed); //Updates the position of the cursor to show object collided with
             Cursor.transform.rotation = Quaternion.Slerp(Cursor.transform.rotation, cam.transform.rotation, speed);
             Cursor.SetActive(true);
 
-            if (colliderList.ContainsKey(collidedName))
-            {
-                
-
-                //Change texture of material if appliciable here 
-
-                missCount = 0; //reset the miss count becuase we have hit the object 
-
-                if (elapsed > pause)
-                {
-                    if (dial.fillAmount != 1f) //if we have not clicked Start animation
-                    {
-                        dial.fillAmount = dial.fillAmount + Time.deltaTime * timerSpeed;
-                    }
-                    else //we have clicked 
-                    {
-                        //Debug.Log("Button pressed\n");
-                        source.PlayOneShot(click, VOL);
-
-                        //Call the delegate method here 
-                        colliderList[collidedName].DynamicInvoke();
-
-                        pause = .5f; //setting our delay
-                        dial.fillAmount = 0; //reset the dial amount
-                        elapsed = 0;
-                    }
-                }
-                 elapsed += Time.deltaTime; //checking number of seconds elapsed
-            }
-            else
+            if (collidedName != currentCollider && currentCollider != null)
             {
                 if (missCount < threshold)
                 {
@@ -105,6 +80,52 @@ public class HeadTracking : MonoBehaviour
                     missCount = 0;
                     elapsed = 0;
                     pause = .25f;
+                    currentCollider = null;
+                }
+            }
+            else
+            {
+                if (colliderList.ContainsKey(collidedName))
+                {
+                    //Change texture of material if appliciable here 
+                    currentCollider = collidedName;
+                    missCount = 0; //reset the miss count becuase we have hit the object 
+
+                    if (elapsed > pause)
+                    {
+                        if (dial.fillAmount != 1f) //if we have not clicked Start animation
+                        {
+                            dial.fillAmount = dial.fillAmount + Time.deltaTime * timerSpeed;
+                        }
+                        else //we have clicked 
+                        {
+                            //Debug.Log("Button pressed\n");
+                            source.PlayOneShot(click, VOL);
+
+                            //Call the delegate method here 
+                            colliderList[collidedName].DynamicInvoke();
+
+                            pause = .5f; //setting our delay
+                            dial.fillAmount = 0; //reset the dial amount
+                            elapsed = 0;
+                        }
+                    }
+                    elapsed += Time.deltaTime; //checking number of seconds elapsed
+                }
+                else
+                {
+                    if (missCount < threshold)
+                    {
+                        missCount++;
+                    }
+                    else
+                    {
+                        Cursor.SetActive(false);
+                        dial.fillAmount = 0;
+                        missCount = 0;
+                        elapsed = 0;
+                        pause = .25f;
+                    }
                 }
             }
         }
