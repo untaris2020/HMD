@@ -504,7 +504,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1586146169894398, guid: f256f6b700b6eb145a8c94856cadd059, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4956561063048924, guid: f256f6b700b6eb145a8c94856cadd059, type: 3}
       propertyPath: m_LocalPosition.x
@@ -561,6 +561,11 @@ PrefabInstance:
     - target: {fileID: 4956561063048924, guid: f256f6b700b6eb145a8c94856cadd059, type: 3}
       propertyPath: m_LocalScale.z
       value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 1059213822353822339, guid: f256f6b700b6eb145a8c94856cadd059,
+        type: 3}
+      propertyPath: m_TagString
+      value: gesture_1
       objectReference: {fileID: 0}
     - target: {fileID: 4767683760138876916, guid: f256f6b700b6eb145a8c94856cadd059,
         type: 3}
@@ -719,7 +724,7 @@ PrefabInstance:
     - target: {fileID: 7813069970455922152, guid: feba0759ac3ea1f45b24e285e6be5a41,
         type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: feba0759ac3ea1f45b24e285e6be5a41, type: 3}
@@ -821,13 +826,17 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 1586146169894398, guid: 020a9a279f4453d48a9fad8e37a38572, type: 3}
+      propertyPath: m_TagString
+      value: Untagged
+      objectReference: {fileID: 0}
     - target: {fileID: 4956561063048924, guid: 020a9a279f4453d48a9fad8e37a38572, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4956561063048924, guid: 020a9a279f4453d48a9fad8e37a38572, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -1
+      value: -0.92
       objectReference: {fileID: 0}
     - target: {fileID: 4956561063048924, guid: 020a9a279f4453d48a9fad8e37a38572, type: 3}
       propertyPath: m_LocalPosition.z
@@ -882,6 +891,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: actualDownArrowRender
       objectReference: {fileID: 0}
+    - target: {fileID: 1303723864793746635, guid: 020a9a279f4453d48a9fad8e37a38572,
+        type: 3}
+      propertyPath: m_TagString
+      value: gesture_sidescroll
+      objectReference: {fileID: 0}
     - target: {fileID: 1908591072448247611, guid: 020a9a279f4453d48a9fad8e37a38572,
         type: 3}
       propertyPath: m_Name
@@ -891,6 +905,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: up_arrow_object
+      objectReference: {fileID: 0}
+    - target: {fileID: 7898471960982916892, guid: 020a9a279f4453d48a9fad8e37a38572,
+        type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.104
       objectReference: {fileID: 0}
     - target: {fileID: 8290618759836636074, guid: 020a9a279f4453d48a9fad8e37a38572,
         type: 3}
@@ -1011,6 +1030,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_IsActive
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5626381135203749000, guid: 49fe80de65c21eb4ca25298e67034c0c,
+        type: 3}
+      propertyPath: m_TagString
+      value: gesture_4
       objectReference: {fileID: 0}
     - target: {fileID: 6843345267473178175, guid: 49fe80de65c21eb4ca25298e67034c0c,
         type: 3}

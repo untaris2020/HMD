@@ -1198,6 +1198,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: debug_header_R
       objectReference: {fileID: 0}
+    - target: {fileID: 5626381135203749000, guid: 49fe80de65c21eb4ca25298e67034c0c,
+        type: 3}
+      propertyPath: m_TagString
+      value: gesture_4
+      objectReference: {fileID: 0}
     - target: {fileID: 6843345267473178175, guid: 49fe80de65c21eb4ca25298e67034c0c,
         type: 3}
       propertyPath: m_LocalPosition.x

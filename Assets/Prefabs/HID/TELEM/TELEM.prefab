@@ -2321,11 +2321,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1586146169894398, guid: fea76add2523fdd4bb7ac045d07ea211, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1586146169894398, guid: fea76add2523fdd4bb7ac045d07ea211, type: 3}
       propertyPath: m_Icon
       value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 1586146169894398, guid: fea76add2523fdd4bb7ac045d07ea211, type: 3}
+      propertyPath: m_TagString
+      value: Untagged
       objectReference: {fileID: 0}
     - target: {fileID: 4956561063048924, guid: fea76add2523fdd4bb7ac045d07ea211, type: 3}
       propertyPath: m_LocalPosition.x
@@ -2593,6 +2597,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: telem_header_R
       objectReference: {fileID: 0}
+    - target: {fileID: 5626381135203749000, guid: 49fe80de65c21eb4ca25298e67034c0c,
+        type: 3}
+      propertyPath: m_TagString
+      value: gesture_4
+      objectReference: {fileID: 0}
     - target: {fileID: 6843345267473178175, guid: 49fe80de65c21eb4ca25298e67034c0c,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -2761,6 +2770,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: telemPG2_col
+      objectReference: {fileID: 0}
+    - target: {fileID: 7252988273258562734, guid: 38cb154fed93fe442afc9fb4b4adcd1f,
+        type: 3}
+      propertyPath: m_TagString
+      value: gesture_sidescroll
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 38cb154fed93fe442afc9fb4b4adcd1f, type: 3}

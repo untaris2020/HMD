@@ -156,8 +156,6 @@ public class PanelBase : MonoBehaviour
 
     void InstantiateGestureMarkers() {
         DestroyGestureMarkers();
-
-        Debug.Log("Creating new markers...");
         obj = GetComponentsInChildren<Transform> (true);
 
         // get all buttons if any
@@ -172,13 +170,26 @@ public class PanelBase : MonoBehaviour
                 gesture_number = 3;
             } else if (ob.CompareTag("gesture_4")) {
                 gesture_number = 4;
+            } else if (ob.CompareTag("gesture_sidescroll")) {
+                gesture_number = 5;
             }
 
+            if (gesture_number == 5) {
+                //side scroll marker
+                Debug.Log("sidescroll");
+                GameObject temp = Instantiate(DebugManager.Instance.sideScrollMarker, ob.transform);
+                // set offset
+                temp.transform.localScale = new Vector3(0.08333334f, 0.08333334f, 0.08333334f);
+                temp.transform.localEulerAngles = new Vector3(0f, 0f, 0f);
+                temp.transform.localPosition = new Vector3(-0.4575001f, -0.064f, -0.05166666f);
+                //temp.transform.position 
+                gestureMarkers.Add(temp);
+            } else if (gesture_number != -1) {
+                // regurlar number marker
 
-            if (gesture_number != -1) {
                 GameObject temp = Instantiate(DebugManager.Instance.gestureMarkers[gesture_number - 1], ob.transform);
                 // set offset
-                temp.transform.localScale = new Vector3(.002f, .002f, .002f);
+                temp.transform.localScale = new Vector3(0.0015f, 0.002f, 0.002f);
                 temp.transform.localEulerAngles = new Vector3(0f, -180f, 0f);
                 temp.transform.localPosition = new Vector3(-0.00252f, 0.00203f, 0.099f);
                 //temp.transform.position 
@@ -200,7 +211,6 @@ public class PanelBase : MonoBehaviour
     }
 
     void DestroyGestureMarkers() {
-        Debug.Log("Destroying...");
         foreach (GameObject obj in gestureMarkers) {
             // can you destroy a null object? idk might need to null check
             Destroy(obj);

@@ -1,12 +1,14 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class FadeInOut : MonoBehaviour
 {
-    public GameObject cylinder;
-    public GameObject text;
+    //public GameObject cylinder;
+    //public GameObject text;
+    Transform[] obj;
     float fadeTimeSeconds = 0.4f;
 
     // Start is called before the first frame update
@@ -31,15 +33,30 @@ public class FadeInOut : MonoBehaviour
 
     void FadeIn() {
 
-        StartCoroutine(fadeInAndOut(cylinder, true, fadeTimeSeconds));
-        StartCoroutine(fadeInAndOut(text, true, fadeTimeSeconds));
+        obj = GetComponentsInChildren<Transform> (true);
+
+        foreach (var ob in obj.Where(ob => (ob != transform))) {
+            if (ob.GetComponent<MeshRenderer>()) {
+                StartCoroutine(fadeInAndOut(ob.gameObject, true, fadeTimeSeconds));
+            }
+        }
+
+        //StartCoroutine(fadeInAndOut(cylinder, true, fadeTimeSeconds));
+        //StartCoroutine(fadeInAndOut(text, true, fadeTimeSeconds));
     }
 
     public void FadeOut() {
-        StartCoroutine(fadeInAndOut(cylinder, false, fadeTimeSeconds));
-        StartCoroutine(fadeInAndOut(text, false, fadeTimeSeconds));
+        if (isActiveAndEnabled) {
+            obj = GetComponentsInChildren<Transform> (true);
 
-        StartCoroutine(Delay(fadeTimeSeconds));
+            foreach (var ob in obj.Where(ob => (ob != transform))) {
+                if (ob.GetComponent<MeshRenderer>()) {
+                    StartCoroutine(fadeInAndOut(ob.gameObject, false, fadeTimeSeconds));
+                }
+            }
+
+            StartCoroutine(Delay(fadeTimeSeconds));
+        }
     }
 
     IEnumerator Delay(float duration) {
