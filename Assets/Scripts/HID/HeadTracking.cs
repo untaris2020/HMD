@@ -9,8 +9,9 @@ public class HeadTracking : MonoBehaviour
 {
     private Camera cam;
 
-    private string currentCollider; 
-
+    private string currentCollider;
+    private string currentAreaCollider;
+    private bool panelActive; 
    // public Image Cursor; //parent object to move
     public GameObject Cursor;
 
@@ -41,11 +42,14 @@ public class HeadTracking : MonoBehaviour
 
 
     private Dictionary<string, Delegate> colliderList = new Dictionary<string, Delegate>();
+    private Dictionary<string, Delegate> onOffColliderList = new Dictionary<string, Delegate>(); 
     private Dictionary<string, forceClickData> pageColliderList = new Dictionary<string, forceClickData>();
 
     void Start()
     {
-        currentCollider = null; 
+        currentCollider = null;
+        currentAreaCollider = null;
+        panelActive = false;
         cam = GameObject.Find("MainCamera").GetComponent<Camera>();
         source = GetComponent<AudioSource>();
     }
@@ -56,6 +60,10 @@ public class HeadTracking : MonoBehaviour
         colliderList.Add(colliderName, colliderFunc);
     }
 
+    public void registerToggleCollider(string colliderName, Delegate colliderFunc)
+    {
+        onOffColliderList.Add(colliderName, colliderFunc);
+    }
 
     public void registerCollider(string colliderName, string pageColliderName, Delegate colliderFunc, forceSensorManager.fingerInput inputs)
     {
@@ -148,10 +156,39 @@ public class HeadTracking : MonoBehaviour
                         pause = .25f;
                     }
                 }
+
+                if(onOffColliderList.ContainsKey(collidedName))
+                {
+                    if(currentAreaCollider != collidedName && !panelActive)
+                    {
+                        onOffColliderList[collidedName].DynamicInvoke(); //Set brand new panel to active
+                        panelActive = true;
+                        currentAreaCollider = collidedName; //update tracking variables 
+                    }
+                    else if(currentAreaCollider != collidedName && panelActive)
+                    {
+                        onOffColliderList[currentAreaCollider].DynamicInvoke(); //Toggle former inactive
+                        onOffColliderList[collidedName].DynamicInvoke(); //Toggle new active
+                        panelActive = true;
+                        currentAreaCollider = collidedName;  //Update tracking variables 
+                    }
+                }
+                //else if(panelActive)
+                //{
+                //    onOffColliderList[currentAreaCollider].DynamicInvoke(); //Toggle the current inactive becuase we are no longer looking at a panel
+                //    panelActive = false;
+                //    currentAreaCollider = null; 
+                //}
             }
         }
         else
         {
+            if(panelActive)
+            {
+                onOffColliderList[currentAreaCollider].DynamicInvoke(); //Toggle the current inactive becuase we are no longer looking at a panel
+                panelActive = false;
+                currentAreaCollider = null; 
+            }
             Cursor.SetActive(false);
             dial.fillAmount = 0;
             missCount = 0;
@@ -167,6 +204,11 @@ public class HeadTracking : MonoBehaviour
 
         RaycastHit[] hits;
 
+        forceSensorManager.fingerInput thumblow = input;
+        thumblow.thumb = 0; 
+        forceSensorManager.fingerInput thumbhigh = input;
+        thumbhigh.thumb = 1;
+
         //float lerp = Mathf.PingPong(Time.time, duration) / duration;
         //float lerp = 0;
         hits = Physics.RaycastAll(cam.transform.position, cam.transform.forward, 100.0f);
@@ -178,7 +220,7 @@ public class HeadTracking : MonoBehaviour
 
                 foreach (forceClickData dat in pageColliderList.Values)
                 {
-                    if ((dat.pageCol == collidedName) && (dat.input.Equals(input)))
+                    if ((dat.pageCol == collidedName) && (dat.input.Equals(thumblow) || dat.input.Equals(thumbhigh)))
                     {
                         //We found the guy we are looking for 
                         dat.del.DynamicInvoke();
