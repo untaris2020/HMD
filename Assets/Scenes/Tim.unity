@@ -1097,7 +1097,12 @@ PrefabInstance:
         type: 3}
       propertyPath: models.Array.data[0]
       value: 
-      objectReference: {fileID: -927199367670048503, guid: e44a1c41d02fc824aafbe691067f5d9a,
+      objectReference: {fileID: 0}
+    - target: {fileID: 5164311966423926228, guid: 83ca115a245c487409860bf2169744ea,
+        type: 3}
+      propertyPath: models.Array.data[1]
+      value: 
+      objectReference: {fileID: -927199367670048503, guid: f92bfacdff04f6e42a76849458417805,
         type: 3}
     - target: {fileID: 6758343569576109480, guid: 83ca115a245c487409860bf2169744ea,
         type: 3}
@@ -1625,6 +1630,16 @@ PrefabInstance:
       propertyPath: _world_center
       value: 
       objectReference: {fileID: 946154289}
+    - target: {fileID: 7628259576536362468, guid: f6884cfcea15b5b44a5aa8b3a220c207,
+        type: 3}
+      propertyPath: REAR_CAM
+      value: 
+      objectReference: {fileID: 1706013154}
+    - target: {fileID: 7628259576536362468, guid: f6884cfcea15b5b44a5aa8b3a220c207,
+        type: 3}
+      propertyPath: GLOVE_CAM
+      value: 
+      objectReference: {fileID: 390736929}
     - target: {fileID: 7975425389554604115, guid: f6884cfcea15b5b44a5aa8b3a220c207,
         type: 3}
       propertyPath: m_textInfo.characterCount
@@ -4502,6 +4517,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2032287673}
+  - component: {fileID: 2032287674}
   m_Layer: 0
   m_Name: CHEST_TOGGLE
   m_TagString: Untagged
@@ -4523,6 +4539,21 @@ Transform:
   m_Father: {fileID: 1832656934}
   m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2032287674
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2032287672}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 607190d408521294cad91c7d465043fb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  MODE: 0
+  startScene: {fileID: 0}
+  gloveObj: {fileID: 0}
 --- !u!1001 &58488479880982237
 PrefabInstance:
   m_ObjectHideFlags: 0
