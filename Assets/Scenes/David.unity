@@ -7059,7 +7059,7 @@ PrefabInstance:
     - target: {fileID: 5164311966423926228, guid: 83ca115a245c487409860bf2169744ea,
         type: 3}
       propertyPath: models.Array.size
-      value: 10
+      value: 12
       objectReference: {fileID: 0}
     - target: {fileID: 5164311966423926228, guid: 83ca115a245c487409860bf2169744ea,
         type: 3}
