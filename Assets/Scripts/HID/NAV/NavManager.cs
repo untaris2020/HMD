@@ -16,6 +16,8 @@ public class NavManager : MonoBehaviour
     public Material buttonMat, buttonHoverMat, headerMat, headerHoverMat;
     private CamerasManager camerasManager;
 
+    private bool glove_active; 
+
     public delegate void MyDelegate();
     private delegate void functionDelegate();
 
@@ -32,8 +34,8 @@ public class NavManager : MonoBehaviour
 
     List<Waypoint> waypoints = new List<Waypoint>();
 
-    private CameraHandler GLOVE_CAM;
-    private CameraHandler REAR_CAM;
+    public CameraHandler GLOVE_CAM;
+    public CameraHandler REAR_CAM;
 
     public GameObject _cube, _camera, _arrow, _world_center;
     
@@ -61,9 +63,6 @@ public class NavManager : MonoBehaviour
         userPosCounter = 0;
 
         HeadTracking ht = GameObject.Find("SceneManager").GetComponent<HeadTracking>();
-
-        REAR_CAM = GameObject.Find("HEAD_CAM").GetComponent<CameraHandler>();
-        GLOVE_CAM = GameObject.Find("HEAD_CAM").GetComponent<CameraHandler>();
 
         functionDelegate startRear = new functionDelegate(PressRearviewON);
         functionDelegate stopRear = new functionDelegate(PressRearviewOFF);
@@ -276,6 +275,7 @@ public class NavManager : MonoBehaviour
 
     public void PressGloveON()
     {
+        
         gloveONButton.GetComponent<Renderer>().material = buttonHoverMat;
         gloveOFFButton.GetComponent<Renderer>().material = buttonMat;
 
