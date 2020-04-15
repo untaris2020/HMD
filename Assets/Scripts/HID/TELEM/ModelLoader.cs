@@ -85,6 +85,13 @@ public class ModelLoader : MonoBehaviour
         UpdateUI();
         misc_text.SetText("");
         glove_model.SetActive(false);
+
+        for (int i=0; i<models.Length; i++) {
+            if (models[i] == null) {
+                GameObject temp = new GameObject("NULL");
+                models[i] = temp;
+            }
+        }
     }
 
     // Update is called once per frame
