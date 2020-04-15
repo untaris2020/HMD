@@ -377,6 +377,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: startButton
       objectReference: {fileID: 0}
+    - target: {fileID: -927199367670048503, guid: ebc95f266c8bf9248ab8fc3387eb33ca,
+        type: 3}
+      propertyPath: m_TagString
+      value: gesture_1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: ebc95f266c8bf9248ab8fc3387eb33ca, type: 3}
 --- !u!1 &6751071118253948818 stripped
