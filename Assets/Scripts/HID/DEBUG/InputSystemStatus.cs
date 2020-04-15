@@ -121,15 +121,12 @@ public class InputSystemStatus : MonoBehaviour
         if (!useGaze) {
             ToggleSystem();
         }
-        
-
     }
 
     void GestureButtonPress() {
         if (!useGestures) {
             ToggleSystem();
         }
-        
     }
 
     void ToggleSystem() {
