@@ -82,16 +82,18 @@ public class ModelLoader : MonoBehaviour
         ht.registerCollider(modelButtons[4].GetComponent<Collider>().name, tmpDelegate0);
         functionDebug.Instance.registerFunction("loadModel4", tmpDelegate0);
 
-        UpdateUI();
-        misc_text.SetText("");
-        glove_model.SetActive(false);
-
         for (int i=0; i<models.Length; i++) {
             if (models[i] == null) {
                 GameObject temp = new GameObject("NULL");
                 models[i] = temp;
             }
         }
+
+        UpdateUI();
+        misc_text.SetText("");
+        glove_model.SetActive(false);
+
+        
     }
 
     // Update is called once per frame
