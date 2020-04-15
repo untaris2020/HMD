@@ -20,6 +20,11 @@ public class PanelBase : MonoBehaviour
     public delegate void Button2Delegate();
     public delegate void Button3Delegate();
 
+    public Collider Page0Col; 
+    public Collider Page1Col;
+    public Collider Page2Col;
+    public Collider Page3Col;
+
     protected virtual void Start()
     {
         HeadTracking ht = GameObject.Find("SceneManager").GetComponent<HeadTracking>();
@@ -27,19 +32,21 @@ public class PanelBase : MonoBehaviour
 
 
         Button0Delegate tmpDelegate0 = new Button0Delegate(Button0Press);
-        ht.registerCollider(panels[0].GetComponent<Collider>().name, tmpDelegate0);
+        forceSensorManager.fingerInput input = new forceSensorManager.fingerInput(0, 0, 0, 0, 1);
+
+        ht.registerCollider(panels[0].GetComponent<Collider>().name, Page3Col.name, tmpDelegate0, input);
         functionDebug.Instance.registerFunction(this.GetType().Name + "_tab0",tmpDelegate0);
 
         Button1Delegate tmpDelegate1 = new Button1Delegate(Button1Press);
-        ht.registerCollider(panels[1].GetComponent<Collider>().name, tmpDelegate1);
+        ht.registerCollider(panels[1].GetComponent<Collider>().name, Page0Col.name, tmpDelegate1, input);
         functionDebug.Instance.registerFunction(this.GetType().Name + "_tab1",tmpDelegate1);
 
         Button2Delegate tmpDelegate2 = new Button2Delegate(Button2Press);
-        ht.registerCollider(panels[2].GetComponent<Collider>().name, tmpDelegate2);
+        ht.registerCollider(panels[2].GetComponent<Collider>().name, Page1Col.name, tmpDelegate2, input);
         functionDebug.Instance.registerFunction(this.GetType().Name + "_tab2",tmpDelegate2);
 
         Button3Delegate tmpDelegate3 = new Button3Delegate(Button3Press);
-        ht.registerCollider(panels[3].GetComponent<Collider>().name, tmpDelegate3);
+        ht.registerCollider(panels[3].GetComponent<Collider>().name, Page2Col.name, tmpDelegate3, input);
         functionDebug.Instance.registerFunction(this.GetType().Name + "_tab3",tmpDelegate3);
 
         pageIndex = 0;
