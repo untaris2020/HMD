@@ -16,7 +16,8 @@ public class packetICD : MonoBehaviour
         TOGGLE_SCREEN = 3, 
         HEAD_CAM = 4, 
         GLOVE_CAM = 5, 
-        FORCE_SENSOR = 6
+        FORCE_SENSOR = 6,
+        TOGGLE_GLOVE = 7,
     }
 
     public enum IMU_Mode
@@ -31,6 +32,12 @@ public class packetICD : MonoBehaviour
         GLOVE = 1,
     }
     
+    public enum Toggle_Mode
+    {
+        CHEST = 0, 
+        GLOVE = 1, 
+    }
+
     public struct Header
     {
         public Type type;   //Type of data packet

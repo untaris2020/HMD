@@ -10,9 +10,9 @@ public class recordAudio : MonoBehaviour
     private AudioSource audioSource = null;
     List<float> tempRecording = new List<float>();
     List<float[]> recordedClips = new List<float[]>();
-
-    int idx; 
-
+    private string AudioPathDir; 
+    int idx;
+    private bool firstClip;
     private int minFreq;  
     private int maxFreq;
 
@@ -27,6 +27,7 @@ public class recordAudio : MonoBehaviour
         al = GetComponent<audioLoader>();
         audioSource = GetComponent<AudioSource>();
 
+        firstClip = true; 
         //Check if there is at least one microphone connected  
         if (Microphone.devices.Length <= 0)
         {
@@ -66,7 +67,14 @@ public class recordAudio : MonoBehaviour
             Array.Copy(samples, ClipSamples, ClipSamples.Length - 1);
             audioSource.clip = AudioClip.Create("playRecordClip", ClipSamples.Length, 1, 44100, false);
             audioSource.clip.SetData(ClipSamples, 0);
-            SavWav.Save("recording" + idx + ".wav", audioSource.clip);
+            if(firstClip)
+            {
+                AudioPathDir = DateTime.Now.ToString("MMM_dd_HH_mm");
+                firstClip = false; 
+            }
+            
+
+            SavWav.Save(AudioPathDir + "/" + "recording" + idx + ".wav", audioSource.clip);
             al.LoadNewAudio(audioSource.clip, DateTime.Now, ("Recording " + idx));
             idx += 1;
         }

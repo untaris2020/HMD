@@ -10,10 +10,15 @@ public class startBehavior : MonoBehaviour
     public IMUHandler IMU_CHEST;
     private bool hidState; 
     private delegate void ButtonDelegate();
-    public bool useStartRoutine; 
+    public bool useStartRoutine;
+    public bool ignoreIMU; 
     // Start is called before the first frame update
     void Start()
     {
+        HeadTracking ht = GameObject.Find("SceneManager").GetComponent<HeadTracking>();
+        ButtonDelegate tmpDelegate = new ButtonDelegate(onClick);
+        ht.registerCollider(this.GetComponentInChildren<Collider>().name, tmpDelegate);
+
         if(useStartRoutine)
         {
             hidState = false;
@@ -21,10 +26,7 @@ public class startBehavior : MonoBehaviour
             
             button.SetActive(true);
             text.SetActive(true);
-            HeadTracking ht = GameObject.Find("SceneManager").GetComponent<HeadTracking>();
-            ButtonDelegate tmpDelegate = new ButtonDelegate(onClick);
-            ht.registerCollider(this.GetComponentInChildren<Collider>().name, tmpDelegate);
-            
+
             this.GetComponentInChildren<TextMeshProUGUI>().SetText("CLICK TO START SCENE");
         }
         else
@@ -39,7 +41,7 @@ public class startBehavior : MonoBehaviour
 
     public void onClick()
     {
-        if(IMU_CHEST.getConnected())
+        if(IMU_CHEST.getConnected() || ignoreIMU)
         {
             hidState = true;
             toggleHID(hidState);
@@ -73,5 +75,11 @@ public class startBehavior : MonoBehaviour
         toggleHID(hidState);
         button.SetActive(true);
         text.SetActive(true);
+        this.GetComponentInChildren<TextMeshProUGUI>().SetText("CLICK TO START SCENE");
+        //Toggle Camera inactive
+        //Toggle Waypoint incactive
+        //Toggle 3D inactive 
+        //Stop recording 
+
     }
 }

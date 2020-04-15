@@ -19,6 +19,7 @@ public class audioLoader : MonoBehaviour
     private delegate void ButtonDelegate();
     private int currentPage;
     private AudioSource aud;
+    
 
     private struct recording
     {
