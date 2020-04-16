@@ -45,8 +45,8 @@ public class NavManager : MonoBehaviour
     
 
     private IEnumerator coroutine;
-    private float TICKTIME = 5.0f;   //was 10.0f
-    private float BACKUPTIMESECONDS = 600.0f;   // amount of time between backups was 300 (5mins)
+    private float TICKTIME = 1.0f;   //was 10.0f
+    private float BACKUPTIMESECONDS = 1000.0f;   // amount of time between backups was 300 (5mins)
     private int NUMOFOBJECTS = 0; 
     private int userPosCounter;
     private bool update_waypoints_rth = false;
@@ -54,6 +54,8 @@ public class NavManager : MonoBehaviour
     private bool showall_status = false;
     public TextMeshProUGUI rth_text;
     public TextMeshProUGUI showall_text;
+    GameObject homeWaypoint;
+    AStar astarScript;
 
     public bool getRTHStat() { return rth_status; }
     public bool getSAStat() { return showall_status; }
@@ -73,6 +75,7 @@ public class NavManager : MonoBehaviour
 
         userPosCounter = 0;
 
+        astarScript = GetComponent<AStar>();
         HeadTracking ht = GameObject.Find("SceneManager").GetComponent<HeadTracking>();
 
         functionDelegate startChest = new functionDelegate(ToggleRearviewCam);
@@ -144,8 +147,10 @@ public class NavManager : MonoBehaviour
             userPositions[userPosCounter] = tmpPos;
 
             // Make a waypoint game object
+            
             GameObject temp = Instantiate(waypoint_mesh, tmpPos.position, Quaternion.identity, _world_center.transform);
             temp.SetActive(rth_status || showall_status);
+            temp.tag = "Waypoint";
             waypoint_meshes.Add(temp);
 
             if (userPosCounter >= (NUMOFOBJECTS)-1)
@@ -191,6 +196,12 @@ public class NavManager : MonoBehaviour
         {
             obj.SetActive(rth_status);
         }
+
+        // new code to drive ASTAR
+        homeWaypoint = waypoint_meshes[0];  // first waypoint is home - note if the waypoitns get cleared (every X seconds set above) this alg will not work correctly
+
+        List<GameObject> path = new List<GameObject>();
+        path = astarScript.generateRTHPath(homeWaypoint);
 
     }
 
