@@ -570,6 +570,11 @@ PrefabInstance:
     - target: {fileID: 4767683760138876916, guid: f256f6b700b6eb145a8c94856cadd059,
         type: 3}
       propertyPath: m_TagString
+      value: Untagged
+      objectReference: {fileID: 0}
+    - target: {fileID: 6333296170696197414, guid: f256f6b700b6eb145a8c94856cadd059,
+        type: 3}
+      propertyPath: m_TagString
       value: gesture_1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
@@ -724,7 +729,7 @@ PrefabInstance:
     - target: {fileID: 7813069970455922152, guid: feba0759ac3ea1f45b24e285e6be5a41,
         type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: feba0759ac3ea1f45b24e285e6be5a41, type: 3}

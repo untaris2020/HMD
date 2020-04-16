@@ -155,6 +155,10 @@ public class PanelBase : MonoBehaviour
     }
 
     void InstantiateGestureMarkers() {
+        if (!InputSystemStatus.Instance.GetShowGestureIndicators()) {
+            return;
+        }
+
         DestroyGestureMarkers();
         obj = GetComponentsInChildren<Transform> (true);
 
