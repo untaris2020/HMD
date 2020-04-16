@@ -9,6 +9,7 @@ TagManager:
   - gesture_3
   - gesture_4
   - gesture_sidescroll
+  - Waypoint
   layers:
   - Default
   - TransparentFX
