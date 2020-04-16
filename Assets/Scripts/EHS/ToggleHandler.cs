@@ -20,20 +20,27 @@ public class ToggleHandler : tcpPacket
     private bool newPacket;
 
     private delegate void functionDelegate();
-    
-    public void start()
+
+    public void Start()
     {
+        Debug.Log("Toggle Started");
+        //base.Start();
         newPacket = false; 
         seqID = -1; 
         connected = false;
         if (MODE == packetICD.Toggle_Mode.CHEST)
         {
             NAME = "chestToggle";
+            debugName = "chest_toggle"; 
         }
         else
         {
             NAME = "gloveToggle";
+            debugName = "glove_toggle";
         }
+
+        reportStatus(); 
+
         functionDelegate stopDelegate = new functionDelegate(stopStream);
         functionDelegate startDelegate = new functionDelegate(startStream);
         functionDebug.Instance.registerFunction(NAME + "start", startDelegate);

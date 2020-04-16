@@ -11,6 +11,8 @@ public class DebugManager : MonoBehaviour
     public static DebugManager Instance;
     //public DebugManager Instance { get { return m_Instance; } }
 
+    private bool updateStatusesState; 
+
     public TextMeshProUGUI[] statuses;
     public static Hashtable debugHashtable = new Hashtable();
     public GameObject[] gestureMarkers;
@@ -31,23 +33,22 @@ public class DebugManager : MonoBehaviour
     {
         //m_Instance = this;
         Instance = this;
-
+        updateStatusesState = false; 
         // Moved from void Start()
         for (int i=0; i<consoleEntries.Length; i++) consoleEntries[i] = new ConsoleEntrie();
 
         debugHashtable.Add("telem_status","UN-INIT");
+        debugHashtable.Add("chest_system","UN-INIT");
+        debugHashtable.Add("glove_system","UN-INIT");
         debugHashtable.Add("chest_IMU","UN-INIT");
-        debugHashtable.Add("hand_IMU","UN-INIT");
-        debugHashtable.Add("hand_FS","UN-INIT");
-        debugHashtable.Add("chest_cam","UN-INIT");
-        debugHashtable.Add("hand_cam","UN-INIT");
-
-        debugHashtable.Add("w","UN-INIT");
-        debugHashtable.Add("chest_IMU_PC","UN-INIT");
-        debugHashtable.Add("hand_IMU_PC","UN-INIT");
-        debugHashtable.Add("x","UN-INIT");
-        debugHashtable.Add("y","UN-INIT");
-        debugHashtable.Add("z","UN-INIT");
+        debugHashtable.Add("glove_IMU","UN-INIT");
+        debugHashtable.Add("head_cam","UN-INIT");
+        debugHashtable.Add("glove_cam","UN-INIT");
+        debugHashtable.Add("chest_toggle","UN-INIT");
+        debugHashtable.Add("glove_toggle","UN-INIT");
+        debugHashtable.Add("force_sensor","UN-INIT");
+        debugHashtable.Add("microphone","UN-INIT");
+        //debugHashtable.Add("z","UN-INIT");
         UpdateStatuses();
     }
 
@@ -57,24 +58,21 @@ public class DebugManager : MonoBehaviour
         Instance = null;
     }
 
-
-
-    void Start()
-    {
-        
-        
-    }
-
-    // Update is called once per frame
     void Update()
     {
-
+        if(updateStatusesState)
+        {
+            UpdateStatuses();
+            updateStatusesState = false; 
+        }
+        
     }
+
 
     public void SetParam(string name, string value)
     {
         debugHashtable[name] = value;
-        UpdateStatuses();
+        updateStatusesState = true; 
         return;
     }
 

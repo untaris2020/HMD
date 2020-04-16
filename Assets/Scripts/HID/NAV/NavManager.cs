@@ -14,6 +14,7 @@ public class NavManager : MonoBehaviour
 
     public GameObject rearviewToggleButton, gloveToggleButton, rthButton, showallButton;
     public Material buttonMat, buttonHoverMat, headerMat, headerHoverMat;
+    public Collider navPage0_col, navPage1_col;
     private CamerasManager camerasManager;
 
     private bool glove_active; 
@@ -56,6 +57,10 @@ public class NavManager : MonoBehaviour
     GameObject homeWaypoint;
     AStar astarScript;
 
+    public bool getRTHStat() { return rth_status; }
+    public bool getSAStat() { return showall_status; }
+    public bool getHeadCam() { return rearviewCamStatus; }
+    public bool getGloveCam() { return gloveCamStatus; }
 
     // Start is called before the first frame update
     void Start()
@@ -73,24 +78,26 @@ public class NavManager : MonoBehaviour
         astarScript = GetComponent<AStar>();
         HeadTracking ht = GameObject.Find("SceneManager").GetComponent<HeadTracking>();
 
-        functionDelegate toggleRearviewCam = new functionDelegate(ToggleRearviewCam);
-        functionDebug.Instance.registerFunction("toggleRearviewCam", toggleRearviewCam);
-        ht.registerCollider(rearviewToggleButton.GetComponent<Collider>().name, toggleRearviewCam);
+        functionDelegate startChest = new functionDelegate(ToggleRearviewCam);
+        forceSensorManager.fingerInput input = new forceSensorManager.fingerInput(0, 1, 0, 0, 0);
+        functionDebug.Instance.registerFunction("toggleRearviewCam", startChest);
+        ht.registerCollider(rearviewToggleButton.GetComponent<Collider>().name, navPage1_col.name, startChest, input);
 
-
+        input = new forceSensorManager.fingerInput(0, 0, 1, 0, 0);
         functionDelegate startGlove = new functionDelegate(ToggleGloveCam);
         functionDebug.Instance.registerFunction("toggleGloveCam", startGlove);
-        ht.registerCollider(gloveToggleButton.GetComponent<Collider>().name, startGlove);
+        ht.registerCollider(gloveToggleButton.GetComponent<Collider>().name, navPage1_col.name, startGlove, input);
 
-
+        input = new forceSensorManager.fingerInput(0, 1, 0, 0, 0);
         functionDelegate rth = new functionDelegate(PressRTH);
         functionDebug.Instance.registerFunction("toggleRTH", rth);
-        ht.registerCollider(rthButton.GetComponent<Collider>().name, rth);
+        ht.registerCollider(rthButton.GetComponent<Collider>().name, navPage0_col.name, rth, input);
 
+        input = new forceSensorManager.fingerInput(0, 0, 1, 0, 0);
         functionDelegate showall = new functionDelegate(PressShowAll);
         functionDebug.Instance.registerFunction("toggleShowAll", showall);
-        ht.registerCollider(showallButton.GetComponent<Collider>().name, showall);
-        
+        ht.registerCollider(showallButton.GetComponent<Collider>().name, navPage0_col.name, showall, input);
+
         coroutine = GetUserPOSLoop(TICKTIME);
         StartCoroutine(coroutine);
 
@@ -296,7 +303,6 @@ public class NavManager : MonoBehaviour
 
     public void PressRearviewON()
     {
-
         // spawn camera
         camerasManager.spawnCam();
         

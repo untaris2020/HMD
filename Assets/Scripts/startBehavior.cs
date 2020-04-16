@@ -7,17 +7,30 @@ public class startBehavior : MonoBehaviour
     public GameObject hid;
     public GameObject button;
     public GameObject text;
-    public IMUHandler IMU_CHEST;
+    
     private bool hidState; 
     private delegate void ButtonDelegate();
     public bool useStartRoutine;
-    public bool ignoreIMU; 
+    public bool ignoreIMU;
+    public Collider startPG_col;
+    public CameraHandler HEAD_CAM;
+    public CameraHandler GLOVE_CAM;
+    public IMUHandler IMU_CHEST;
+    public IMUHandler IMU_GLOVE;
+    public ToggleHandler CHEST_TOGGLE;
+    public ToggleHandler GLOVE_TOGGLE;
+    public forceSensorManager FORCE_SENSOR; 
+
+    public ModelLoader ML;
+    public audioManager AM;
+    public NavManager NM; 
     // Start is called before the first frame update
     void Start()
     {
         HeadTracking ht = GameObject.Find("SceneManager").GetComponent<HeadTracking>();
         ButtonDelegate tmpDelegate = new ButtonDelegate(onClick);
-        ht.registerCollider(this.GetComponentInChildren<Collider>().name, tmpDelegate);
+        forceSensorManager.fingerInput input = new forceSensorManager.fingerInput(0, 1, 0, 0, 0);
+        ht.registerCollider(this.GetComponentInChildren<Collider>().name, startPG_col.name, tmpDelegate, input);
 
         if(useStartRoutine)
         {
@@ -26,6 +39,7 @@ public class startBehavior : MonoBehaviour
             
             button.SetActive(true);
             text.SetActive(true);
+            startPG_col.enabled = true;
 
             this.GetComponentInChildren<TextMeshProUGUI>().SetText("CLICK TO START SCENE");
         }
@@ -35,6 +49,7 @@ public class startBehavior : MonoBehaviour
             toggleHID(hidState);
             button.SetActive(false);
             text.SetActive(false);
+            startPG_col.enabled = false;
         }
         
     }
@@ -48,6 +63,8 @@ public class startBehavior : MonoBehaviour
             IMU_CHEST.startStream();
             button.SetActive(false);
             text.SetActive(false);
+            startPG_col.enabled = false;
+
         }
         else
         {
@@ -75,11 +92,40 @@ public class startBehavior : MonoBehaviour
         toggleHID(hidState);
         button.SetActive(true);
         text.SetActive(true);
+        startPG_col.enabled = true;
         this.GetComponentInChildren<TextMeshProUGUI>().SetText("CLICK TO START SCENE");
+        
+        //Toggle all hardware to off 
+        HEAD_CAM.setConnected(false);
+        GLOVE_CAM.setConnected(false);
+        IMU_CHEST.setConnected(false);
+        IMU_GLOVE.setConnected(false);
+        CHEST_TOGGLE.setConnected(false);
+        GLOVE_TOGGLE.setConnected(false);
+        FORCE_SENSOR.setConnected(false); 
+
         //Toggle Camera inactive
+        NM.PressRearviewOFF();
+        NM.PressGloveOFF();
+
         //Toggle Waypoint incactive
+        if(NM.getRTHStat())
+        {
+            NM.PressRTH();
+        }
+        if(NM.getSAStat())
+        {
+            NM.PressShowAll();
+        }
         //Toggle 3D inactive 
+        ML.ClearModelsButton();
+
         //Stop recording 
+        if(AM.getRecording())
+        {
+            AM.recordingHit();
+        }
+        
 
     }
 }

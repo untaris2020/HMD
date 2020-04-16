@@ -32,11 +32,14 @@ public class recordAudio : MonoBehaviour
         if (Microphone.devices.Length <= 0)
         {
             DebugManager.Instance.LogBoth("NO MICROPHONE DETECTED");
+            DebugManager.Instance.SetParam("microphone", "D-CON");
+            
             micConnected = false;
         }
         else
         {
             micConnected = true;
+            DebugManager.Instance.SetParam("microphone", "CON");
             Microphone.GetDeviceCaps(null, out minFreq, out maxFreq);
 
             if (minFreq == 0 && maxFreq == 0)

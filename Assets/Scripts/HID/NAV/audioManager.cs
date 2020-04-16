@@ -17,6 +17,8 @@ public class audioManager : MonoBehaviour
     private float prevTime;
     private delegate void functionDelegate();
     private recordAudio ar;
+
+    public bool getRecording() { return recording; }
     // Start is called before the first frame update
     void Start()
     {
@@ -58,7 +60,7 @@ public class audioManager : MonoBehaviour
         }
     }
 
-    void recordingHit()
+    public void recordingHit()
     {
         if(ar.isMicConnected())
         {

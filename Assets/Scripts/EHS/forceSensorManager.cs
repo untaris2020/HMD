@@ -39,8 +39,10 @@ public class forceSensorManager : tcpPacket
     }
 
     
-    public void start()
+    public void Start()
     {
+        base.Start();
+        debugName = "force_sensor";
         connected = false;
         newInput = false; 
         NAME = "forceSensor";
@@ -48,6 +50,8 @@ public class forceSensorManager : tcpPacket
         functionDelegate startDelegate = new functionDelegate(startStream);
         functionDebug.Instance.registerFunction(NAME + "start", startDelegate);
         functionDebug.Instance.registerFunction(NAME + "stop", stopDelegate);
+
+        reportStatus(); 
     }
 
     void Update()

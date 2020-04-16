@@ -11,10 +11,17 @@ public class InputSystemStatus : MonoBehaviour
     public GameObject GestureInputButton;
     public GameObject showGestureIndicatorsButton;
 
+    public Collider GazeInputCollider;
+    public Collider GestureInputCollider;
+    public Collider showGestureIndicatorsCollider;
+
+    public GameObject debugPG2_Col; 
+
     public TextMeshProUGUI useGaze_text;
     public TextMeshProUGUI useGesture_text;
     public TextMeshProUGUI showGestureIndicators_text;
 
+    public forceSensorManager FORCE_SENSOR; 
     delegate void Button0Delegate();
     bool useGaze;
     bool useGestures;
@@ -57,16 +64,19 @@ public class InputSystemStatus : MonoBehaviour
         HeadTracking ht = GameObject.Find("SceneManager").GetComponent<HeadTracking>();
 
         Button0Delegate tmpDelegate0 = new Button0Delegate(GazeButtonPress);
-        ht.registerCollider(GazeInputButton.GetComponent<Collider>().name, tmpDelegate0);
-        functionDebug.Instance.registerFunction("nav_GazeButton",tmpDelegate0);
+        forceSensorManager.fingerInput input = new forceSensorManager.fingerInput(0, 1, 0, 0, 0);
+        ht.registerCollider(GazeInputButton.GetComponent<Collider>().name, debugPG2_Col.name, tmpDelegate0, input);
+        functionDebug.Instance.registerFunction(GazeInputCollider.name,tmpDelegate0);
 
+        input = new forceSensorManager.fingerInput(0, 0, 1, 0, 0);
         tmpDelegate0 = new Button0Delegate(GestureButtonPress);
-        ht.registerCollider(GestureInputButton.GetComponent<Collider>().name, tmpDelegate0);
-        functionDebug.Instance.registerFunction("nav_GestureButton",tmpDelegate0);
+        ht.registerCollider(GestureInputButton.GetComponent<Collider>().name, debugPG2_Col.name, tmpDelegate0, input);
+        functionDebug.Instance.registerFunction(GestureInputCollider.name,tmpDelegate0);
 
+        input = new forceSensorManager.fingerInput(0, 0, 0, 1, 0);
         tmpDelegate0 = new Button0Delegate(ShowGestureIndicatorsButtonPress);
-        ht.registerCollider(showGestureIndicatorsButton.GetComponent<Collider>().name, tmpDelegate0);
-        functionDebug.Instance.registerFunction("nav_ShowGestureIndicatorsButton",tmpDelegate0);
+        ht.registerCollider(showGestureIndicatorsButton.GetComponent<Collider>().name, debugPG2_Col.name, tmpDelegate0, input);
+        functionDebug.Instance.registerFunction(showGestureIndicatorsCollider.name,tmpDelegate0);
 
         UpdateUI();
     }
@@ -90,7 +100,8 @@ public class InputSystemStatus : MonoBehaviour
         {
             useGaze_text.SetText("ON");
             useGaze_text.color = new Color32(0, 255, 0, 255);   // green
-        } else
+        }
+        else
         {
             useGaze_text.SetText("OFF");
             useGaze_text.color = new Color32(255, 0, 0, 255);   // red
@@ -100,7 +111,8 @@ public class InputSystemStatus : MonoBehaviour
         {
             useGesture_text.SetText("ON");
             useGesture_text.color = new Color32(0, 255, 0, 255);   // green
-        } else
+        }
+        else
         {
             useGesture_text.SetText("OFF");
             useGesture_text.color = new Color32(255, 0, 0, 255);   // red
@@ -110,7 +122,8 @@ public class InputSystemStatus : MonoBehaviour
         {
             showGestureIndicators_text.SetText("ON");
             showGestureIndicators_text.color = new Color32(0, 255, 0, 255);   // green
-        } else
+        }
+        else
         {
             showGestureIndicators_text.SetText("OFF");
             showGestureIndicators_text.color = new Color32(255, 0, 0, 255);   // red
@@ -130,10 +143,11 @@ public class InputSystemStatus : MonoBehaviour
     }
 
     void ToggleSystem() {
-        if (isGloveReady) {
+        if (FORCE_SENSOR.getConnected()) {
             useGestures = !useGestures;
             useGaze = !useGaze;
-        } else {
+        }
+        else {
             DebugManager.Instance.LogBoth("ERROR", "Glove not connected. Cannot switch inputs");
         }
 
