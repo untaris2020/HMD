@@ -56,3 +56,11 @@ MonoBehaviour:
   - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}
+  gestureMarkers:
+  - {fileID: 1446631944119877120, guid: eb1bfbae49d979e43b31c79194421282, type: 3}
+  - {fileID: 8603107505344500913, guid: e8605c25f83d56e45ad4318ae456032d, type: 3}
+  - {fileID: 196193377002128071, guid: 9f4b7f9ffef1981469d934a519536a44, type: 3}
+  - {fileID: 1124507440001207974, guid: 0082affc9625aa844bd46f5ec9143152, type: 3}
+  sideScrollMarker: {fileID: 2309351265986851930, guid: 1dc942de37179884b8547e706a77dcda,
+    type: 3}
+  console: {fileID: 0}

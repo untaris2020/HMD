@@ -1,6 +1,8 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System;
+using System.Linq;
 
 public class PanelBase : MonoBehaviour
 {
@@ -12,6 +14,7 @@ public class PanelBase : MonoBehaviour
 
     public GameObject[] panels;
     public GameObject[] pages;
+    List<GameObject> gestureMarkers = new List<GameObject>();
 
     protected int pageIndex;
     //public string panelName; 
@@ -30,8 +33,9 @@ public class PanelBase : MonoBehaviour
     private bool page2RenderState;
     private bool page3RenderState;
 
-    protected virtual void Start()
+    protected virtual void Start() 
     {
+
         HeadTracking ht = GameObject.Find("SceneManager").GetComponent<HeadTracking>();
         // Resiter Colliders
         page0RenderState = false;
@@ -70,7 +74,7 @@ public class PanelBase : MonoBehaviour
         ht.registerToggleCollider(Page3Col.name, tmpDelegate0);
         
 
-        pageIndex = 0;
+        pageIndex = -1;
 
         Button0Press();
     }
@@ -107,29 +111,130 @@ public class PanelBase : MonoBehaviour
     public void onViewTogglePG0()
     {
         page0RenderState = !page0RenderState;
-        Debug.Log("Page 0: " + page0RenderState);
+
+        if (page0RenderState) {
+            InstantiateGestureMarkers();
+        } else {
+            FadeOutGestureMarkers();
+        }
+
     }
 
     public void onViewTogglePG1()
     {
         page1RenderState = !page1RenderState;
-        Debug.Log("Page 1: " + page1RenderState);
+
+        if (page1RenderState) {
+            InstantiateGestureMarkers();
+        } else {
+            FadeOutGestureMarkers();
+        }
     }
 
+    Transform[] obj;
     public void onViewTogglePG2()
     {
         page2RenderState = !page2RenderState;
-        Debug.Log("Page 2: " + page2RenderState);
+
+        if (page2RenderState) {
+            InstantiateGestureMarkers();
+        } else {
+            FadeOutGestureMarkers();
+        }
     }
 
     public void onViewTogglePG3()
     {
         page3RenderState = !page3RenderState;
-        Debug.Log("Page 3: " + page3RenderState);
+
+        if (page3RenderState) {
+            InstantiateGestureMarkers();
+        } else {
+            FadeOutGestureMarkers();
+        }
+    }
+
+    void InstantiateGestureMarkers() {
+        if (!InputSystemStatus.Instance.GetShowGestureIndicators()) {
+            return;
+        }
+
+        DestroyGestureMarkers();
+        obj = GetComponentsInChildren<Transform> (true);
+
+        // get all buttons if any
+        foreach (var ob in obj.Where(ob => (ob != transform))) {
+            int gesture_number = -1;
+
+            if (ob.CompareTag("gesture_1")) {
+                gesture_number = 1;
+            } else if (ob.CompareTag("gesture_2")) {
+                gesture_number = 2;
+            } else if (ob.CompareTag("gesture_3")) {
+                gesture_number = 3;
+            } else if (ob.CompareTag("gesture_4")) {
+                gesture_number = 4;
+            } else if (ob.CompareTag("gesture_sidescroll")) {
+                gesture_number = 5;
+            }
+
+            if (gesture_number == 5) {
+                //side scroll marker
+                Debug.Log("sidescroll");
+                GameObject temp = Instantiate(DebugManager.Instance.sideScrollMarker, ob.transform);
+                // set offset
+                temp.transform.localScale = new Vector3(0.08333334f, 0.08333334f, 0.08333334f);
+                temp.transform.localEulerAngles = new Vector3(0f, 0f, 0f);
+                temp.transform.localPosition = new Vector3(-0.4575001f, -0.064f, -0.05166666f);
+                //temp.transform.position 
+                gestureMarkers.Add(temp);
+            } else if (gesture_number != -1) {
+                // regurlar number marker
+
+                GameObject temp = Instantiate(DebugManager.Instance.gestureMarkers[gesture_number - 1], ob.transform);
+                // set offset
+                temp.transform.localScale = new Vector3(0.0015f, 0.002f, 0.002f);
+                temp.transform.localEulerAngles = new Vector3(0f, -180f, 0f);
+                temp.transform.localPosition = new Vector3(-0.00252f, 0.00203f, 0.099f);
+                //temp.transform.position 
+                gestureMarkers.Add(temp);
+            }
+        }
+    }
+
+    void FadeOutGestureMarkers() {
+
+        Debug.Log(gestureMarkers.Count);
+        Debug.Log("Fading out...");
+        foreach (GameObject obj in gestureMarkers) {
+            if (obj != null) {
+                FadeInOut temp = obj.GetComponent<FadeInOut>();
+                temp.FadeOut();
+            }
+        }
+    }
+
+    void DestroyGestureMarkers() {
+        foreach (GameObject obj in gestureMarkers) {
+            // can you destroy a null object? idk might need to null check
+            Destroy(obj);
+        }
+        gestureMarkers.Clear();
     }
 
     public void LoadPage(int page)
     {
+        if (page == pageIndex) {
+            // page is the same, dont reload
+            return;
+        }
+
+        DestroyGestureMarkers();
+        
+
+        // clean up null elements occasionally
+        //gestureMarkers.RemoveAll(item => item == null);
+
         pageIndex = page;
         
         if(Verbose)

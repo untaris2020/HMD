@@ -13,6 +13,8 @@ public class DebugManager : MonoBehaviour
 
     public TextMeshProUGUI[] statuses;
     public static Hashtable debugHashtable = new Hashtable();
+    public GameObject[] gestureMarkers;
+    public GameObject sideScrollMarker;
 
     //private List<string> consoleEntries = new List<string>();
 

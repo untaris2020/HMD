@@ -368,6 +368,21 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 5181655418438349382, guid: 4a225d25facb29348b0e905aefbabb25,
+        type: 3}
+      propertyPath: m_TagString
+      value: gesture_3
+      objectReference: {fileID: 0}
+    - target: {fileID: 7702893623373383525, guid: 4a225d25facb29348b0e905aefbabb25,
+        type: 3}
+      propertyPath: m_TagString
+      value: gesture_1
+      objectReference: {fileID: 0}
+    - target: {fileID: 9176916774605564438, guid: 4a225d25facb29348b0e905aefbabb25,
+        type: 3}
+      propertyPath: m_TagString
+      value: gesture_2
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 4a225d25facb29348b0e905aefbabb25, type: 3}
 --- !u!1 &5103258519574726211 stripped
@@ -1182,6 +1197,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: debug_header_R
+      objectReference: {fileID: 0}
+    - target: {fileID: 5626381135203749000, guid: 49fe80de65c21eb4ca25298e67034c0c,
+        type: 3}
+      propertyPath: m_TagString
+      value: gesture_4
       objectReference: {fileID: 0}
     - target: {fileID: 6843345267473178175, guid: 49fe80de65c21eb4ca25298e67034c0c,
         type: 3}

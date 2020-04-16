@@ -3,7 +3,12 @@
 --- !u!78 &1
 TagManager:
   serializedVersion: 2
-  tags: []
+  tags:
+  - gesture_1
+  - gesture_2
+  - gesture_3
+  - gesture_4
+  - gesture_sidescroll
   layers:
   - Default
   - TransparentFX

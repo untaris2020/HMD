@@ -5,7 +5,7 @@ using TMPro;
 
 public class InputSystemStatus : MonoBehaviour
 {
-    public InputSystemStatus Instance;
+    public static InputSystemStatus Instance;
 
     public GameObject GazeInputButton;
     public GameObject GestureInputButton;
@@ -121,15 +121,12 @@ public class InputSystemStatus : MonoBehaviour
         if (!useGaze) {
             ToggleSystem();
         }
-        
-
     }
 
     void GestureButtonPress() {
         if (!useGestures) {
             ToggleSystem();
         }
-        
     }
 
     void ToggleSystem() {
