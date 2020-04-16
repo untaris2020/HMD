@@ -9,7 +9,7 @@ using UnityEngine;
 public class IMUHandler : tcpPacket
 {
     public packetICD.IMU_Mode MODE;
-
+    public ModelLoader ML; 
     private string NAME; 
 
     //IMU Packet Information 
@@ -86,18 +86,11 @@ public class IMUHandler : tcpPacket
         //In here the logic for which values get sent also need to be adjusted based on default. For instance the chest is tilted so the axis are all wrong 
         if(MODE == packetICD.IMU_Mode.CHEST)
         {
-            //In here we need to convert the IMU data into the proper format 
-
-
-
-
             HeadLockScript.Instance.updateHIDwithIMU(w,x,y,z);
         }
         else if(MODE == packetICD.IMU_Mode.GLOVE)
         {
-            //For now do nothing 
+            ML.updateModelwithIMU(w, x, y, z, xAccel, yAccel, zAccel); 
         }
-       
-
     }
 }

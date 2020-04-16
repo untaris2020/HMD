@@ -8,6 +8,7 @@ public class ModelLoader : MonoBehaviour
     public TelemPanelManager telem_panel_manager;
     public GameObject clearModelsButton, misc1Button, misc2Button, upButton, downButton, upArrow, _camera;
     public GameObject[] modelButtons;
+    public IMUHandler IMU_GLOVE; 
 
     // text
     public TextMeshProUGUI[] modelTexts;
@@ -25,7 +26,11 @@ public class ModelLoader : MonoBehaviour
     public GameObject[] models;
     public GameObject glove_model;
     private List<GameObject> loaded_models;
-
+    private bool newIMUpacket;
+    private bool firstPacket; 
+    private Quaternion rot;
+    private Quaternion defaultRot; 
+    private Vector3 pos; 
 
     private delegate void functionDelegate();
 
@@ -33,6 +38,8 @@ public class ModelLoader : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        newIMUpacket = false;
+        firstPacket = false; 
         loaded_models = new List<GameObject>();
         NUMOFMODELS = models.Length;
         DebugManager.Instance.LogBoth(this.GetType().Name, NUMOFMODELS + " models loaded.");
@@ -91,7 +98,7 @@ public class ModelLoader : MonoBehaviour
 
         UpdateUI();
         misc_text.SetText("");
-        glove_model.SetActive(false);
+        glove_model.GetComponent<Renderer>().enabled = false;
 
         
     }
@@ -99,7 +106,18 @@ public class ModelLoader : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+        if(newIMUpacket && loaded_models.Count > 0)
+        {
+            if(firstPacket)
+            {
+                defaultRot = rot; 
+            }
+            newIMUpacket = false; 
+            float speed = Time.deltaTime * 12.0f;
+            glove_model.transform.position = Vector3.Slerp(glove_model.transform.position, pos, speed);
+            rot = rot *  Quaternion.Inverse(defaultRot);
+            glove_model.transform.rotation = Quaternion.Slerp(glove_model.transform.rotation, rot, speed); 
+        }
     }
 
     void UpdateUI()
@@ -167,7 +185,7 @@ public class ModelLoader : MonoBehaviour
         spawn_pos.z += 5;
         spawn_pos.y -= 5;
 
-        glove_model.SetActive(true);
+        glove_model.GetComponent<Renderer>().enabled = true;
         glove_model.transform.position = spawn_pos;
 
         // waiting for user to click the button...
@@ -185,11 +203,23 @@ public class ModelLoader : MonoBehaviour
         loaded_models.Clear();
     }
 
+    public void updateModelwithIMU(float w, float x, float y, float z, float xAccel, float yAccel, float zAccel)
+    { 
+        pos = new Vector3(xAccel, yAccel, zAccel);
+        rot = new Quaternion(-x,-z,-y,w);
+        newIMUpacket = true;
+    }
+
     private void Set3DModelPosition()
     {
         if (!ready_to_load)
         {
             return;
+        }
+
+        if(!IMU_GLOVE.getConnected())
+        {
+            DebugManager.Instance.LogBoth("MODEL LOADER: ERROR CHEST IMU NOT CONNECTED");
         }
 
         // Load and scale selected model
@@ -199,13 +229,16 @@ public class ModelLoader : MonoBehaviour
         }
         int model_index = load_model + (page_index * 5);
 
-        loaded_models.Add( (GameObject)Instantiate(models[model_index], new Vector3(0, 0, -15), Quaternion.identity));
+        loaded_models.Add( (GameObject)Instantiate(models[model_index], new Vector3(0, 0, 0), Quaternion.identity, glove_model.transform));
         DebugManager.Instance.LogBoth("INFO", "Loading 3D Model " + models[model_index].name);
 
         load_model = -1;
-        glove_model.SetActive(false);
+        glove_model.GetComponent<Renderer>().enabled = false;
         instructions_text.SetText("");
         ready_to_load = false;
+
+        //Start IMU stream 
+        IMU_GLOVE.startStream(); 
     }
 
     private void UpArrowButton()
