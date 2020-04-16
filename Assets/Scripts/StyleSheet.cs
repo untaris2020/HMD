@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 
 public class StyleSheet : MonoBehaviour { 
+    public static StyleSheet Instance;
 
     public Material ButtonActiveMat;
     public Material ButtonInactiveMat;
@@ -26,7 +27,14 @@ public class StyleSheet : MonoBehaviour {
     public FontStyle HeadingFontStyle;
     public FontStyle BodyFontStyle;
     public FontStyle ErrorFontStyle;
+
+    private void Awake()
+    { 
+        Instance = this;
+    }
 }
+
+
 
 //Assignment Process
 

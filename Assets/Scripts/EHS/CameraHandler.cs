@@ -18,18 +18,24 @@ public class CameraHandler : tcpPacket
 
     private delegate void functionDelegate();
 
-    public void start()
+    public void Start()
     {
+        base.Start();
         seqID = -1; 
         connected = false;
         if (MODE == packetICD.CAM_Mode.HEAD)
         {
             NAME = "headCAM";
+            debugName = "head_cam";
         }
         else
         {
             NAME = "gloveCam";
+            debugName = "glove_cam";
         }
+
+        reportStatus(); 
+
         functionDelegate stopDelegate = new functionDelegate(stopStream);
         functionDelegate startDelegate = new functionDelegate(startStream);
         functionDebug.Instance.registerFunction(NAME + "start", startDelegate);

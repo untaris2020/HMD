@@ -65,14 +65,23 @@ public class HeadTracking : MonoBehaviour
         onOffColliderList.Add(colliderName, colliderFunc);
     }
 
-    public void registerCollider(string colliderName, string pageColliderName, Delegate colliderFunc, forceSensorManager.fingerInput inputs)
+    public void registerCollider(string colliderName, string pageColliderName, Delegate default_colliderFunc, forceSensorManager.fingerInput inputs)
     {
-        colliderList.Add(colliderName, colliderFunc);
+        colliderList.Add(colliderName, default_colliderFunc);
         forceClickData temp;
-        temp.del = colliderFunc;
+        temp.del = default_colliderFunc;
         temp.input = inputs;
         temp.pageCol = pageColliderName;
         pageColliderList.Add(colliderName, temp);
+    }
+
+    public void registerForceCollider(string uniqueName, string pageColliderName, Delegate force_collider, forceSensorManager.fingerInput inputs)
+    {
+        forceClickData temp;
+        temp.del = force_collider;
+        temp.input = inputs;
+        temp.pageCol = pageColliderName;
+        pageColliderList.Add(uniqueName, temp);
     }
 
 

@@ -6,7 +6,7 @@ public class ModelLoader : MonoBehaviour
 {
     // buttons
     public TelemPanelManager telem_panel_manager;
-    public GameObject clearModelsButton, misc1Button, misc2Button, upButton, downButton, upArrow, _camera;
+    public GameObject clearModelsBut, misc1Button, misc2Button, upButton, downButton, upArrow, _camera;
     public GameObject[] modelButtons;
     public IMUHandler IMU_GLOVE; 
 
@@ -17,6 +17,8 @@ public class ModelLoader : MonoBehaviour
     public TextMeshProUGUI misc_text;   // right - unused
     public TextMeshProUGUI instructions_text;
 
+    public GameObject telem_panel2Col;
+    public GameObject telem_panel3Col; 
     // array/list of models
     private int NUMOFMODELS;
     private int NUMOFPAGES;
@@ -30,7 +32,10 @@ public class ModelLoader : MonoBehaviour
     private bool firstPacket; 
     private Quaternion rot;
     private Quaternion defaultRot; 
-    private Vector3 pos; 
+    private Vector3 pos;
+
+    private int currentHighlighted; 
+
 
     private delegate void functionDelegate();
 
@@ -38,6 +43,8 @@ public class ModelLoader : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        currentHighlighted = 0; 
+
         newIMUpacket = false;
         firstPacket = false; 
         loaded_models = new List<GameObject>();
@@ -50,14 +57,16 @@ public class ModelLoader : MonoBehaviour
 
         // clear models button
         functionDelegate tmpDelegate0 = new functionDelegate(ClearModelsButton);
-        ht.registerCollider(clearModelsButton.GetComponent<Collider>().name, tmpDelegate0);
+        forceSensorManager.fingerInput input = new forceSensorManager.fingerInput(0, 1, 0, 0, 0);
+        ht.registerCollider(clearModelsBut.GetComponent<Collider>().name, telem_panel3Col.name, tmpDelegate0, input);
         functionDebug.Instance.registerFunction("clearModels", tmpDelegate0);
 
         // set position button
         tmpDelegate0 = new functionDelegate(Set3DModelPosition);
-        ht.registerCollider(misc1Button.GetComponent<Collider>().name, tmpDelegate0);
+        input = new forceSensorManager.fingerInput(0, 0, 1, 0, 0);
+        ht.registerCollider(misc1Button.GetComponent<Collider>().name, telem_panel3Col.name, tmpDelegate0, input);
         functionDebug.Instance.registerFunction("set3DModelPosition", tmpDelegate0);
-
+        
         // up arrow
         tmpDelegate0 = new functionDelegate(UpArrowButton);
         ht.registerCollider(upButton.GetComponent<Collider>().name, tmpDelegate0);
@@ -88,6 +97,19 @@ public class ModelLoader : MonoBehaviour
         tmpDelegate0 = new functionDelegate(LoadModel4);
         ht.registerCollider(modelButtons[4].GetComponent<Collider>().name, tmpDelegate0);
         functionDebug.Instance.registerFunction("loadModel4", tmpDelegate0);
+
+        //Register Force functions
+        tmpDelegate0 = new functionDelegate(pressCurrentHighlighted);
+        input = new forceSensorManager.fingerInput(0, 1, 0, 0, 0);
+        ht.registerForceCollider(telem_panel2Col.name + "1", telem_panel2Col.name, tmpDelegate0, input);
+
+        tmpDelegate0 = new functionDelegate(upCurrentHighlight);
+        input = new forceSensorManager.fingerInput(0, 0, 1, 0, 0);
+        ht.registerForceCollider(telem_panel2Col.name + "2", telem_panel2Col.name, tmpDelegate0, input);
+
+        tmpDelegate0 = new functionDelegate(downCurrentHighlight);
+        input = new forceSensorManager.fingerInput(0, 0, 0, 1, 0);
+        ht.registerForceCollider(telem_panel2Col.name + "3", telem_panel2Col.name, tmpDelegate0, input);
 
         for (int i=0; i<models.Length; i++) {
             if (models[i] == null) {
@@ -121,7 +143,7 @@ public class ModelLoader : MonoBehaviour
     }
 
     void UpdateUI()
-    {
+    { 
         index_text.SetText((page_index + 1).ToString() + " / " + NUMOFPAGES.ToString());
         if (page_index == 0)
         {
@@ -135,6 +157,15 @@ public class ModelLoader : MonoBehaviour
 
         for (int i=0; i<5; i++)
         {
+            if(i == (currentHighlighted %5))
+            {
+                modelButtons[i].GetComponent<MeshRenderer>().material = StyleSheet.Instance.ButtonActiveMat;
+            }
+            else
+            {
+                modelButtons[i].GetComponent<MeshRenderer>().material = StyleSheet.Instance.ButtonInactiveMat;   
+            }
+
             int tmp_index = i + (page_index * 5);
             // TODO need to check if in bounds of array
             if (tmp_index >=0 && tmp_index < models.Length)
@@ -144,7 +175,6 @@ public class ModelLoader : MonoBehaviour
             {
                 modelTexts[i].SetText("");
             }
-            
         }
     }
 
@@ -192,7 +222,7 @@ public class ModelLoader : MonoBehaviour
         ready_to_load = true;
     }
 
-    private void ClearModelsButton()
+    public void ClearModelsButton()
     {
         // not sure if this will work
         foreach (GameObject obj in loaded_models)
@@ -275,4 +305,54 @@ public class ModelLoader : MonoBehaviour
     {
         LoadModel(4);
     }
+
+    private void pressCurrentHighlighted()
+    {
+        switch(currentHighlighted)
+        {
+            case 0:
+                LoadModel0(); 
+                break;
+            case 1:
+                LoadModel1(); 
+                break;
+            case 2:
+                LoadModel2(); 
+                break;
+            case 3:
+                LoadModel3(); 
+                break;
+            case 4:
+                LoadModel4(); 
+                break;
+        }
+    }
+
+    private void upCurrentHighlight()
+    {
+        if(currentHighlighted > 0)
+        {
+            currentHighlighted--; 
+            if(currentHighlighted % 5 == 4)
+            {
+                PrevPage();
+                
+            }
+            UpdateUI(); 
+        }
+    }
+    private void downCurrentHighlight()
+    {
+        if(currentHighlighted < (models.Length -1))
+        {
+            currentHighlighted++; 
+            if(currentHighlighted % 5 == 0)
+            {
+                NextPage();
+                
+            }
+            UpdateUI();
+        }
+    }
+
 }

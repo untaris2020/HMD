@@ -19,22 +19,30 @@ public class IMUHandler : tcpPacket
     private float w;
     private float xAccel;
     private float yAccel;
-    private float zAccel; 
+    private float zAccel;
 
+    
     private delegate void functionDelegate();
 
-    public void start()
+    public void Start()
     {
+        base.Start();
+        Debug.Log("START IMU");
         seqID = -1; 
         connected = false;
         if (MODE == packetICD.IMU_Mode.CHEST)
         {
             NAME = "chestIMU";
+            debugName = "chest_IMU";
         }
         else
         {
-            NAME = "chestIMU";
+            NAME = "gloveIMU";
+            debugName = "glove_IMU";
         }
+
+        reportStatus(); 
+
         functionDelegate stopDelegate = new functionDelegate(stopStream);
         functionDelegate startDelegate = new functionDelegate(startStream);
         functionDebug.Instance.registerFunction(NAME + "start", startDelegate);

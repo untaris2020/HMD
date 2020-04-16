@@ -53,9 +53,23 @@ public class TCPServer : MonoBehaviour
         Instance = this;
     }
 
+    void updateStatus()
+    {
+        if(IMU_CHEST.getConnected() && CHEST_TOGGLE.getConnected() && HEAD_CAM.getConnected())
+        {
+            DebugManager.Instance.SetParam("chest_system", "CON");
+        }
+        if(IMU_GLOVE.getConnected() && GLOVE_TOGGLE.getConnected() && GLOVE_CAM.getConnected() && FORCE_SENSOR.getConnected())
+        {
+            DebugManager.Instance.SetParam("glove_system", "CON");
+        }
+    }
+
 
     void Start()
     {
+        DebugManager.Instance.SetParam("chest_system", "D-CON");
+        DebugManager.Instance.SetParam("glove_system", "D-CON");
         //Get ICD Script also on EHS Obj
         tcpListenerThread = new Thread(new ThreadStart(ListenForIncommingRequests));
         tcpListenerThread.IsBackground = true;
@@ -147,6 +161,8 @@ public class TCPServer : MonoBehaviour
                             if (body == "REG")
                             {
                                 IMU_CHEST.initialize((TcpClient)client);
+                                IMU_CHEST.reportStatus(); 
+                                updateStatus();
                             }
                             else
                             {
@@ -157,6 +173,8 @@ public class TCPServer : MonoBehaviour
                             if (body == "REG")
                             {
                                 IMU_GLOVE.initialize((TcpClient)client);
+                                updateStatus();
+                                IMU_GLOVE.reportStatus(); 
                             }
                             else
                             {
@@ -167,6 +185,8 @@ public class TCPServer : MonoBehaviour
                             if (body == "REG")
                             {
                                 CHEST_TOGGLE.initialize((TcpClient)client);
+                                CHEST_TOGGLE.reportStatus();
+                                updateStatus();
                                 CHEST_TOGGLE.startStream(); 
                             }
                             else
@@ -178,6 +198,8 @@ public class TCPServer : MonoBehaviour
                             if (body == "REG")
                             {
                                 HEAD_CAM.initialize((TcpClient)client);
+                                updateStatus();
+                                HEAD_CAM.reportStatus(); 
                             }
                             else
                             {
@@ -188,6 +210,8 @@ public class TCPServer : MonoBehaviour
                             if (body == "REG")
                             {
                                 GLOVE_CAM.initialize((TcpClient)client);
+                                updateStatus();
+                                GLOVE_CAM.reportStatus(); 
                             }
                             else
                             {
@@ -198,6 +222,8 @@ public class TCPServer : MonoBehaviour
                             if (body == "REG")
                             {
                                 FORCE_SENSOR.initialize((TcpClient)client);
+                                updateStatus();
+                                FORCE_SENSOR.reportStatus();
                                 FORCE_SENSOR.startStream();
                             }
                             else
@@ -210,6 +236,8 @@ public class TCPServer : MonoBehaviour
                             if (body == "REG")
                             {
                                 GLOVE_TOGGLE.initialize((TcpClient)client);
+                                updateStatus();
+                                GLOVE_TOGGLE.reportStatus(); 
                                 GLOVE_TOGGLE.startStream();
                             }
                             else
