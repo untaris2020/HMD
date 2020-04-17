@@ -19,6 +19,9 @@ public class MissionPanelManager : MonoBehaviour
     //Arrow game object
     public GameObject upArrow;
     public GameObject downArrow;
+    public GameObject upArrowR;
+    public GameObject downArrowR;
+
     public GameObject button1C;
     public GameObject button2C;
     public GameObject button3C;
@@ -94,7 +97,8 @@ public class MissionPanelManager : MonoBehaviour
 
         panel1Press();
 
-        //upArrow.SetActive(false);
+        upArrow.SetActive(false);
+        
     }
     
     void Awake()
@@ -131,24 +135,39 @@ public class MissionPanelManager : MonoBehaviour
     public void displaySuperMissions()
     {
         int SMissionCount = MissionContainerInstance.SuperMissions.Count;
-        Title.SetText("Super Missions");
+        
         Debug.Log("SMission Count: " + SMissionCount);
 
         if (SMissionCount - SMOffset <= 5)
+        {
+            downArrowR.SetActive(false);
             downArrow.SetActive(false);
+
+        }
         else
+        {
+            downArrowR.SetActive(true);
             downArrow.SetActive(true);
+        }
 
         //Need to only disable the arrow instead of the entire bar
-        /*if (SMOffset == 0)
+        if (SMOffset == 0)
+        {
+            Title.SetText("Super Missions");
+            upArrowR.SetActive(false);
             upArrow.SetActive(false);
+        }
         else
+        {
+            Title.SetText("");
+            upArrowR.SetActive(true);
             upArrow.SetActive(true);
-        */
+        }
 
 
 
-        if(SMissionCount - SMOffset > 0)
+
+        if (SMissionCount - SMOffset > 0)
             button1.SetText(MissionContainerInstance.SuperMissions[0 + SMOffset].SuperMissionText);
         if (SMissionCount - SMOffset > 1)
             button2.SetText(MissionContainerInstance.SuperMissions[1 + SMOffset].SuperMissionText);
@@ -203,12 +222,30 @@ public class MissionPanelManager : MonoBehaviour
         int MissionCount = MissionContainerInstance.SuperMissions[SuperMissionNumber].Missions.Count;
 
         if (MissionCount - MOffset <= 5)
+        {
+            downArrowR.SetActive(false);
             downArrow.SetActive(false);
+
+        }
         else
+        {
+            downArrowR.SetActive(true);
             downArrow.SetActive(true);
+        }
 
+        if (MOffset == 0)
+        {
+            Title.SetText("Missions");
+            upArrowR.SetActive(false);
+            upArrow.SetActive(false);
+        }
+        else
+        {
+            Title.SetText("");
+            upArrowR.SetActive(true);
+            upArrow.SetActive(true);
+        }
 
-        Title.SetText("Missions");
         if (MissionCount - MOffset > 0)
             button1.SetText(MissionContainerInstance.SuperMissions[SuperMissionNumber].Missions[0 + MOffset].MissionText);
         if (MissionCount - MOffset > 1)
@@ -265,11 +302,31 @@ public class MissionPanelManager : MonoBehaviour
         int taskCount = MissionContainerInstance.SuperMissions[SuperMissionNumber].Missions[MissionNumber].Tasks.Count;
 
         if (taskCount - TOffset <= 5)
+        {
+            downArrowR.SetActive(false);
             downArrow.SetActive(false);
-        else
-            downArrow.SetActive(true);
 
-        Title.SetText("Tasks");
+        }
+        else
+        {
+            downArrowR.SetActive(true);
+            downArrow.SetActive(true);
+        }
+
+        if (TOffset == 0)
+        {
+            Title.SetText("Tasks");
+            upArrowR.SetActive(false);
+            upArrow.SetActive(false);
+        }
+        else
+        {
+            Title.SetText("");
+            upArrowR.SetActive(true);
+            upArrow.SetActive(true);
+        }
+
+        
         if (taskCount - TOffset > 0)
             button1.SetText(MissionContainerInstance.SuperMissions[SuperMissionNumber].Missions[MissionNumber].Tasks[0 + TOffset].TaskText);
         if (taskCount - TOffset > 1)
@@ -326,12 +383,33 @@ public class MissionPanelManager : MonoBehaviour
         int StaskCount = MissionContainerInstance.SuperMissions[SuperMissionNumber].Missions[MissionNumber].Tasks[TaskNumber].SubTasks.Count;
 
         if (StaskCount - STOffset <= 5)
+        {
+            downArrowR.SetActive(false);
             downArrow.SetActive(false);
+
+        }
         else
+        {
+            downArrowR.SetActive(true);
             downArrow.SetActive(true);
+        }
+            
 
+        if (STOffset == 0)
+        {
+            Title.SetText("Sub-Tasks");
+            upArrowR.SetActive(false);
+            upArrow.SetActive(false);
+        }
+        else
+        {
+            Title.SetText("");
+            upArrowR.SetActive(true);
+            upArrow.SetActive(true);
+        }
+           
 
-        Title.SetText("Sub-Tasks");
+        
         Debug.Log("SubTask Count: " + StaskCount);
         if (StaskCount - STOffset > 0)
             button1.SetText(MissionContainerInstance.SuperMissions[SuperMissionNumber].Missions[MissionNumber].Tasks[TaskNumber].SubTasks[0 + STOffset].SubTaskText);
@@ -484,6 +562,8 @@ public class MissionPanelManager : MonoBehaviour
         panels[page].GetComponent<MeshRenderer>().material = style.ButtonActiveMat;
 
 
+        
+
         // add any custom logic here if needed
 
         //
@@ -491,25 +571,28 @@ public class MissionPanelManager : MonoBehaviour
 
     public void button1Press()
     {
-        Debug.Log("I was pressed");
+        
 
         if (SuperMissionFlag)
         {
             SuperMissionNumber = SMOffset;
             MissionFlag = true;
             SuperMissionFlag = false;
+            LoadPage(1);
         }
         else if (MissionFlag)
         {
             MissionNumber = MOffset;
             TaskFlag = true;
             MissionFlag = false;
+            LoadPage(2);
         }
         else if (TaskFlag)
         {
             TaskNumber = TOffset;
             SubTaskFlag = true;
             TaskFlag = false;
+            LoadPage(3);
         }
         else //subtasks are currently being displayed
         {
@@ -536,18 +619,21 @@ public class MissionPanelManager : MonoBehaviour
             SuperMissionNumber = SMOffset + 1;
             MissionFlag = true;
             SuperMissionFlag = false;
+            LoadPage(1);
         }
         else if (MissionFlag)
         {
             MissionNumber = MOffset + 1;
             TaskFlag = true;
             MissionFlag = false;
+            LoadPage(2);
         }
         else if (TaskFlag)
         {
             TaskNumber = TOffset + 1;
             SubTaskFlag = true;
             TaskFlag = false;
+            LoadPage(3);
         }
         else //subtasks are currently being displayed
         {
@@ -574,18 +660,21 @@ public class MissionPanelManager : MonoBehaviour
             SuperMissionNumber = SMOffset + 2;
             MissionFlag = true;
             SuperMissionFlag = false;
+            LoadPage(1);
         }
         else if (MissionFlag)
         {
             MissionNumber = MOffset + 2;
             TaskFlag = true;
             MissionFlag = false;
+            LoadPage(2);
         }
         else if (TaskFlag)
         {
             TaskNumber = TOffset + 2;
             SubTaskFlag = true;
             TaskFlag = false;
+            LoadPage(3);
         }
         else //subtasks are currently being displayed
         {
@@ -612,18 +701,21 @@ public class MissionPanelManager : MonoBehaviour
             SuperMissionNumber = SMOffset + 3;
             MissionFlag = true;
             SuperMissionFlag = false;
+            LoadPage(1);
         }
         else if (MissionFlag)
         {
             MissionNumber = MOffset + 3;
             TaskFlag = true;
             MissionFlag = false;
+            LoadPage(2);
         }
         else if (TaskFlag)
         {
             TaskNumber = TOffset + 3;
             SubTaskFlag = true;
             TaskFlag = false;
+            LoadPage(3);
         }
         else //subtasks are currently being displayed
         {
@@ -650,18 +742,21 @@ public class MissionPanelManager : MonoBehaviour
             SuperMissionNumber = SMOffset + 4;
             MissionFlag = true;
             SuperMissionFlag = false;
+            LoadPage(1);
         }
         else if (MissionFlag)
         {
             MissionNumber = MOffset + 4;
             TaskFlag = true;
             MissionFlag = false;
+            LoadPage(2);
         }
         else if (TaskFlag)
         {
             TaskNumber = TOffset + 4;
             SubTaskFlag = true;
             TaskFlag = false;
+            LoadPage(3);
         }
         else //subtasks are currently being displayed
         {
