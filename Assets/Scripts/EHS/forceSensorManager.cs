@@ -1,118 +1,91 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using System.Net;
-using System.Net.Sockets;
-using System.Threading;
-using System.Text;
-using UnityEngine.Networking;
-using System.Timers;
-
-using System;
+﻿using System;
 using System.IO;
+using System.Net;
+using System.Text;
+using UnityEngine;
+using UnityEngine.UI;
+using System.Threading;
+using System.Net.Sockets;
+using System.Collections;
+using System.Collections.Generic;
 
-public class forceSensorManager : MonoBehaviour
+public class forceSensorManager : tcpPacket
 {
-    private HeadTracking headTrack;
-     
-    private TcpListener tcpListener;
-    private Thread tcpListenerThread;
-    private TcpClient connectedTcpClient;
+    // Loading Screen
+    public HeadTracking ht; 
+    private string NAME; 
+    private bool GloveActive;
+    private bool newPacket;
+    private bool newInput;
+    fingerInput currentInput; 
+    private delegate void functionDelegate();
 
-    private bool forceSensorPress;
-    private bool debug;
-    private string msg;
-    private bool connection; 
-
-    private SceneMan scene;
-
-    EndPoint Remote; 
-
-    byte[] data = new byte[1024];
-
-    public int port = 6080;
-
-    // Start is called before the first frame update
-    // Use this for initialization
-    void Start()
+    public struct fingerInput
     {
-        scene = (GameObject.Find("SceneManager")).GetComponent(typeof(SceneMan)) as SceneMan;
-        headTrack = (GameObject.Find("SceneManager")).GetComponent(typeof(HeadTracking)) as HeadTracking;
-        tcpListenerThread = new Thread(new ThreadStart(ListenForIncommingRequests));
-        tcpListenerThread.IsBackground = true;
-        tcpListenerThread.Start();
-        forceSensorPress = false;
-        debug = false;
-        connection = false; 
+        public fingerInput(int newThumb, int newIndex, int newMiddle, int newRing, int newLittle)
+        {
+            thumb = newThumb;
+            index = newIndex;
+            middle = newMiddle;
+            ring = newRing;
+            little = newLittle; 
+        }
+
+        public int thumb;
+        public int index;
+        public int middle;
+        public int ring;
+        public int little; 
+    }
+
+    
+    public void Start()
+    {
+        base.Start();
+        debugName = "force_sensor";
+        connected = false;
+        newInput = false; 
+        NAME = "forceSensor";
+        functionDelegate stopDelegate = new functionDelegate(stopStream);
+        functionDelegate startDelegate = new functionDelegate(startStream);
+        functionDebug.Instance.registerFunction(NAME + "start", startDelegate);
+        functionDebug.Instance.registerFunction(NAME + "stop", stopDelegate);
+
+        reportStatus(); 
     }
 
     void Update()
     {
-        if(connection)
+        if(newInput)
         {
-            DebugManager.Instance.SetParam("hand_FS", "CON");
-
-            connection = false;
-        }
-        if(debug)
-        {
-            DebugManager.Instance.LogBoth(this.GetType().Name, msg);
-            msg = "";
-            debug = false;
-        }
-        if(forceSensorPress)
-        {
-            headTrack.forceClick();
-            forceSensorPress = false;
+            //Call reworked force sensor here. 
+            newInput = false;
+            ht.forceClick(currentInput); 
         }
     }
 
 
-     // Runs in background TcpServerThread; Handles incomming TCPClient requests 	
-    private void ListenForIncommingRequests()
+    public override int processPacket(string packet)
     {
+        string[] tmp = packet.Split(new string[] { "$" }, StringSplitOptions.None);
         try
         {
-            // Create listener on localhost. 			
-            tcpListener = new TcpListener(IPAddress.Parse(scene.IP), port);
-            tcpListener.Start();
-            Byte[] bytes = new Byte[20000];
-            while (true)
+            if (tmp.Length == 5)
             {
-                using(connectedTcpClient = tcpListener.AcceptTcpClient())
-                {
-                    //Connected here
-                    connection = true; 
-                    // Get a stream object for reading 					
-                    using (NetworkStream stream = connectedTcpClient.GetStream())
-                    {
-                        
-                        msg = "Connection received from force Sensor...";
-                        debug = true;
-                      
-                        int length;
-                        // Read incomming stream into byte arrary. 						
-                        while ((length = stream.Read(bytes, 0, bytes.Length)) != 0)
-                        {
-                            var incommingData = new byte[length];
-                            Array.Copy(bytes, 0, incommingData, 0, length);
-                            // Convert byte array to string message.
-                            string clientMessage = Encoding.ASCII.GetString(incommingData);;
-
-                            if(clientMessage.CompareTo("PRESS") == 0)
-                            {
-                                forceSensorPress = true;
-                            }
-
-
-                        }
-                    }
-                }
+                currentInput.thumb = (int.Parse(tmp[0]));
+                currentInput.index = (int.Parse(tmp[1]));
+                currentInput.middle = (int.Parse(tmp[2]));
+                currentInput.ring = (int.Parse(tmp[3]));
+                currentInput.little = (int.Parse(tmp[4]));
+                newInput = true; 
             }
         }
-        catch (SocketException socketException)
+        catch (FormatException e)
         {
-            Debug.Log("SocketException " + socketException.ToString());
+            DebugManager.Instance.LogUnityConsole(e.Message);
+            return -1;
         }
+    
+        return 0;
     }
 }

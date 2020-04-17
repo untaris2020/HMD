@@ -30,7 +30,6 @@ public class CamerasManager : MonoBehaviour
         ImageHolder.SetActive(false);
     }
 
-
     private void Awake()
     { 
         Instance = this;

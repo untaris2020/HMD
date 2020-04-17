@@ -19,6 +19,8 @@ public class audioLoader : MonoBehaviour
     private delegate void ButtonDelegate();
     private int currentPage;
     private AudioSource aud;
+    private int currentHighlighted;
+    public Collider navPG3_col; 
 
     private struct recording
     {
@@ -31,6 +33,7 @@ public class audioLoader : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        currentHighlighted = 0;
         aud = GetComponent<AudioSource>();
 
         clips = new List<recording>();
@@ -43,6 +46,19 @@ public class audioLoader : MonoBehaviour
         ht.registerCollider(upArrowCollider.GetComponent<Collider>().name, tmpDelegate);
         tmpDelegate = new ButtonDelegate(downArrowHit);
         ht.registerCollider(downArrowCollider.GetComponent<Collider>().name, tmpDelegate);
+
+        //Register Force functions
+        tmpDelegate  = new ButtonDelegate(pressCurrentHighlighted);
+        forceSensorManager.fingerInput input = new forceSensorManager.fingerInput(0, 1, 0, 0, 0);
+        ht.registerForceCollider(navPG3_col.name + "1", navPG3_col.name, tmpDelegate, input);
+
+        tmpDelegate = new ButtonDelegate(upCurrentHighlight);
+        input = new forceSensorManager.fingerInput(0, 0, 1, 0, 0);
+        ht.registerForceCollider(navPG3_col.name + "2", navPG3_col.name, tmpDelegate, input);
+
+        tmpDelegate = new ButtonDelegate(downCurrentHighlight);
+        input = new forceSensorManager.fingerInput(0, 0, 0, 1, 0);
+        ht.registerForceCollider(navPG3_col.name + "3", navPG3_col.name, tmpDelegate, input);
 
         int i = 0;
         foreach(GameObject box in box_list)
@@ -123,9 +139,18 @@ public class audioLoader : MonoBehaviour
         for(int i =(currentPage*5); i < (currentPage*5 + 5); i++)
         {
             GameObject tempBox = box_list[j];
+            if(j == currentHighlighted%5)
+            {
+                tempBox.GetComponentInChildren<MeshRenderer>().material = StyleSheet.Instance.ButtonActiveMat;
+            }
+            else
+            {
+                tempBox.GetComponentInChildren<MeshRenderer>().material = StyleSheet.Instance.ButtonInactiveMat;
+            }
+
             if(i < clips.Count)
             {
-                 AudioClip tempClip = clips[i].clip;
+                AudioClip tempClip = clips[i].clip;
 
                 
                 string minutes = Mathf.Floor(clips[i].length/ 60).ToString("00");
@@ -143,22 +168,32 @@ public class audioLoader : MonoBehaviour
 
     public void Box1Hit()
     {
+        currentHighlighted = 0;
+        UpdateList(); 
         playClip(0);
     }
     public void Box2Hit()
     {
+        currentHighlighted = 1; 
+        UpdateList(); 
         playClip(1);
     }
     public void Box3Hit()
     {
+        currentHighlighted = 2;
+        UpdateList(); 
         playClip(2);
     }
     public void Box4Hit()
     {
+        currentHighlighted = 3;
+        UpdateList(); 
         playClip(3);
     }
     public void Box5Hit()
     {
+        currentHighlighted = 4; 
+        UpdateList(); 
         playClip(4);
     }
     public void upArrowHit()
@@ -186,6 +221,44 @@ public class audioLoader : MonoBehaviour
         }
         UpdateList();
     }
+
+    private void pressCurrentHighlighted()
+    {
+       playClip(currentHighlighted%5);
+    }
+
+    private void upCurrentHighlight()
+    {
+        if(currentHighlighted > 0)
+        {
+            currentHighlighted--; 
+            if(currentHighlighted % 5 == 4)
+            {
+                upArrowHit();
+                
+            }
+            else
+            {
+                UpdateList(); 
+            }
+        }
+    }
+    private void downCurrentHighlight()
+    {
+        if(currentHighlighted < (clips.Count - 1))
+        {
+            currentHighlighted++; 
+            if(currentHighlighted % 5 == 0)
+            {
+                downArrowHit();
+            }
+            else
+            {
+                UpdateList(); 
+            }
+        }
+    }
+
 
     public void LoadNewAudio(AudioClip clip, DateTime time, string Name)
     {

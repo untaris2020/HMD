@@ -18,7 +18,15 @@ public class tcpPacket:MonoBehaviour
     protected bool connected;
     protected TcpClient cli;
     protected int seqID;
-    
+    protected string debugName;
+    protected bool setParam = true; 
+
+    protected void Start()
+    {
+        setParam = true;
+    }
+
+
     public virtual void initialize(TcpClient client)
     {
         seqID = -1;
@@ -26,7 +34,7 @@ public class tcpPacket:MonoBehaviour
         connected = true;
     }
 
-    
+
     /// <summary>
     /// processPacket virtual function that must be override to parse TCPPacket
     /// </summary>
@@ -79,6 +87,21 @@ public class tcpPacket:MonoBehaviour
     public virtual void startStream()
     {
         sendMsg("START");
+    }
+
+    public void reportStatus()
+    {
+        Debug.Log("SETTING PARAM FOR " + debugName);
+        string report; 
+        if(connected)
+        {
+            report = "CON";
+        }
+        else
+        {
+            report = "D-CON";
+        }
+        DebugManager.Instance.SetParam(debugName, report);
     }
 
     #region setters and getters

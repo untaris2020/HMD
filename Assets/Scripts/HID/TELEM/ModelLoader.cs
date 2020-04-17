@@ -6,8 +6,9 @@ public class ModelLoader : MonoBehaviour
 {
     // buttons
     public TelemPanelManager telem_panel_manager;
-    public GameObject clearModelsButton, misc1Button, misc2Button, upButton, downButton, upArrow, _camera;
+    public GameObject clearModelsBut, misc1Button, misc2Button, upButton, downButton, upArrow, _camera;
     public GameObject[] modelButtons;
+    public IMUHandler IMU_GLOVE; 
 
     // text
     public TextMeshProUGUI[] modelTexts;
@@ -16,6 +17,8 @@ public class ModelLoader : MonoBehaviour
     public TextMeshProUGUI misc_text;   // right - unused
     public TextMeshProUGUI instructions_text;
 
+    public GameObject telem_panel2Col;
+    public GameObject telem_panel3Col; 
     // array/list of models
     private int NUMOFMODELS;
     private int NUMOFPAGES;
@@ -25,6 +28,13 @@ public class ModelLoader : MonoBehaviour
     public GameObject[] models;
     public GameObject glove_model;
     private List<GameObject> loaded_models;
+    private bool newIMUpacket;
+    private bool firstPacket; 
+    private Quaternion rot;
+    private Quaternion defaultRot; 
+    private Vector3 pos;
+
+    private int currentHighlighted; 
 
 
     private delegate void functionDelegate();
@@ -33,6 +43,10 @@ public class ModelLoader : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        currentHighlighted = 0; 
+
+        newIMUpacket = false;
+        firstPacket = false; 
         loaded_models = new List<GameObject>();
         NUMOFMODELS = models.Length;
         DebugManager.Instance.LogBoth(this.GetType().Name, NUMOFMODELS + " models loaded.");
@@ -43,14 +57,16 @@ public class ModelLoader : MonoBehaviour
 
         // clear models button
         functionDelegate tmpDelegate0 = new functionDelegate(ClearModelsButton);
-        ht.registerCollider(clearModelsButton.GetComponent<Collider>().name, tmpDelegate0);
+        forceSensorManager.fingerInput input = new forceSensorManager.fingerInput(0, 1, 0, 0, 0);
+        ht.registerCollider(clearModelsBut.GetComponent<Collider>().name, telem_panel3Col.name, tmpDelegate0, input);
         functionDebug.Instance.registerFunction("clearModels", tmpDelegate0);
 
         // set position button
         tmpDelegate0 = new functionDelegate(Set3DModelPosition);
-        ht.registerCollider(misc1Button.GetComponent<Collider>().name, tmpDelegate0);
+        input = new forceSensorManager.fingerInput(0, 0, 1, 0, 0);
+        ht.registerCollider(misc1Button.GetComponent<Collider>().name, telem_panel3Col.name, tmpDelegate0, input);
         functionDebug.Instance.registerFunction("set3DModelPosition", tmpDelegate0);
-
+        
         // up arrow
         tmpDelegate0 = new functionDelegate(UpArrowButton);
         ht.registerCollider(upButton.GetComponent<Collider>().name, tmpDelegate0);
@@ -82,6 +98,19 @@ public class ModelLoader : MonoBehaviour
         ht.registerCollider(modelButtons[4].GetComponent<Collider>().name, tmpDelegate0);
         functionDebug.Instance.registerFunction("loadModel4", tmpDelegate0);
 
+        //Register Force functions
+        tmpDelegate0 = new functionDelegate(pressCurrentHighlighted);
+        input = new forceSensorManager.fingerInput(0, 1, 0, 0, 0);
+        ht.registerForceCollider(telem_panel2Col.name + "1", telem_panel2Col.name, tmpDelegate0, input);
+
+        tmpDelegate0 = new functionDelegate(upCurrentHighlight);
+        input = new forceSensorManager.fingerInput(0, 0, 1, 0, 0);
+        ht.registerForceCollider(telem_panel2Col.name + "2", telem_panel2Col.name, tmpDelegate0, input);
+
+        tmpDelegate0 = new functionDelegate(downCurrentHighlight);
+        input = new forceSensorManager.fingerInput(0, 0, 0, 1, 0);
+        ht.registerForceCollider(telem_panel2Col.name + "3", telem_panel2Col.name, tmpDelegate0, input);
+
         for (int i=0; i<models.Length; i++) {
             if (models[i] == null) {
                 GameObject temp = new GameObject("NULL");
@@ -91,7 +120,7 @@ public class ModelLoader : MonoBehaviour
 
         UpdateUI();
         misc_text.SetText("");
-        glove_model.SetActive(false);
+        glove_model.GetComponent<Renderer>().enabled = false;
 
         
     }
@@ -99,11 +128,22 @@ public class ModelLoader : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+        if(newIMUpacket && loaded_models.Count > 0)
+        {
+            if(firstPacket)
+            {
+                defaultRot = rot; 
+            }
+            newIMUpacket = false; 
+            float speed = Time.deltaTime * 12.0f;
+            glove_model.transform.position = Vector3.Slerp(glove_model.transform.position, pos, speed);
+            rot = rot *  Quaternion.Inverse(defaultRot);
+            glove_model.transform.rotation = Quaternion.Slerp(glove_model.transform.rotation, rot, speed); 
+        }
     }
 
     void UpdateUI()
-    {
+    { 
         index_text.SetText((page_index + 1).ToString() + " / " + NUMOFPAGES.ToString());
         if (page_index == 0)
         {
@@ -117,6 +157,15 @@ public class ModelLoader : MonoBehaviour
 
         for (int i=0; i<5; i++)
         {
+            if(i == (currentHighlighted %5))
+            {
+                modelButtons[i].GetComponent<MeshRenderer>().material = StyleSheet.Instance.ButtonActiveMat;
+            }
+            else
+            {
+                modelButtons[i].GetComponent<MeshRenderer>().material = StyleSheet.Instance.ButtonInactiveMat;   
+            }
+
             int tmp_index = i + (page_index * 5);
             // TODO need to check if in bounds of array
             if (tmp_index >=0 && tmp_index < models.Length)
@@ -126,7 +175,6 @@ public class ModelLoader : MonoBehaviour
             {
                 modelTexts[i].SetText("");
             }
-            
         }
     }
 
@@ -167,14 +215,14 @@ public class ModelLoader : MonoBehaviour
         spawn_pos.z += 5;
         spawn_pos.y -= 5;
 
-        glove_model.SetActive(true);
+        glove_model.GetComponent<Renderer>().enabled = true;
         glove_model.transform.position = spawn_pos;
 
         // waiting for user to click the button...
         ready_to_load = true;
     }
 
-    private void ClearModelsButton()
+    public void ClearModelsButton()
     {
         // not sure if this will work
         foreach (GameObject obj in loaded_models)
@@ -185,11 +233,23 @@ public class ModelLoader : MonoBehaviour
         loaded_models.Clear();
     }
 
+    public void updateModelwithIMU(float w, float x, float y, float z, float xAccel, float yAccel, float zAccel)
+    { 
+        pos = new Vector3(xAccel, yAccel, zAccel);
+        rot = new Quaternion(-x,-z,-y,w);
+        newIMUpacket = true;
+    }
+
     private void Set3DModelPosition()
     {
         if (!ready_to_load)
         {
             return;
+        }
+
+        if(!IMU_GLOVE.getConnected())
+        {
+            DebugManager.Instance.LogBoth("MODEL LOADER: ERROR CHEST IMU NOT CONNECTED");
         }
 
         // Load and scale selected model
@@ -199,13 +259,16 @@ public class ModelLoader : MonoBehaviour
         }
         int model_index = load_model + (page_index * 5);
 
-        loaded_models.Add( (GameObject)Instantiate(models[model_index], new Vector3(0, 0, -15), Quaternion.identity));
+        loaded_models.Add( (GameObject)Instantiate(models[model_index], new Vector3(0, 0, 0), Quaternion.identity, glove_model.transform));
         DebugManager.Instance.LogBoth("INFO", "Loading 3D Model " + models[model_index].name);
 
         load_model = -1;
-        glove_model.SetActive(false);
+        glove_model.GetComponent<Renderer>().enabled = false;
         instructions_text.SetText("");
         ready_to_load = false;
+
+        //Start IMU stream 
+        IMU_GLOVE.startStream(); 
     }
 
     private void UpArrowButton()
@@ -242,4 +305,54 @@ public class ModelLoader : MonoBehaviour
     {
         LoadModel(4);
     }
+
+    private void pressCurrentHighlighted()
+    {
+        switch(currentHighlighted)
+        {
+            case 0:
+                LoadModel0(); 
+                break;
+            case 1:
+                LoadModel1(); 
+                break;
+            case 2:
+                LoadModel2(); 
+                break;
+            case 3:
+                LoadModel3(); 
+                break;
+            case 4:
+                LoadModel4(); 
+                break;
+        }
+    }
+
+    private void upCurrentHighlight()
+    {
+        if(currentHighlighted > 0)
+        {
+            currentHighlighted--; 
+            if(currentHighlighted % 5 == 4)
+            {
+                PrevPage();
+                
+            }
+            UpdateUI(); 
+        }
+    }
+    private void downCurrentHighlight()
+    {
+        if(currentHighlighted < (models.Length -1))
+        {
+            currentHighlighted++; 
+            if(currentHighlighted % 5 == 0)
+            {
+                NextPage();
+                
+            }
+            UpdateUI();
+        }
+    }
+
 }

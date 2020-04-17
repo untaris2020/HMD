@@ -12,8 +12,9 @@ public class NavManager : MonoBehaviour
     // 1) create backup system
     // 2) fix persistant behivior
 
-    public GameObject rearviewONButton, rearviewOFFButton, gloveONButton, gloveOFFButton, rthButton, showallButton;
+    public GameObject rearviewToggleButton, gloveToggleButton, rthButton, showallButton;
     public Material buttonMat, buttonHoverMat, headerMat, headerHoverMat;
+    public Collider navPage0_col, navPage1_col;
     private CamerasManager camerasManager;
 
     private bool glove_active; 
@@ -36,13 +37,16 @@ public class NavManager : MonoBehaviour
 
     public CameraHandler GLOVE_CAM;
     public CameraHandler REAR_CAM;
-
+    bool rearviewCamStatus;
+    bool gloveCamStatus;
     public GameObject _cube, _camera, _arrow, _world_center;
+    public TextMeshProUGUI glove_text;
+    public TextMeshProUGUI rearview_text;
     
 
     private IEnumerator coroutine;
-    private float TICKTIME = 5.0f;   //was 10.0f
-    private float BACKUPTIMESECONDS = 600.0f;   // amount of time between backups was 300 (5mins)
+    private float TICKTIME = 1.0f;   //was 10.0f
+    private float BACKUPTIMESECONDS = 1000.0f;   // amount of time between backups was 300 (5mins)
     private int NUMOFOBJECTS = 0; 
     private int userPosCounter;
     private bool update_waypoints_rth = false;
@@ -50,11 +54,20 @@ public class NavManager : MonoBehaviour
     private bool showall_status = false;
     public TextMeshProUGUI rth_text;
     public TextMeshProUGUI showall_text;
+    GameObject homeWaypoint;
+    AStar astarScript;
 
+    public bool getRTHStat() { return rth_status; }
+    public bool getSAStat() { return showall_status; }
+    public bool getHeadCam() { return rearviewCamStatus; }
+    public bool getGloveCam() { return gloveCamStatus; }
 
     // Start is called before the first frame update
     void Start()
     {
+        gloveCamStatus = false;
+        rearviewCamStatus = false;
+
         camerasManager = GetComponent<CamerasManager>();
         NUMOFOBJECTS = (int)(BACKUPTIMESECONDS / TICKTIME);
         // Allocate space
@@ -62,46 +75,38 @@ public class NavManager : MonoBehaviour
 
         userPosCounter = 0;
 
+        astarScript = GetComponent<AStar>();
         HeadTracking ht = GameObject.Find("SceneManager").GetComponent<HeadTracking>();
 
-        functionDelegate startRear = new functionDelegate(PressRearviewON);
-        functionDelegate stopRear = new functionDelegate(PressRearviewOFF);
-        functionDebug.Instance.registerFunction("startRearCam", startRear);
-        functionDebug.Instance.registerFunction("stopRearCam", stopRear);
+        functionDelegate startChest = new functionDelegate(ToggleRearviewCam);
+        forceSensorManager.fingerInput input = new forceSensorManager.fingerInput(0, 1, 0, 0, 0);
+        functionDebug.Instance.registerFunction("toggleRearviewCam", startChest);
+        ht.registerCollider(rearviewToggleButton.GetComponent<Collider>().name, navPage1_col.name, startChest, input);
 
-        functionDelegate startGlove = new functionDelegate(PressGloveON);
-        functionDelegate stopGlove = new functionDelegate(PressGloveOFF);
-        functionDebug.Instance.registerFunction("startGloveCam", startGlove);
-        functionDebug.Instance.registerFunction("stopGloveCam", stopGlove);
+        input = new forceSensorManager.fingerInput(0, 0, 1, 0, 0);
+        functionDelegate startGlove = new functionDelegate(ToggleGloveCam);
+        functionDebug.Instance.registerFunction("toggleGloveCam", startGlove);
+        ht.registerCollider(gloveToggleButton.GetComponent<Collider>().name, navPage1_col.name, startGlove, input);
 
+        input = new forceSensorManager.fingerInput(0, 1, 0, 0, 0);
         functionDelegate rth = new functionDelegate(PressRTH);
-        functionDelegate showall = new functionDelegate(PressShowAll);
         functionDebug.Instance.registerFunction("toggleRTH", rth);
+        ht.registerCollider(rthButton.GetComponent<Collider>().name, navPage0_col.name, rth, input);
+
+        input = new forceSensorManager.fingerInput(0, 0, 1, 0, 0);
+        functionDelegate showall = new functionDelegate(PressShowAll);
         functionDebug.Instance.registerFunction("toggleShowAll", showall);
-        
+        ht.registerCollider(showallButton.GetComponent<Collider>().name, navPage0_col.name, showall, input);
+
         coroutine = GetUserPOSLoop(TICKTIME);
         StartCoroutine(coroutine);
-
-        // This might be broken, make unique MyDelegates
-        MyDelegate RearviewON = new MyDelegate(PressRearviewON);
-        ht.registerCollider(rearviewONButton.GetComponent<Collider>().name, RearviewON);
-
-        MyDelegate RearviewOFF = new MyDelegate(PressRearviewOFF);
-        ht.registerCollider(rearviewOFFButton.GetComponent<Collider>().name, RearviewOFF);
-
-        MyDelegate RTH = new MyDelegate(PressRTH);
-        ht.registerCollider(rthButton.GetComponent<Collider>().name, RTH);
-
-        MyDelegate ShowAll = new MyDelegate(PressShowAll);
-        ht.registerCollider(showallButton.GetComponent<Collider>().name, ShowAll);
 
         // set worldcenter
         _world_center.transform.position = _camera.transform.position + _camera.transform.forward * 2.0f;
         DebugManager.Instance.LogUnityConsole("NavManager", "Setting World Center: " + _cube.transform.position);
 
         //persistentBehavior.UpdateBinding();
-        UpdateStatusText();
-        
+        UpdateUI();
     }
 
     private void OnDestroy() 
@@ -142,8 +147,10 @@ public class NavManager : MonoBehaviour
             userPositions[userPosCounter] = tmpPos;
 
             // Make a waypoint game object
+            
             GameObject temp = Instantiate(waypoint_mesh, tmpPos.position, Quaternion.identity, _world_center.transform);
             temp.SetActive(rth_status || showall_status);
+            temp.tag = "Waypoint";
             waypoint_meshes.Add(temp);
 
             if (userPosCounter >= (NUMOFOBJECTS)-1)
@@ -183,12 +190,18 @@ public class NavManager : MonoBehaviour
         rth_status = !rth_status;
         showall_status = false;
         _arrow.SetActive(rth_status);
-        UpdateStatusText();
+        UpdateUI();
 
         foreach (GameObject obj in waypoint_meshes)
         {
             obj.SetActive(rth_status);
         }
+
+        // new code to drive ASTAR
+        homeWaypoint = waypoint_meshes[0];  // first waypoint is home - note if the waypoitns get cleared (every X seconds set above) this alg will not work correctly
+
+        List<GameObject> path = new List<GameObject>();
+        path = astarScript.generateRTHPath(homeWaypoint);
 
     }
 
@@ -197,7 +210,7 @@ public class NavManager : MonoBehaviour
         // toggle function
         showall_status = !showall_status;
         rth_status = false;
-        UpdateStatusText();
+        UpdateUI();
 
         foreach (GameObject obj in waypoint_meshes)
         {
@@ -211,7 +224,7 @@ public class NavManager : MonoBehaviour
         }
     }
 
-    private void UpdateStatusText()
+    private void UpdateUI()
     {
         _arrow.SetActive(rth_status);
 
@@ -234,14 +247,62 @@ public class NavManager : MonoBehaviour
             showall_text.SetText("OFF");
             showall_text.color = new Color32(255, 0, 0, 255);   // red
         }
+
+        if (rearviewCamStatus)
+        {
+            rearview_text.SetText("ON");
+            rearview_text.color = new Color32(0, 255, 0, 255);   // green
+        } else
+        {
+            rearview_text.SetText("OFF");
+            rearview_text.color = new Color32(255, 0, 0, 255);   // red
+        }
+
+        if (gloveCamStatus)
+        {
+            glove_text.SetText("ON");
+            glove_text.color = new Color32(0, 255, 0, 255);   // green
+        } else
+        {
+            glove_text.SetText("OFF");
+            glove_text.color = new Color32(255, 0, 0, 255);   // red
+        }
+        
+    }
+
+    void ToggleRearviewCam() {
+        gloveCamStatus = false;
+        rearviewCamStatus = !rearviewCamStatus;
+
+        UpdateCamStatus();
+    }
+
+    void ToggleGloveCam() {
+        rearviewCamStatus = false;
+        gloveCamStatus = !gloveCamStatus;
+
+        UpdateCamStatus();
+    }
+
+    void UpdateCamStatus() {
+        if (rearviewCamStatus) {
+            PressRearviewON();
+        } else {
+            PressRearviewOFF();
+        }
+
+        if (gloveCamStatus) {
+            PressGloveON();
+        } else {
+            PressGloveOFF();
+        }
+
+        UpdateUI();
     }
 
 
     public void PressRearviewON()
     {
-        rearviewONButton.GetComponent<Renderer>().material = buttonHoverMat;
-        rearviewOFFButton.GetComponent<Renderer>().material = buttonMat;
-
         // spawn camera
         camerasManager.spawnCam();
         
@@ -258,8 +319,6 @@ public class NavManager : MonoBehaviour
 
     public void PressRearviewOFF()
     {
-        rearviewOFFButton.GetComponent<Renderer>().material = buttonHoverMat;
-        rearviewONButton.GetComponent<Renderer>().material = buttonMat;
         
         //Despawn camera
         camerasManager.destroyCam();
@@ -276,8 +335,6 @@ public class NavManager : MonoBehaviour
     public void PressGloveON()
     {
         
-        gloveONButton.GetComponent<Renderer>().material = buttonHoverMat;
-        gloveOFFButton.GetComponent<Renderer>().material = buttonMat;
 
         camerasManager.spawnCam();
         if(GLOVE_CAM.getConnected())
@@ -290,55 +347,15 @@ public class NavManager : MonoBehaviour
         }
     }
 
-    public void PressGloveOFF()
-    {
-        gloveOFFButton.GetComponent<Renderer>().material = buttonHoverMat;
-        gloveONButton.GetComponent<Renderer>().material = buttonMat;
+    public void PressGloveOFF() {
 
         camerasManager.destroyCam();
-        if(GLOVE_CAM.getConnected())
-        {
+        if (GLOVE_CAM.getConnected()) {
             GLOVE_CAM.stopStream();
-        }
-        else
-        {
+        } else {
             DebugManager.Instance.LogSceneConsole("ERROR: CAMERA DISCONNECTED");
         }
     }
-
-    //ML Code
-
-    /// <summary>
-        /// Instantiates a new object with MLPersistentBehavior. The MLPersistentBehavior is
-        /// responsible for restoring and saving itself.
-        /// </summary>
-    //    String timeStamp = DateTime.Now.ToString();
-    
-
-    //void CreateContent(Vector3 position, Quaternion rotation)
-    //    {
-    //        GameObject gameObj = Instantiate(_content, position, rotation);
-    //        MLPersistentBehavior persistentBehavior = gameObj.GetComponent<MLPersistentBehavior>();
-    //        persistentBehavior.UniqueId = Guid.NewGuid().ToString();
-    //        _pointBehaviors.Add(persistentBehavior);
-    //        //AddContentListeners(persistentBehavior);
-    //    }
-
-    //    /// <summary>
-    //    /// Removes the points and destroys its binding to prevent future restoration
-    //    /// </summary>
-    //    /// <param name="gameObj">Game Object to be removed</param>
-    //    void RemoveContent(GameObject gameObj)
-    //    {
-    //        MLPersistentBehavior persistentBehavior = gameObj.GetComponent<MLPersistentBehavior>();
-    //        //RemoveContentListeners(persistentBehavior);
-    //        _pointBehaviors.Remove(persistentBehavior);
-    //        persistentBehavior.DestroyBinding();
-    //        //Instantiate(_destroyedContentEffect, persistentBehavior.transform.position, Quaternion.identity);
-
-    //        Destroy(persistentBehavior.gameObject);
-    //    }
-
 
 }
 

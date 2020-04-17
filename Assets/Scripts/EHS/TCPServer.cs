@@ -21,6 +21,15 @@ public class TCPServer : MonoBehaviour
     #region Public Variables
     public string IP;
     public int PORT;
+
+        //Instatiated Object References
+    public IMUHandler IMU_CHEST;
+    public IMUHandler IMU_GLOVE;
+    public CameraHandler HEAD_CAM; 
+    public CameraHandler GLOVE_CAM;
+    public ToggleHandler CHEST_TOGGLE;
+    public ToggleHandler GLOVE_TOGGLE;
+    public forceSensorManager FORCE_SENSOR;
     #endregion
 
     #region Private Variables
@@ -30,11 +39,7 @@ public class TCPServer : MonoBehaviour
     private TcpClient tempTcpClient;
 
 
-    //Instatiated Object References
-    public IMUHandler IMU_CHEST;
-    public IMUHandler IMU_GLOVE;
-    public CameraHandler HEAD_CAM; 
-    public CameraHandler GLOVE_CAM;
+
 
     //public GameObject SYSTEM;
     #endregion
@@ -48,9 +53,23 @@ public class TCPServer : MonoBehaviour
         Instance = this;
     }
 
+    void updateStatus()
+    {
+        if(IMU_CHEST.getConnected() && CHEST_TOGGLE.getConnected() && HEAD_CAM.getConnected())
+        {
+            DebugManager.Instance.SetParam("chest_system", "CON");
+        }
+        if(IMU_GLOVE.getConnected() && GLOVE_TOGGLE.getConnected() && GLOVE_CAM.getConnected() && FORCE_SENSOR.getConnected())
+        {
+            DebugManager.Instance.SetParam("glove_system", "CON");
+        }
+    }
+
 
     void Start()
     {
+        DebugManager.Instance.SetParam("chest_system", "D-CON");
+        DebugManager.Instance.SetParam("glove_system", "D-CON");
         //Get ICD Script also on EHS Obj
         tcpListenerThread = new Thread(new ThreadStart(ListenForIncommingRequests));
         tcpListenerThread.IsBackground = true;
@@ -142,6 +161,8 @@ public class TCPServer : MonoBehaviour
                             if (body == "REG")
                             {
                                 IMU_CHEST.initialize((TcpClient)client);
+                                IMU_CHEST.reportStatus(); 
+                                updateStatus();
                             }
                             else
                             {
@@ -152,18 +173,33 @@ public class TCPServer : MonoBehaviour
                             if (body == "REG")
                             {
                                 IMU_GLOVE.initialize((TcpClient)client);
+                                updateStatus();
+                                IMU_GLOVE.reportStatus(); 
                             }
                             else
                             {
-                                IMU_GLOVE.GetComponent<IMUHandler>().processPacket(body);
+                                IMU_GLOVE.processPacket(body);
                             }
                             break;
                         case (int)packetICD.Type.TOGGLE_SCREEN:
+                            if (body == "REG")
+                            {
+                                CHEST_TOGGLE.initialize((TcpClient)client);
+                                CHEST_TOGGLE.reportStatus();
+                                updateStatus();
+                                CHEST_TOGGLE.startStream(); 
+                            }
+                            else
+                            {
+                                CHEST_TOGGLE.processPacket(body);
+                            }
                             break;
                         case (int)packetICD.Type.HEAD_CAM:
                             if (body == "REG")
                             {
                                 HEAD_CAM.initialize((TcpClient)client);
+                                updateStatus();
+                                HEAD_CAM.reportStatus(); 
                             }
                             else
                             {
@@ -174,6 +210,8 @@ public class TCPServer : MonoBehaviour
                             if (body == "REG")
                             {
                                 GLOVE_CAM.initialize((TcpClient)client);
+                                updateStatus();
+                                GLOVE_CAM.reportStatus(); 
                             }
                             else
                             {
@@ -181,7 +219,32 @@ public class TCPServer : MonoBehaviour
                             }
                             break;
                         case (int)packetICD.Type.FORCE_SENSOR:
+                            if (body == "REG")
+                            {
+                                FORCE_SENSOR.initialize((TcpClient)client);
+                                updateStatus();
+                                FORCE_SENSOR.reportStatus();
+                                FORCE_SENSOR.startStream();
+                            }
+                            else
+                            {
+                                Debug.Log("Got body message");
+                                FORCE_SENSOR.processPacket(body);
+                            }
                             break;
+                        case (int)packetICD.Type.TOGGLE_GLOVE:
+                            if (body == "REG")
+                            {
+                                GLOVE_TOGGLE.initialize((TcpClient)client);
+                                updateStatus();
+                                GLOVE_TOGGLE.reportStatus(); 
+                                GLOVE_TOGGLE.startStream();
+                            }
+                            else
+                            {
+                                GLOVE_TOGGLE.processPacket(body);
+                            }
+                            break; 
                         default:
                             DebugManager.Instance.LogUnityConsole("ID Unknown: " + msgID);
                             break;

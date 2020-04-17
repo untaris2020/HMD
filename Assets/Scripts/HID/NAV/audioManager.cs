@@ -8,6 +8,7 @@ public class audioManager : MonoBehaviour
     public GameObject recordButton;
     public GameObject playbackTime;
     public GameObject recordingIndicator; 
+    public Collider navPG2Collider; 
 
     private bool recording;
     private float updateTime;
@@ -16,13 +17,17 @@ public class audioManager : MonoBehaviour
     private float prevTime;
     private delegate void functionDelegate();
     private recordAudio ar;
+
+    public bool getRecording() { return recording; }
     // Start is called before the first frame update
     void Start()
     {
         HeadTracking ht = GameObject.Find("SceneManager").GetComponent<HeadTracking>();
         ar = this.GetComponent<recordAudio>();
-        functionDelegate rec = new functionDelegate(recordingHit);    
-        ht.registerCollider(recordButton.GetComponentInChildren<Collider>().name, rec);
+        functionDelegate rec = new functionDelegate(recordingHit);
+
+        forceSensorManager.fingerInput input = new forceSensorManager.fingerInput(0, 1, 0, 0, 0);
+        ht.registerCollider(recordButton.GetComponentInChildren<Collider>().name, navPG2Collider.name, rec, input);
         Time.timeScale = 1.0f;
         updateTime = 0f;
         prevTime = 0f;
@@ -55,7 +60,7 @@ public class audioManager : MonoBehaviour
         }
     }
 
-    void recordingHit()
+    public void recordingHit()
     {
         if(ar.isMicConnected())
         {
