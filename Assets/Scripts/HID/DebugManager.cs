@@ -11,6 +11,15 @@ public class DebugManager : MonoBehaviour
     public static DebugManager Instance;
     //public DebugManager Instance { get { return m_Instance; } }
 
+    // sets runtime operation mode
+    bool simulatorMode = false;
+    public bool GetSimulatorMode() {
+        return simulatorMode;
+    }
+    public void SetSimulatorMode(bool status) {
+        simulatorMode = status;
+    }
+
     private bool updateStatusesState; 
 
     public TextMeshProUGUI[] statuses;
