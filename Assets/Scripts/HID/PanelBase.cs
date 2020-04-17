@@ -205,7 +205,7 @@ public class PanelBase : MonoBehaviour
     void FadeOutGestureMarkers() {
 
         Debug.Log(gestureMarkers.Count);
-        Debug.Log("Fading out...");
+        //Debug.Log("Fading out...");
         foreach (GameObject obj in gestureMarkers) {
             if (obj != null) {
                 FadeInOut temp = obj.GetComponent<FadeInOut>();

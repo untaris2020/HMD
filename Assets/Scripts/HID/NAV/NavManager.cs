@@ -132,6 +132,8 @@ public class NavManager : MonoBehaviour
         }
     }
 
+    
+
     private IEnumerator GetUserPOSLoop(float waitTime)
     {
         
@@ -334,8 +336,8 @@ public class NavManager : MonoBehaviour
 
     public void PressGloveON()
     {
-        
 
+        Debug.Log("glove on");
         camerasManager.spawnCam();
         if(GLOVE_CAM.getConnected())
         {

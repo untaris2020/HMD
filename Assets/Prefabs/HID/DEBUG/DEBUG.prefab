@@ -87,7 +87,8 @@ MonoBehaviour:
   useGaze_text: {fileID: 236708701949511692}
   useGesture_text: {fileID: 2131470870453851715}
   showGestureIndicators_text: {fileID: 2943734021417353547}
-  FORCE_SENSOR: {fileID: 0}
+  FORCE_SENSOR: {fileID: 3776211195505158576, guid: 3827f67669c9e594eabe4e951ef11ab7,
+    type: 3}
 --- !u!1001 &1127210525414761010
 PrefabInstance:
   m_ObjectHideFlags: 0

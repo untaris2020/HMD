@@ -252,7 +252,8 @@ public class TCPServer : MonoBehaviour
                 }
                 else
                 {
-                    DebugManager.Instance.LogSceneConsole("ERR: ID " + id + " could not be parsed to int");
+                    // BUG - this function is getting called on the camera, crashing unity. DebugManager cant be called from a seperate thread
+                    //DebugManager.Instance.LogSceneConsole("ERR: ID " + id + " could not be parsed to int");
                 }
             }
         }            

@@ -566,6 +566,9 @@ public class StableCheckObject
 
                 if (obj.flags[id] == -1)
                 {
+                    // TODO remove this move to an error system
+                    ErrorHandler.Instance.HandleError(0, "Warning: " + name + " low");
+
                     DebugManager.Instance.LogUnityConsole(this.GetType().Name, "Warning: " + name + " low");
                     //ErrorHandler.Instance.HandleError(0, "Warning: " + name + " low");
 
@@ -574,6 +577,9 @@ public class StableCheckObject
                 }
                 else if (obj.flags[id] == 1)
                 {
+                    // TODO remove this move to an error system
+                    ErrorHandler.Instance.HandleError(0, "Warning: " + name + " high");
+
                     DebugManager.Instance.LogUnityConsole(this.GetType().Name, "Warning: " + name + " high");
                     //ErrorHandler.Instance.HandleError(0, "Warning: " + name + " high");
                     errorReady = false;
@@ -787,6 +793,7 @@ public class TelemObject
                 // ERROR: Battery time is negative
                 TelemWebRequest.t_batteryStatus = "red";
                 flags[12] = -1;
+
                 DebugManager.Instance.LogUnityConsole(this.GetType().Name, "ERROR: t_battery is negative");
             }
             else 
