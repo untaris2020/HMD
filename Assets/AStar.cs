@@ -18,7 +18,7 @@ public class AStar : MonoBehaviour {
     //GameObject current;
 
     //PriorityQueue<float, GameObject> open = new PriorityQueue<float, GameObject>();
-    float NEIGHBOR_DISTANCE = 10f;
+    float NEIGHBOR_DISTANCE = 30f;  
     float distanceToUser;
     float distanceToPlayer;
     float nodeDistances;
