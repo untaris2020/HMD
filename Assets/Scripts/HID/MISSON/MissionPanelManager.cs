@@ -136,7 +136,7 @@ public class MissionPanelManager : MonoBehaviour
     {
         int SMissionCount = MissionContainerInstance.SuperMissions.Count;
         
-        Debug.Log("SMission Count: " + SMissionCount);
+        //Debug.Log("SMission Count: " + SMissionCount);
 
         if (SMissionCount - SMOffset <= 5)
         {

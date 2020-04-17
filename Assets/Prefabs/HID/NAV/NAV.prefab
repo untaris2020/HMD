@@ -65,14 +65,18 @@ MonoBehaviour:
   headerHoverMat: {fileID: 2100000, guid: 6ba4c6f78918abb438f06051740080c2, type: 2}
   navPage0_col: {fileID: 2070434969635538293}
   navPage1_col: {fileID: 704269822922344177}
-  waypoint_mesh: {fileID: 1365476325174732, guid: 955bb973fab837e42a19113450468a69,
+  waypoint_prefab: {fileID: 1365476325174732, guid: 955bb973fab837e42a19113450468a69,
     type: 3}
-  GLOVE_CAM: {fileID: 0}
-  REAR_CAM: {fileID: 0}
+  rth_waypoint_prefab: {fileID: 252434433471557239, guid: c0572005bff60b240b3c9a14e0642583,
+    type: 3}
+  GLOVE_CAM: {fileID: 3762312520480542841, guid: 8bc4b0a6986f93b40ab0737b0ba10252,
+    type: 3}
+  REAR_CAM: {fileID: 58488478348713791, guid: 17cf2bc56fe877f43a9609f29dd1f072, type: 3}
   _cube: {fileID: 0}
   _camera: {fileID: 0}
   _arrow: {fileID: 4867377729772874392}
-  _world_center: {fileID: 0}
+  _world_center: {fileID: 748606198394154781, guid: 671ab6ae93c115547b2acda3f453e4aa,
+    type: 3}
   glove_text: {fileID: 8522164230594812186}
   rearview_text: {fileID: 8279894144284392651}
   rth_text: {fileID: 252108897465169544}

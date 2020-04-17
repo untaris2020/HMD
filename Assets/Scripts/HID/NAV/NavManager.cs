@@ -24,8 +24,10 @@ public class NavManager : MonoBehaviour
 
     // Nav System
     //public MLPersistentBehavior persistentBehavior;
-    public GameObject waypoint_mesh;
+    public GameObject waypoint_prefab;
+    public GameObject rth_waypoint_prefab;
     List<GameObject> waypoint_meshes = new List<GameObject>();
+    List<GameObject> rth_waypoints = new List<GameObject>();
 
     //GameObject _content = null;
     //List<MLPersistentBehavior> _pointBehaviors = new List<MLPersistentBehavior>();
@@ -62,9 +64,14 @@ public class NavManager : MonoBehaviour
     public bool getHeadCam() { return rearviewCamStatus; }
     public bool getGloveCam() { return gloveCamStatus; }
 
+    //TEST
+    public GameObject test1;
+    public GameObject test2;
+
     // Start is called before the first frame update
     void Start()
     {
+
         gloveCamStatus = false;
         rearviewCamStatus = false;
 
@@ -117,6 +124,7 @@ public class NavManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        //Debug.Log("DST: " + Vector3.Distance(test1.transform.position, test2.transform.position));
         if (rth_status)
         {
             foreach (GameObject obj in waypoint_meshes)
@@ -150,10 +158,12 @@ public class NavManager : MonoBehaviour
 
             // Make a waypoint game object
             
-            GameObject temp = Instantiate(waypoint_mesh, tmpPos.position, Quaternion.identity, _world_center.transform);
-            temp.SetActive(rth_status || showall_status);
+            GameObject temp = Instantiate(waypoint_prefab, tmpPos.position, Quaternion.identity, _world_center.transform);
+            temp.SetActive(true);
             temp.tag = "Waypoint";
             waypoint_meshes.Add(temp);
+
+            UpdateWaypointsVisibility();
 
             if (userPosCounter >= (NUMOFOBJECTS)-1)
             {
@@ -192,18 +202,38 @@ public class NavManager : MonoBehaviour
         rth_status = !rth_status;
         showall_status = false;
         _arrow.SetActive(rth_status);
+
         UpdateUI();
+        UpdateWaypointsVisibility();
 
-        foreach (GameObject obj in waypoint_meshes)
-        {
-            obj.SetActive(rth_status);
+        //foreach (GameObject obj in waypoint_meshes)
+        //{
+        //    obj.SetActive(rth_status);
+        //}
+
+        if (rth_status) {
+
+            // new code to drive ASTAR
+            homeWaypoint = waypoint_meshes[0];  // first waypoint is home - note if the waypoitns get cleared (every X seconds set above) this alg will not work correctly
+
+            List<GameObject> path = new List<GameObject>();
+            path = astarScript.generateRTHPath(homeWaypoint);
+
+            Debug.Log("Final path len: " + path.Count);
+
+
+            foreach(GameObject obj in path) {
+                GameObject tmp = Instantiate(rth_waypoint_prefab, obj.transform.position, Quaternion.identity, _world_center.transform);
+                tmp.SetActive(true);
+                rth_waypoints.Add(tmp);
+            }
+
+        } else {
+            foreach(GameObject obj in rth_waypoints) {
+                Destroy(obj);
+            }
+            rth_waypoints.Clear();
         }
-
-        // new code to drive ASTAR
-        homeWaypoint = waypoint_meshes[0];  // first waypoint is home - note if the waypoitns get cleared (every X seconds set above) this alg will not work correctly
-
-        List<GameObject> path = new List<GameObject>();
-        path = astarScript.generateRTHPath(homeWaypoint);
 
     }
 
@@ -212,18 +242,26 @@ public class NavManager : MonoBehaviour
         // toggle function
         showall_status = !showall_status;
         rth_status = false;
-        UpdateUI();
 
+        UpdateUI();
+        UpdateWaypointsVisibility();
+    }
+
+    void UpdateWaypointsVisibility() {
         foreach (GameObject obj in waypoint_meshes)
         {
-            obj.SetActive(showall_status);
+
+            obj.transform.localScale = new Vector3(0, 0, 0);
             if (showall_status)
             {
+                obj.transform.localScale = new Vector3(1, 1, 1);
                 var col = obj.GetComponent<Renderer>().material.color;
                 col.a = 1.0f;
                 obj.GetComponent<Renderer>().material.color = col;
             }
         }
+
+
     }
 
     private void UpdateUI()

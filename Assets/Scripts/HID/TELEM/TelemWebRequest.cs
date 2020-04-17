@@ -794,7 +794,7 @@ public class TelemObject
                 TelemWebRequest.t_batteryStatus = "red";
                 flags[12] = -1;
 
-                DebugManager.Instance.LogUnityConsole(this.GetType().Name, "ERROR: t_battery is negative");
+                //DebugManager.Instance.LogUnityConsole(this.GetType().Name, "ERROR: t_battery is negative");
             }
             else 
             {
