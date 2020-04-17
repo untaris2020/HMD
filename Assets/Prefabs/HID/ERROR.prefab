@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 2325901271194398012}
   - component: {fileID: 3518329549245295172}
   - component: {fileID: 7201000162432210621}
+  - component: {fileID: 1011551736}
   m_Layer: 0
   m_Name: ERROR
   m_TagString: Untagged
@@ -56,6 +57,7 @@ MeshRenderer:
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -80,6 +82,21 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+--- !u!114 &1011551736
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2043617464433098836}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 41d37c0a08e6d2c48936ede3f49f6813, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  errorPanel: {fileID: 9109119508170407227}
+  myText: {fileID: 4103132493692457286}
+  VOL: 1.7
 --- !u!1 &2602369839241528456
 GameObject:
   m_ObjectHideFlags: 0
@@ -143,8 +160,6 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-    m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
-      Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
   m_text: UNINIT
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -336,6 +351,20 @@ MonoBehaviour:
   m_BlockingMask:
     serializedVersion: 2
     m_Bits: 4294967295
+--- !u!64 &1011551743
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9109119508170407227}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 4
+  m_Convex: 0
+  m_CookingOptions: 30
+  m_Mesh: {fileID: -1550514412580984892, guid: ebc95f266c8bf9248ab8fc3387eb33ca, type: 3}
 --- !u!1001 &958135290333799474
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -343,11 +372,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 2325901271194398012}
     m_Modifications:
-    - target: {fileID: -927199367670048503, guid: ebc95f266c8bf9248ab8fc3387eb33ca,
-        type: 3}
-      propertyPath: m_Name
-      value: error_panel
-      objectReference: {fileID: 0}
     - target: {fileID: -4216859302048453862, guid: ebc95f266c8bf9248ab8fc3387eb33ca,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -428,8 +452,19 @@ PrefabInstance:
       propertyPath: m_Materials.Array.data[1]
       value: 
       objectReference: {fileID: 2100000, guid: 346cbcb2d8fa248348daef42412c2b2a, type: 2}
+    - target: {fileID: -927199367670048503, guid: ebc95f266c8bf9248ab8fc3387eb33ca,
+        type: 3}
+      propertyPath: m_Name
+      value: error_panel
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: ebc95f266c8bf9248ab8fc3387eb33ca, type: 3}
+--- !u!1 &9109119508170407227 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: -927199367670048503, guid: ebc95f266c8bf9248ab8fc3387eb33ca,
+    type: 3}
+  m_PrefabInstance: {fileID: 958135290333799474}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &5202025042090987304 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -4216859302048453862, guid: ebc95f266c8bf9248ab8fc3387eb33ca,
