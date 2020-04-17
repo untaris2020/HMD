@@ -50,10 +50,6 @@ public class ErrorHandler : MonoBehaviour {
         HeadTracking ht = GameObject.Find("SceneManager").GetComponent<HeadTracking>();
         // Resiter Colliders
 
-        HandleError(0, "test1");
-        HandleError(1, "test2");
-        HandleError(0, "test3");
-        HandleError(1, "test4");
 
         //HandleError(0, "test3");
         Button0Delegate tmpDelegate0 = new Button0Delegate(CloseErrorWindow);
@@ -77,6 +73,7 @@ public class ErrorHandler : MonoBehaviour {
     {
         if (ErrorList.Count == 0)
         {
+
             //Debug.Log("Do I run lol");
             ErrorList.Add(ErrorMsg);
             PriorityList.Add(Priority);
