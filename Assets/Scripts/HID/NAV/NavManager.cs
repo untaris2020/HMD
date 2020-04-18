@@ -47,7 +47,7 @@ public class NavManager : MonoBehaviour
     
 
     private IEnumerator coroutine;
-    private float TICKTIME = 1.0f;   //was 10.0f
+    private float TICKTIME = 5f;   //was 5.0f
     private float BACKUPTIMESECONDS = 1000.0f;   // amount of time between backups was 300 (5mins)
     private int NUMOFOBJECTS = 0; 
     private int userPosCounter;
@@ -175,7 +175,7 @@ public class NavManager : MonoBehaviour
                 userPosCounter = 0;
 
             } else { userPosCounter++; }
-            
+            Debug.Log(userPosCounter);
             yield return new WaitForSeconds(waitTime);
         }
     }

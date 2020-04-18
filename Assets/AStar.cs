@@ -15,6 +15,7 @@ public class AStar : MonoBehaviour {
     GameObject[] waypoints;
     GameObject startGameObject;
     GameObject targetGameObject;
+    NavManager navManager;
     //GameObject current;
 
     //PriorityQueue<float, GameObject> open = new PriorityQueue<float, GameObject>();
@@ -30,6 +31,7 @@ public class AStar : MonoBehaviour {
     // Use this for initialization
     void Start() {
         user = gameObject.GetComponent<NavManager>()._camera;
+        navManager = gameObject.GetComponent<NavManager>();
     }
 
     public List<GameObject> generateRTHPath(GameObject home) {
@@ -55,7 +57,7 @@ public class AStar : MonoBehaviour {
     }
 
     void storeNodesInDictionary() {
-        Debug.Log("Num of starting waypoints: " + waypoints.Length);
+        //Debug.Log("Num of starting waypoints: " + waypoints.Length);
 
         for (int i = 0; i < waypoints.Length; i++) {
             var waypoint = waypoints[i];
@@ -64,7 +66,7 @@ public class AStar : MonoBehaviour {
 
             float distUser = Vector3.Distance(user.transform.position, waypointPosition); // Closest node to user
             if (distUser < distanceToUser) {
-                Debug.Log("Updating start pos");
+                //Debug.Log("Updating start pos");
                 startGameObject = waypoint;
                 distanceToUser = distUser;
             }
@@ -99,11 +101,12 @@ public class AStar : MonoBehaviour {
             }
         }
 
-        Debug.Log("Num of neighbors: " + neighbors.Count);
+       // Debug.Log("Num of neighbors: " + neighbors.Count);
 
         if (neighbors.Count == 0) {
             DebugManager.Instance.LogBoth("RTH ERROR", "No neighbors found, ASTAR failed. This means the user walked faster than " + NEIGHBOR_DISTANCE + "m/s. Adjust NEIGHBOR_DISTANCE");
             ErrorHandler.Instance.HandleError(1, "RTH ERROR: Unable to find path. See console.");
+            navManager.PressRTH();
         }
 
         //Debug.Log("Node " + seachNode.worldPosition + " has this many neighbors: " + neighbors.Count);
@@ -155,13 +158,13 @@ public class AStar : MonoBehaviour {
         // add target node
         nodes.Add(targetNode);
 
-        Debug.Log("Unique Nodes: " + nodes.Count);
+        //Debug.Log("Unique Nodes: " + nodes.Count);
         
 
         // Start ASTAR
         openSet.Add(startNode);
 
-        Debug.Log("Target node: " + targetNode.localNodeID);
+       // Debug.Log("Target node: " + targetNode.localNodeID);
 
         while (openSet.Count > 0) {
             Node currentNode = openSet[0];
@@ -180,16 +183,16 @@ public class AStar : MonoBehaviour {
             openSet.Remove(currentNode);
             closedSet.Add(currentNode);
 
-            Debug.Log("Current node: " + currentNode.localNodeID + " " + currentNode.worldPosition);
+            //Debug.Log("Current node: " + currentNode.localNodeID + " " + currentNode.worldPosition);
 
             if (currentNode == targetNode) {
-                Debug.Log("Goal reached");
+                //Debug.Log("Goal reached");
                 RetracePath();
                 return;
             }
             
             foreach (Node neighbor in GetNeighbours(currentNode, nodes)) {
-                Debug.Log("Checking neighbor: " + neighbor.localNodeID + " " + neighbor.worldPosition);
+                //Debug.Log("Checking neighbor: " + neighbor.localNodeID + " " + neighbor.worldPosition);
 
                 if (closedSet.Contains(neighbor)) {
                     continue;
@@ -201,7 +204,7 @@ public class AStar : MonoBehaviour {
                     neighbor.gCost = newMovementCostToNeighbour;
                     neighbor.hCost = (int)Vector3.Distance(neighbor.worldPosition, targetNode.worldPosition);
                     neighbor.parent = currentNode;
-                    Debug.Log("Setting " + neighbor.localNodeID + " (" + neighbor.worldPosition + ") parent as " + neighbor.parent.localNodeID + " (" + currentNode.worldPosition + ")");
+                    //Debug.Log("Setting " + neighbor.localNodeID + " (" + neighbor.worldPosition + ") parent as " + neighbor.parent.localNodeID + " (" + currentNode.worldPosition + ")");
 
                     if (!openSet.Contains(neighbor)) {
                         openSet.Add(neighbor);
@@ -224,10 +227,10 @@ public class AStar : MonoBehaviour {
         List<Node> path = new List<Node>();
         Node currentNode = targetNode;
 
-        Debug.Log("Start: " + startNode.localNodeID);
+       // Debug.Log("Start: " + startNode.localNodeID);
 
         while (currentNode != startNode) {
-            Debug.Log("Current: " + currentNode.localNodeID);
+           // Debug.Log("Current: " + currentNode.localNodeID);
             path.Add(currentNode);
             currentNode = currentNode.parent;
         }
@@ -261,7 +264,7 @@ public class Node {
         associatedInstanceID = _instanceID;
         localNodeID = nodesCounter;
 
-        Debug.Log("NEW ID: " + localNodeID);
+        //Debug.Log("NEW ID: " + localNodeID);
         nodesCounter++;
     }
 
@@ -269,7 +272,7 @@ public class Node {
         worldPosition = _worldPos;
         localNodeID = nodesCounter;
 
-        Debug.Log("NEW ID: " + localNodeID);
+        //Debug.Log("NEW ID: " + localNodeID);
         nodesCounter++;
     }
 

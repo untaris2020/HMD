@@ -42,8 +42,12 @@ public class HeadLockScript : MonoBehaviour
     public void Start()
     {
         Camera = GameObject.Find("Main Camera");
-        _controllerConnectionHandler = GetComponent<MLControllerConnectionHandlerBehavior>();
-        MLInput.OnTriggerDown += HandleOnTriggerDown;
+
+        if (!DebugManager.Instance.GetSimulatorMode()) {
+            _controllerConnectionHandler = GetComponent<MLControllerConnectionHandlerBehavior>();
+            MLInput.OnTriggerDown += HandleOnTriggerDown;
+        }
+        
         source = GetComponent<AudioSource>();
         firstTime = true; 
     }
@@ -53,6 +57,10 @@ public class HeadLockScript : MonoBehaviour
     {
         if (runState == State.STATIC)  //For testing purpose only!
         {
+            this.transform.position = Camera.transform.position;
+            this.transform.rotation = Camera.transform.rotation;
+        }
+        else if (DebugManager.Instance.GetSimulatorMode()) {
             this.transform.position = Camera.transform.position;
             this.transform.rotation = Camera.transform.rotation;
         }
