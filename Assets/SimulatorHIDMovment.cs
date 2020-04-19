@@ -3,13 +3,17 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class TestFollowCamera : MonoBehaviour
+public class SimulatorHIDMovment : MonoBehaviour
 {
     //public GameObject head;
     public GameObject body;
     private IEnumerator coroutine;
     public NavManager nav;
     float speed;
+
+    bool hmd_status = true;
+    public GameObject hmd;
+
     Vector3 newPos;
     Vector3 offSet = new Vector3(0f, 1f, 0f);
     // Start is called before the first frame update
@@ -22,7 +26,17 @@ public class TestFollowCamera : MonoBehaviour
         //nav.PressShowAll();
         gameObject.transform.localScale = new Vector3(0.2f, 0.2f, 0.2f);
         //gameObject.transform.localPosition = new Vector3(0f, 10f, 0f);
+
+        // turn off all shawdos in HID
+        Renderer[] obj = GetComponentsInChildren<Renderer> (true);
+
         
+
+        // get all buttons if any
+        foreach (var ob in obj) {
+            ob.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
+            ob.receiveShadows = false;
+        }
     }
 
     
@@ -39,6 +53,17 @@ public class TestFollowCamera : MonoBehaviour
         //gameObject.transform.position = Vector3.Lerp(gameObject.transform.position, body.transform.position, 10f);
        // gameObject.transform.rotation = body.transform.rotation;
 
+    }
+
+    public void ToggleHIDVisibility() {
+        hmd_status = !hmd_status;
+
+        if (hmd_status) {
+            //this.transform.position = body.transform.position + offSet;
+            hmd.transform.localScale = new Vector3(0.15f, 0.15f, 0.15f);
+        } else {
+            hmd.transform.localScale = new Vector3(0f, 0f, 0f);
+        }
     }
 
     //int counter = 0;

@@ -19,7 +19,7 @@ public class AStar : MonoBehaviour {
     //GameObject current;
 
     //PriorityQueue<float, GameObject> open = new PriorityQueue<float, GameObject>();
-    float NEIGHBOR_DISTANCE = 30f;  
+    float NEIGHBOR_DISTANCE = 50f;  
     float distanceToUser;
     float distanceToPlayer;
     float nodeDistances;
@@ -64,8 +64,8 @@ public class AStar : MonoBehaviour {
             var nodeData = new List<Node>();
             var waypointPosition = waypoint.transform.position;
 
-            float distUser = Vector3.Distance(user.transform.position, waypointPosition); // Closest node to user
-            if (distUser < distanceToUser) {
+            float distUser = (user.transform.position - waypointPosition).sqrMagnitude; // Closest node to user
+            if (distUser < distanceToUser * distanceToUser) {
                 //Debug.Log("Updating start pos");
                 startGameObject = waypoint;
                 distanceToUser = distUser;
@@ -96,7 +96,7 @@ public class AStar : MonoBehaviour {
                 continue;
 
             
-            if (Vector3.Distance(node.worldPosition, seachNode.worldPosition) < NEIGHBOR_DISTANCE) {
+            if ((node.worldPosition - seachNode.worldPosition).sqrMagnitude < NEIGHBOR_DISTANCE * NEIGHBOR_DISTANCE) {
                 neighbors.Add(node);
             }
         }

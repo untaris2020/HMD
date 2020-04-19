@@ -31,6 +31,14 @@ public class forceSensorManager : tcpPacket
             little = newLittle; 
         }
 
+        public void SetValues(int newThumb, int newIndex, int newMiddle, int newRing, int newLittle) {
+            thumb = newThumb;
+            index = newIndex;
+            middle = newMiddle;
+            ring = newRing;
+            little = newLittle; 
+        }
+
         public int thumb;
         public int index;
         public int middle;

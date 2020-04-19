@@ -162,6 +162,8 @@ public class PanelBase : MonoBehaviour
         DestroyGestureMarkers();
         obj = GetComponentsInChildren<Transform> (true);
 
+        
+
         // get all buttons if any
         foreach (var ob in obj.Where(ob => (ob != transform))) {
             int gesture_number = -1;

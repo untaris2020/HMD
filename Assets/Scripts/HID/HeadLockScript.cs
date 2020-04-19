@@ -43,10 +43,8 @@ public class HeadLockScript : MonoBehaviour
     {
         Camera = GameObject.Find("Main Camera");
 
-        if (!DebugManager.Instance.GetSimulatorMode()) {
-            _controllerConnectionHandler = GetComponent<MLControllerConnectionHandlerBehavior>();
-            MLInput.OnTriggerDown += HandleOnTriggerDown;
-        }
+        _controllerConnectionHandler = GetComponent<MLControllerConnectionHandlerBehavior>();
+        MLInput.OnTriggerDown += HandleOnTriggerDown;
         
         source = GetComponent<AudioSource>();
         firstTime = true; 

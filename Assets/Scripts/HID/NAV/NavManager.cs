@@ -47,7 +47,7 @@ public class NavManager : MonoBehaviour
     
 
     private IEnumerator coroutine;
-    private float TICKTIME = 5f;   //was 5.0f
+    private float TICKTIME = 3f;   //was 5.0f
     private float BACKUPTIMESECONDS = 1000.0f;   // amount of time between backups was 300 (5mins)
     private int NUMOFOBJECTS = 0; 
     private int userPosCounter;
@@ -57,6 +57,7 @@ public class NavManager : MonoBehaviour
     public TextMeshProUGUI rth_text;
     public TextMeshProUGUI showall_text;
     GameObject homeWaypoint;
+    public GameObject homeBase;
     AStar astarScript;
 
     public bool getRTHStat() { return rth_status; }
@@ -109,7 +110,12 @@ public class NavManager : MonoBehaviour
         StartCoroutine(coroutine);
 
         // set worldcenter
-        _world_center.transform.position = _camera.transform.position + _camera.transform.forward * 2.0f;
+        if (DebugManager.Instance.GetSimulatorMode()) {
+             _world_center.transform.position = homeBase.transform.position;
+        } else {
+             _world_center.transform.position = _camera.transform.position;
+        }
+       
         DebugManager.Instance.LogUnityConsole("NavManager", "Setting World Center: " + _cube.transform.position);
 
         //persistentBehavior.UpdateBinding();

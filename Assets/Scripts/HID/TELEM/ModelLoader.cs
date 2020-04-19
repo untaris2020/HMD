@@ -259,6 +259,13 @@ public class ModelLoader : MonoBehaviour
         }
         int model_index = load_model + (page_index * 5);
 
+        // TODO
+        if (DebugManager.Instance.GetSimulatorMode()) {
+
+        } else {
+
+        }
+
         loaded_models.Add( (GameObject)Instantiate(models[model_index], new Vector3(0, 0, 0), Quaternion.identity, glove_model.transform));
         DebugManager.Instance.LogBoth("INFO", "Loading 3D Model " + models[model_index].name);
 
