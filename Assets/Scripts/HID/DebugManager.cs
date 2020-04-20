@@ -12,7 +12,7 @@ public class DebugManager : MonoBehaviour
     //public DebugManager Instance { get { return m_Instance; } }
 
     // sets runtime operation mode
-    bool simulatorMode = false;
+    bool simulatorMode = true;
     public bool GetSimulatorMode() {
         return simulatorMode;
     }

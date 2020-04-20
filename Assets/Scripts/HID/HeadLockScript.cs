@@ -41,7 +41,7 @@ public class HeadLockScript : MonoBehaviour
 
     public void Start()
     {
-        Camera = GameObject.Find("Main Camera");
+        Camera = GameObject.Find("MainCamera");
 
         _controllerConnectionHandler = GetComponent<MLControllerConnectionHandlerBehavior>();
         MLInput.OnTriggerDown += HandleOnTriggerDown;

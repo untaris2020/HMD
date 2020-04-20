@@ -732,10 +732,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 765791343, guid: 30691d7d711b425408f2d5ab5dbdedcf, type: 3}
-      propertyPath: _camera
-      value: 
-      objectReference: {fileID: 1336028660}
     - target: {fileID: 1814814026029361778, guid: 30691d7d711b425408f2d5ab5dbdedcf,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -806,16 +802,6 @@ PrefabInstance:
       propertyPath: IMU_GLOVE
       value: 
       objectReference: {fileID: 988205130}
-    - target: {fileID: 5379406503352747110, guid: 30691d7d711b425408f2d5ab5dbdedcf,
-        type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 0.05
-      objectReference: {fileID: 0}
-    - target: {fileID: 6537619513594978060, guid: 30691d7d711b425408f2d5ab5dbdedcf,
-        type: 3}
-      propertyPath: m_RootOrder
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 7628259576250127542, guid: 30691d7d711b425408f2d5ab5dbdedcf,
         type: 3}
       propertyPath: GLOVE_CAM

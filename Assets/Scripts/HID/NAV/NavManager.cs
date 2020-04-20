@@ -41,7 +41,7 @@ public class NavManager : MonoBehaviour
     public CameraHandler REAR_CAM;
     bool rearviewCamStatus;
     bool gloveCamStatus;
-    public GameObject _cube, _camera, _arrow, _world_center;
+    public GameObject _camera, _arrow, _world_center;
     public TextMeshProUGUI glove_text;
     public TextMeshProUGUI rearview_text;
     
@@ -116,7 +116,7 @@ public class NavManager : MonoBehaviour
              _world_center.transform.position = _camera.transform.position;
         }
        
-        DebugManager.Instance.LogUnityConsole("NavManager", "Setting World Center: " + _cube.transform.position);
+        DebugManager.Instance.LogUnityConsole("NavManager", "Setting World Center: " + _world_center.transform.position);
 
         //persistentBehavior.UpdateBinding();
         UpdateUI();

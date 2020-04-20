@@ -18,6 +18,20 @@ public class SceneMan : MonoBehaviour
     void Start()
     {
         initalizeScene();
+
+        if (DebugManager.Instance.GetSimulatorMode()) {
+            DebugManager.Instance.LogBoth("RUNNING: Simulator");
+            HID.GetComponent<HeadLockScript>().enabled = false; //f 
+            HID.GetComponent<SimulatorHIDMovment>().enabled = true; // t
+        } else {
+            DebugManager.Instance.LogBoth("RUNNING: Live AR");
+            HID.GetComponent<HeadLockScript>().enabled = true;
+            HID.GetComponent<SimulatorHIDMovment>().enabled = false;
+        }
+    }
+
+    private void Awake() {
+        
     }
 
     void initalizeScene()
@@ -31,6 +45,7 @@ public class SceneMan : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        HID.GetComponent<HeadLockScript>().enabled = false; //f 
     }
 
 }
