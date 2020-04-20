@@ -11,8 +11,8 @@ public class SimulatorHIDMovment : MonoBehaviour
     public NavManager nav;
     float speed;
 
-    bool hmd_status = true;
-    public GameObject hmd;
+    bool hid_status = true;
+    //public GameObject hid;
 
     Vector3 newPos;
     Vector3 offSet = new Vector3(0f, 1f, 0f);
@@ -24,7 +24,7 @@ public class SimulatorHIDMovment : MonoBehaviour
         //StartCoroutine(coroutine);
 
         //nav.PressShowAll();
-        gameObject.transform.localScale = new Vector3(0.2f, 0.2f, 0.2f);
+        //this.transform.localScale = new Vector3(0.2f, 0.2f, 0.2f);
         //gameObject.transform.localPosition = new Vector3(0f, 10f, 0f);
 
         // turn off all shawdos in HID
@@ -56,13 +56,13 @@ public class SimulatorHIDMovment : MonoBehaviour
     }
 
     public void ToggleHIDVisibility() {
-        hmd_status = !hmd_status;
+        hid_status = !hid_status;
 
-        if (hmd_status) {
+        if (hid_status) {
             //this.transform.position = body.transform.position + offSet;
-            hmd.transform.localScale = new Vector3(0.15f, 0.15f, 0.15f);
+            this.transform.localScale = new Vector3(1f, 1f, 1f);
         } else {
-            hmd.transform.localScale = new Vector3(0f, 0f, 0f);
+            this.transform.localScale = new Vector3(0f, 0f, 0f);
         }
     }
 

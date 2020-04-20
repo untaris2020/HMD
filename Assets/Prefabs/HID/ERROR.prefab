@@ -97,6 +97,7 @@ MonoBehaviour:
   errorPanel: {fileID: 9109119508170407227}
   myText: {fileID: 4103132493692457286}
   VOL: 1.7
+  Page0Col: {fileID: 1011551743}
 --- !u!1 &2602369839241528456
 GameObject:
   m_ObjectHideFlags: 0

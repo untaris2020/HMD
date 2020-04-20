@@ -4,6 +4,7 @@ using UnityEditor;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using System.Linq;
 
 
 
@@ -36,6 +37,10 @@ public class ErrorHandler : MonoBehaviour {
     private List<string> ErrorList;
     private List<int> PriorityList;
 
+    List<GameObject> gestureMarkers = new List<GameObject>();
+    public Collider Page0Col; 
+    private bool page0RenderState;
+
     private void Awake()
     {
         ErrorList = new List<string>();
@@ -50,11 +55,23 @@ public class ErrorHandler : MonoBehaviour {
         HeadTracking ht = GameObject.Find("SceneManager").GetComponent<HeadTracking>();
         // Resiter Colliders
 
+        // Resiter Colliders
+        //page0RenderState = false;
+        //page1RenderState = false;
+        //page2RenderState = false;
+        //page3RenderState = false;
+
+        forceSensorManager.fingerInput input = new forceSensorManager.fingerInput(0, 1, 0, 0, 0);
+
+        
 
         //HandleError(0, "test3");
         Button0Delegate tmpDelegate0 = new Button0Delegate(CloseErrorWindow);
-        ht.registerCollider(errorPanel.GetComponent<Collider>().name, tmpDelegate0);
+        ht.registerCollider(errorPanel.GetComponent<Collider>().name, Page0Col.name,  tmpDelegate0, input);
         functionDebug.Instance.registerFunction(this.GetType().Name + "_tab0", tmpDelegate0);
+
+        tmpDelegate0 = new Button0Delegate(onViewTogglePG0);
+        ht.registerToggleCollider(Page0Col.name, tmpDelegate0);
 
         //Debug.Log("Do I run v2");
     }
@@ -129,6 +146,7 @@ public class ErrorHandler : MonoBehaviour {
 
     public void CloseErrorWindow()
     {
+        DestroyGestureMarkers();
         ErrorList.RemoveAt(0);
         PriorityList.RemoveAt(0);
         myText.SetText("");
@@ -148,6 +166,89 @@ public class ErrorHandler : MonoBehaviour {
         // destroy object
        // Destroy(windowInstance.gameObject);
 
+    }
+
+    public void onViewTogglePG0()
+    {
+        page0RenderState = !page0RenderState;
+
+        if (page0RenderState) {
+            InstantiateGestureMarkers();
+        } else {
+            FadeOutGestureMarkers();
+        }
+
+    }
+
+    Transform[] obj;
+    void InstantiateGestureMarkers() {
+        if (!InputSystemStatus.Instance.GetShowGestureIndicators()) {
+            return;
+        }
+
+        DestroyGestureMarkers();
+        obj = GetComponentsInChildren<Transform> (true);
+
+        
+
+        // get all buttons if any
+        foreach (var ob in obj.Where(ob => (ob != transform))) {
+            int gesture_number = -1;
+
+            if (ob.CompareTag("gesture_1")) {
+                gesture_number = 1;
+            } else if (ob.CompareTag("gesture_2")) {
+                gesture_number = 2;
+            } else if (ob.CompareTag("gesture_3")) {
+                gesture_number = 3;
+            } else if (ob.CompareTag("gesture_4")) {
+                gesture_number = 4;
+            } else if (ob.CompareTag("gesture_sidescroll")) {
+                gesture_number = 5;
+            }
+
+            if (gesture_number == 5) {
+                //side scroll marker
+                Debug.Log("sidescroll");
+                GameObject temp = Instantiate(DebugManager.Instance.sideScrollMarker, ob.transform);
+                // set offset
+                temp.transform.localScale = new Vector3(0.08333334f, 0.08333334f, 0.08333334f);
+                temp.transform.localEulerAngles = new Vector3(0f, 0f, 0f);
+                //temp.transform.localPosition = new Vector3(0.0101f, 0.00151f, -0.102f); // this is wrong
+                //temp.transform.position 
+                gestureMarkers.Add(temp);
+            } else if (gesture_number != -1) {
+                // regurlar number marker
+
+                GameObject temp = Instantiate(DebugManager.Instance.gestureMarkers[gesture_number - 1], ob.transform);
+                // set offset
+                temp.transform.localScale = new Vector3(0.0015f, 0.002f, 0.002f);
+                temp.transform.localEulerAngles = new Vector3(0f, -180f, 0f);
+                temp.transform.localPosition = new Vector3(0.0101f, 0.00151f, -0.102f);
+                //temp.transform.position 
+                gestureMarkers.Add(temp);
+            }
+        }
+    }
+
+    void FadeOutGestureMarkers() {
+
+        //Debug.Log(gestureMarkers.Count);
+        //Debug.Log("Fading out...");
+        foreach (GameObject obj in gestureMarkers) {
+            if (obj != null) {
+                FadeInOut temp = obj.GetComponent<FadeInOut>();
+                temp.FadeOut();
+            }
+        }
+    }
+
+    void DestroyGestureMarkers() {
+        foreach (GameObject obj in gestureMarkers) {
+            // can you destroy a null object? idk might need to null check
+            Destroy(obj);
+        }
+        gestureMarkers.Clear();
     }
 }
     
