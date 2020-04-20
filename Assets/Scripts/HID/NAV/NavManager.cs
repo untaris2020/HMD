@@ -181,7 +181,7 @@ public class NavManager : MonoBehaviour
                 userPosCounter = 0;
 
             } else { userPosCounter++; }
-            Debug.Log(userPosCounter);
+            //Debug.Log(userPosCounter);
             yield return new WaitForSeconds(waitTime);
         }
     }

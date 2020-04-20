@@ -4,6 +4,7 @@ using UnityEngine;
 using System;
 using System.Net.Sockets;
 using System.Timers;
+using UnityEngine.XR.MagicLeap;
 
 
 public class SceneMan : MonoBehaviour
@@ -23,10 +24,12 @@ public class SceneMan : MonoBehaviour
             DebugManager.Instance.LogBoth("RUNNING: Simulator");
             HID.GetComponent<HeadLockScript>().enabled = false; //f 
             HID.GetComponent<SimulatorHIDMovment>().enabled = true; // t
+            HID.GetComponent<MLControllerConnectionHandlerBehavior>().enabled = false;
         } else {
             DebugManager.Instance.LogBoth("RUNNING: Live AR");
             HID.GetComponent<HeadLockScript>().enabled = true;
             HID.GetComponent<SimulatorHIDMovment>().enabled = false;
+            HID.GetComponent<MLControllerConnectionHandlerBehavior>().enabled = true;
         }
     }
 
@@ -45,7 +48,6 @@ public class SceneMan : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        HID.GetComponent<HeadLockScript>().enabled = false; //f 
     }
 
 }
