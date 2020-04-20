@@ -16,6 +16,7 @@ public class TerrainChunk {
     MeshFilter meshFilter;
     MeshCollider meshCollider;
 
+
     LODInfo[] detailLevels;
     LODMesh[] lodMeshes;
     int colliderLODIndex;
@@ -48,6 +49,7 @@ public class TerrainChunk {
         meshFilter = meshObject.AddComponent<MeshFilter>();
         meshCollider = meshObject.AddComponent<MeshCollider>();
         meshRenderer.material = material;
+        meshObject.layer = 2;
 
         meshObject.transform.position = new Vector3(position.x, 0, position.y);
         meshObject.transform.parent = parent;

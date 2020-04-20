@@ -3,7 +3,42 @@ guid: 564684051d30b7848b7dce6882cc3cad
 ModelImporter:
   serializedVersion: 19300
   internalIDToNameTable: []
-  externalObjects: {}
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Aluminium
+    second: {fileID: 2100000, guid: 6a80cbb00b58b4b48aaf8afe04f74ca0, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Dragon TPS Black
+    second: {fileID: 2100000, guid: 7cd095b73d668ca45bb7c8c0ab7c14c0, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: No Name
+    second: {fileID: 2100000, guid: 703caf5ebecf5404d8316ba3db4310f7, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: dragon TPS white
+    second: {fileID: 2100000, guid: f3f7439f553d9d141b75623351557158, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: glass
+    second: {fileID: 2100000, guid: 3484fa5dfb11ce0438ed1a7b44c1bdb0, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: shiny silver
+    second: {fileID: 2100000, guid: 5534a37139f4fcf49b7b60e0c733a8e9, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: tan tps
+    second: {fileID: 2100000, guid: dd6a09b428b572242b79e354adc14c9e, type: 2}
   materials:
     materialImportMode: 1
     materialName: 0
