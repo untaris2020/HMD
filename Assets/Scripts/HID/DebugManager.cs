@@ -11,13 +11,26 @@ public class DebugManager : MonoBehaviour
     public static DebugManager Instance;
     //public DebugManager Instance { get { return m_Instance; } }
 
+    public enum State
+    {
+        LiveAR = 1,
+        Simulator = 2
+    }
+
+    public State runState; 
+
     // sets runtime operation mode
-    bool simulatorMode = true;
+    bool simulatorMode {
+        get {
+            if (State.Simulator == runState) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+    }
     public bool GetSimulatorMode() {
         return simulatorMode;
-    }
-    public void SetSimulatorMode(bool status) {
-        simulatorMode = status;
     }
 
     private bool updateStatusesState; 

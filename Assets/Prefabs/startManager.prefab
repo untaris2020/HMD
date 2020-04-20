@@ -154,13 +154,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9cbecc24bb9a82044b4dc6a8ac19fb7a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  hid: {fileID: 0}
+  hid: {fileID: 8251871913592945764, guid: 30691d7d711b425408f2d5ab5dbdedcf, type: 3}
   button: {fileID: 6751071118253948818}
   text: {fileID: 9008700681077239370}
-  IMU_CHEST: {fileID: 0}
   useStartRoutine: 0
   ignoreIMU: 0
   startPG_col: {fileID: 6141575567301474205}
+  HEAD_CAM: {fileID: 0}
+  GLOVE_CAM: {fileID: 0}
+  IMU_CHEST: {fileID: 0}
+  IMU_GLOVE: {fileID: 0}
+  CHEST_TOGGLE: {fileID: 0}
+  GLOVE_TOGGLE: {fileID: 0}
+  FORCE_SENSOR: {fileID: 0}
+  ML: {fileID: 0}
+  AM: {fileID: 0}
+  NM: {fileID: 0}
 --- !u!1 &9008700681077239370
 GameObject:
   m_ObjectHideFlags: 0

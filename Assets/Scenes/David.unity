@@ -1706,6 +1706,11 @@ PrefabInstance:
       propertyPath: IP
       value: 192.168.254.123
       objectReference: {fileID: 0}
+    - target: {fileID: 8298026800631073428, guid: 9afbe9789e08dcd48aa4aa2024b92f01,
+        type: 3}
+      propertyPath: HID
+      value: 
+      objectReference: {fileID: 765791338}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 9afbe9789e08dcd48aa4aa2024b92f01, type: 3}
 --- !u!1001 &1233945256
@@ -1954,6 +1959,11 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 1124507440001207974, guid: 0082affc9625aa844bd46f5ec9143152,
         type: 3}
+    - target: {fileID: 8555067399694177734, guid: 71a76226100a94543a88b79c2ef40df9,
+        type: 3}
+      propertyPath: runState
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 71a76226100a94543a88b79c2ef40df9, type: 3}
 --- !u!1 &1250859262 stripped
