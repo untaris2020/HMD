@@ -105,6 +105,8 @@ namespace UnityStandardAssets.Characters.FirstPerson
         public GameObject hid;
         forceSensorManager.fingerInput currentFingerInput;
 
+        bool isPaused = false;
+
         private Rigidbody m_RigidBody;
         private CapsuleCollider m_Capsule;
         private float m_YRotation;
@@ -183,6 +185,11 @@ namespace UnityStandardAssets.Characters.FirstPerson
                 hid.GetComponent<SimulatorHIDMovment>().ToggleHIDVisibility();
             }
 
+            if (Input.GetKeyDown(KeyCode.P)) {
+                isPaused = !isPaused;
+            }
+
+            Time.timeScale = isPaused ? 0 : 1;
             if (CrossPlatformInputManager.GetButtonDown("Jump") && !m_Jump)
             {
                 m_Jump = true;
