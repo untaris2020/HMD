@@ -105,6 +105,8 @@ namespace UnityStandardAssets.Characters.FirstPerson
         public GameObject hid;
         forceSensorManager.fingerInput currentFingerInput;
 
+        public SimulatorEventSystem eventSystem;
+
         bool isPaused = false;
 
         private Rigidbody m_RigidBody;
@@ -187,6 +189,10 @@ namespace UnityStandardAssets.Characters.FirstPerson
 
             if (Input.GetKeyDown(KeyCode.P)) {
                 isPaused = !isPaused;
+            }
+
+            if (Input.GetKeyDown(KeyCode.E)) {
+                eventSystem.CheckUserEvent(gameObject);
             }
 
             Time.timeScale = isPaused ? 0 : 1;
