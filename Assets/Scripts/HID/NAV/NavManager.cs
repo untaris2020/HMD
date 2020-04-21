@@ -25,7 +25,9 @@ public class NavManager : MonoBehaviour
     // Nav System
     //public MLPersistentBehavior persistentBehavior;
     public GameObject waypoint_prefab;
+    //public Material waypoint_mat;
     public GameObject rth_waypoint_prefab;
+    //public Material rth_waypoint_mat;
     List<GameObject> waypoint_meshes = new List<GameObject>();
     List<GameObject> rth_waypoints = new List<GameObject>();
 
@@ -64,10 +66,6 @@ public class NavManager : MonoBehaviour
     public bool getSAStat() { return showall_status; }
     public bool getHeadCam() { return rearviewCamStatus; }
     public bool getGloveCam() { return gloveCamStatus; }
-
-    //TEST
-    public GameObject test1;
-    public GameObject test2;
 
     // Start is called before the first frame update
     void Start()
@@ -167,6 +165,7 @@ public class NavManager : MonoBehaviour
             GameObject temp = Instantiate(waypoint_prefab, tmpPos.position, Quaternion.identity, _world_center.transform);
             temp.SetActive(true);
             temp.tag = "Waypoint";
+            //temp.GetComponent<Renderer>().material = waypoint_mat;
             waypoint_meshes.Add(temp);
 
             UpdateWaypointsVisibility();
@@ -231,6 +230,7 @@ public class NavManager : MonoBehaviour
             foreach(GameObject obj in path) {
                 GameObject tmp = Instantiate(rth_waypoint_prefab, obj.transform.position, Quaternion.identity, _world_center.transform);
                 tmp.SetActive(true);
+                //tmp.GetComponent<Renderer>().material = rth_waypoint_mat;
                 rth_waypoints.Add(tmp);
             }
 
@@ -261,9 +261,9 @@ public class NavManager : MonoBehaviour
             if (showall_status)
             {
                 obj.transform.localScale = new Vector3(1, 1, 1);
-                var col = obj.GetComponent<Renderer>().material.color;
-                col.a = 1.0f;
-                obj.GetComponent<Renderer>().material.color = col;
+                //var col = obj.GetComponent<Renderer>().material.color;
+                //col.a = 1.0f;
+                //obj.GetComponent<Renderer>().material.color = col;
             }
         }
 

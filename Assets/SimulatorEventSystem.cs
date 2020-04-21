@@ -6,7 +6,9 @@ using UnityEngine.Audio;
 public class SimulatorEventSystem : MonoBehaviour
 {
     public GameObject hid;
+    public GameObject soilParticleSystem;
     AudioSource source;
+
 
     [Space]
     public GameObject mmsev_broken;
@@ -30,7 +32,7 @@ public class SimulatorEventSystem : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+
     }
 
     public void CheckUserEvent(GameObject user) {
@@ -44,24 +46,27 @@ public class SimulatorEventSystem : MonoBehaviour
         }
 
         foreach(GameObject sample in soilSamples) {
-            if ((user.transform.position - sample.transform.position).sqrMagnitude < interactionDistance*interactionDistance) {
-                CollectSample(sample);
+            if (sample != null) {
+                    if ((user.transform.position - sample.transform.position).sqrMagnitude < interactionDistance*interactionDistance) {
+                    CollectSample(sample);
+                }
             }
         }
     }
 
     void CollectSample(GameObject sample) {
         source.PlayOneShot(soil_audio, 1.0f);
+        GameObject probaParticleClone = Instantiate(soilParticleSystem, sample.transform.position, Quaternion.Euler(new Vector3(-90f, 0f, 0f))) as GameObject;
+        Destroy(probaParticleClone, 4);
         Destroy(sample);
     }
 
     void FixMMSEV() {
-        float speed = 30f;
         source.PlayOneShot(mmsev_audio, 1.0f);
         //mmsev_tire.transform.position = Vector3.MoveTowards();
 
         StartCoroutine(MoveToPosition(mmsev_tire.transform, new Vector3(298.68f, 0.8f, 231.78f), Time.deltaTime * 180f));
-        StartCoroutine(RotateToPosition(mmsev_tire.transform, new Vector3(0f, 0f, 0f), Time.deltaTime*180f));
+        StartCoroutine(RotateToPosition(mmsev_tire.transform, new Vector3(0f, 0f, 0f), Time.deltaTime * 180f));
 
         //mmsev_tire.transform.rotation = Quaternion.RotateTowards(mmsev_tire.transform.rotation, new Quaternion(0f, 0f, 0f, 0f), Time.deltaTime*180f); 
     }
