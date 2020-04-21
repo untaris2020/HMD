@@ -47,7 +47,7 @@ public class SimulatorHIDMovment : MonoBehaviour
 
         newPos = body.transform.position + offSet;
 
-        this.transform.position = Vector3.Slerp(this.transform.position, newPos, speed);
+        this.transform.position = Vector3.Slerp(this.transform.position, newPos, speed + 8.0f);
         this.transform.rotation = Quaternion.Slerp(this.transform.rotation, body.transform.rotation, speed); 
 
         //gameObject.transform.position = Vector3.Lerp(gameObject.transform.position, body.transform.position, 10f);
