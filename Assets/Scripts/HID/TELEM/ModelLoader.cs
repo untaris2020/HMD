@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 using TMPro;
+using UnityEngine.XR.MagicLeap;
 
 public class ModelLoader : MonoBehaviour
 {
@@ -35,19 +36,32 @@ public class ModelLoader : MonoBehaviour
     private Vector3 pos;
 
     private int currentHighlighted; 
+    public enum MOV_MODE
+    {
+        IMU = 0,
+        BLEND = 1,
+        controller = 2, 
+    }
 
-
+    public MOV_MODE mode;
     private delegate void functionDelegate();
+
+    [SerializeField]
+    private MLControllerConnectionHandlerBehavior _controllerConnectionHandler;
+
+    private MLInput.Controller _control;
 
 
     // Start is called before the first frame update
     void Start()
     {
+        loaded_models = new List<GameObject>();
+
         currentHighlighted = 0; 
 
         newIMUpacket = false;
         firstPacket = false; 
-        loaded_models = new List<GameObject>();
+        
         NUMOFMODELS = models.Length;
         DebugManager.Instance.LogBoth(this.GetType().Name, NUMOFMODELS + " models loaded.");
         NUMOFPAGES = (int)System.Math.Ceiling((double)NUMOFMODELS / 5);
@@ -128,17 +142,50 @@ public class ModelLoader : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if(newIMUpacket && loaded_models.Count > 0)
+        if (loaded_models != null)
         {
-            if(firstPacket)
+            if (mode == MOV_MODE.IMU)
             {
-                defaultRot = rot; 
+                if (newIMUpacket && loaded_models.Count > 0)
+                {
+                    if (firstPacket)
+                    {
+                        defaultRot = rot;
+                    }
+                    newIMUpacket = false;
+                    float speed = Time.deltaTime * 12.0f;
+                    glove_model.transform.position = Vector3.Slerp(glove_model.transform.position, pos, speed);
+                    rot = rot * Quaternion.Inverse(defaultRot);
+                    glove_model.transform.rotation = Quaternion.Slerp(glove_model.transform.rotation, rot, speed);
+                }
             }
-            newIMUpacket = false; 
-            float speed = Time.deltaTime * 12.0f;
-            glove_model.transform.position = Vector3.Slerp(glove_model.transform.position, pos, speed);
-            rot = rot *  Quaternion.Inverse(defaultRot);
-            glove_model.transform.rotation = Quaternion.Slerp(glove_model.transform.rotation, rot, speed); 
+            else if (mode == MOV_MODE.BLEND)
+            {
+                   
+
+
+                if (newIMUpacket && loaded_models.Count > 0)
+                {
+                    if (firstPacket)
+                    {
+                        defaultRot = rot;
+                    }
+                    newIMUpacket = false;
+                    float speed = Time.deltaTime * 12.0f;
+                    glove_model.transform.position = Vector3.Slerp(glove_model.transform.position, _control.Position, speed);
+                    rot = rot * Quaternion.Inverse(defaultRot);
+                    glove_model.transform.rotation = Quaternion.Slerp(glove_model.transform.rotation, rot, speed);
+                }
+            }
+            else if (mode == MOV_MODE.controller)
+            {
+                if (loaded_models.Count > 0)
+                {
+                    float speed = Time.deltaTime * 12.0f;
+                    glove_model.transform.position = Vector3.Slerp(glove_model.transform.position, _control.Position, speed);
+                    glove_model.transform.rotation = Quaternion.Slerp(glove_model.transform.rotation, _control.Orientation, speed);
+                }
+            }
         }
     }
 
@@ -203,6 +250,19 @@ public class ModelLoader : MonoBehaviour
 
     private void LoadModel(int pos)
     {
+        if(mode != MOV_MODE.IMU)
+        {
+            if (!_controllerConnectionHandler.IsControllerValid()) //this is error condition
+            {
+                ErrorHandler.Instance.HandleError(0, "NO CONTROLLER DETECTED");
+                return;
+            }
+            else if(_controllerConnectionHandler.IsControllerValid())
+            {
+                _control = _controllerConnectionHandler.ConnectedController;
+            }
+        }
+
         load_model = pos;
 
         // load Telem_pg_3
@@ -213,10 +273,11 @@ public class ModelLoader : MonoBehaviour
         // Load Hand Model and have user align glove
         Vector3 spawn_pos = _camera.transform.position;
         spawn_pos.z += 5;
-        spawn_pos.y -= 5;
-
+        spawn_pos.y -= 1;
+        spawn_pos.x -= 2; 
         glove_model.GetComponent<Renderer>().enabled = true;
         glove_model.transform.position = spawn_pos;
+        glove_model.transform.rotation = Quaternion.Euler(180, 90, 0);
 
         // waiting for user to click the button...
         ready_to_load = true;
@@ -266,7 +327,7 @@ public class ModelLoader : MonoBehaviour
 
         }
 
-        loaded_models.Add( (GameObject)Instantiate(models[model_index], new Vector3(0, 0, 0), Quaternion.identity, glove_model.transform));
+        loaded_models.Add( (GameObject)Instantiate(models[model_index], glove_model.transform));
         DebugManager.Instance.LogBoth("INFO", "Loading 3D Model " + models[model_index].name);
 
         load_model = -1;

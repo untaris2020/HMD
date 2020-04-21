@@ -70,11 +70,8 @@ public class HeadLockScript : MonoBehaviour
 
                 Debug.Log("Controller Position Data: " + controller.Position);
 
-                //Difference = (Camera.transform.position - controller.Position); unnessecary??
-
                 if (buttonPressed)
                 {
-                    //Debug.Log("Button Pressed");
                     DefaultRot = controller.Orientation;
                     Difference = (Camera.transform.position - controller.Position);
                     this.transform.rotation = Camera.transform.rotation;
@@ -106,11 +103,8 @@ public class HeadLockScript : MonoBehaviour
             speed = Time.deltaTime * 12.0f;
             this.transform.position = Vector3.Slerp(this.transform.position, Camera.transform.position, speed);
 
-            //Quaternion rotation = Quaternion.Euler(rot);
-            //rotation *= Quaternion.Euler(-90, 0, 0);
-           // rotation *= Quaternion.Euler(0, -90, 0);
             rot = rot *  Quaternion.Inverse(DefaultRot);
-            //rot = rot 
+
             this.transform.rotation = Quaternion.Slerp(this.transform.rotation, rot, speed); 
             updateWithIMU = false;
         }

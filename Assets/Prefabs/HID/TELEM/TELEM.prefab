@@ -210,6 +210,8 @@ MonoBehaviour:
   - {fileID: 4461325800554342707, guid: 88a1394bd5c68ac4b9d4c13773ac6db0, type: 3}
   glove_model: {fileID: 9191836617769674111, guid: 7d5840a1bb911d84dafdc5cb00b1c5a1,
     type: 3}
+  mode: 0
+  _controllerConnectionHandler: {fileID: 0}
 --- !u!64 &2746876638956689645
 MeshCollider:
   m_ObjectHideFlags: 0
