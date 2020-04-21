@@ -555,11 +555,11 @@ public class MissionPanelManager : MonoBehaviour
         // Set all buttons material to inactive
         foreach (GameObject obj in panels)
         {
-            obj.GetComponent<MeshRenderer>().material = style.ButtonInactiveMat;
+            obj.GetComponent<MeshRenderer>().material = style.NonHighlighted;
         }
 
         // set current page as the active material
-        panels[page].GetComponent<MeshRenderer>().material = style.ButtonActiveMat;
+        panels[page].GetComponent<MeshRenderer>().material = style.Highlighted;
 
 
         

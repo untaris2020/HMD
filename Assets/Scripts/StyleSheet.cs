@@ -8,6 +8,9 @@ public class StyleSheet : MonoBehaviour {
 
     public Material ButtonActiveMat;
     public Material ButtonInactiveMat;
+    public Material Highlighted;
+    public Material NonHighlighted;
+
 
     public Font HeadingFont;
     public Font BodyFont;
@@ -23,6 +26,7 @@ public class StyleSheet : MonoBehaviour {
     public Color GreenFontColor;
     public Color YellowFontColor;
     public Color RedFontColor;
+    
 
     public FontStyle HeadingFontStyle;
     public FontStyle BodyFontStyle;

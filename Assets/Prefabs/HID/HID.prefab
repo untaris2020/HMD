@@ -210,6 +210,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ButtonActiveMat: {fileID: 2100000, guid: 232ee01803e374846a2c703bfcca9293, type: 2}
   ButtonInactiveMat: {fileID: 2100000, guid: 6ba4c6f78918abb438f06051740080c2, type: 2}
+  Highlighted: {fileID: 2100000, guid: 7dcd15e851a7eba43a4781183c733b17, type: 2}
+  NonHighlighted: {fileID: 2100000, guid: 253af8567e498cd4fbcd00615ccc0abf, type: 2}
   HeadingFont: {fileID: 0}
   BodyFont: {fileID: 0}
   ErrorFont: {fileID: 0}

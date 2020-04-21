@@ -132,28 +132,34 @@ public class InputSystemStatus : MonoBehaviour
 
     void GazeButtonPress() {
         if (!useGaze) {
-            ToggleSystem();
-        }
-    }
-
-    void GestureButtonPress() {
-        if (!useGestures) {
-            ToggleSystem();
-        }
-    }
-
-    void ToggleSystem() {
-        if (FORCE_SENSOR.getConnected()) {
-            useGestures = !useGestures;
             useGaze = !useGaze;
         }
-        else {
-            DebugManager.Instance.LogBoth("ERROR", "Glove not connected. Cannot switch inputs");
+        else
+        {
+            if(FORCE_SENSOR.getConnected())
+            {
+                useGaze = !useGaze;
+                useGestures = true; //make sure at least 1 active 
+            }
+            else
+            {
+                DebugManager.Instance.LogBoth("ERROR", "Glove not connected. Cannot disable input");
+            }
         }
-
         UpdateUI();
     }
 
+    void GestureButtonPress() {
+        if(FORCE_SENSOR.getConnected())
+        {
+            useGestures = !useGestures; 
+            if(!useGestures)
+            {
+                useGaze = true; 
+            }
+        }
+        UpdateUI();
+    }
     void ShowGestureIndicatorsButtonPress() {
         showGestureIndicators = !showGestureIndicators;
         UpdateUI();

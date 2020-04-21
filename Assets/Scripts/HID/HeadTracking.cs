@@ -93,7 +93,7 @@ public class HeadTracking : MonoBehaviour
         //float lerp = 0;
         hits = Physics.RaycastAll(cam.transform.position, cam.transform.forward, 100.0f);
 
-
+        bool prevCollidedHit = false; 
         if (hits.Length > 0)
         {
             //Debug.Log("Collided Name: " + collidedName + " RES: " + colliderList.ContainsKey(collidedName));
@@ -105,50 +105,18 @@ public class HeadTracking : MonoBehaviour
             foreach (RaycastHit hit in hits)
             {
                 string collidedName = hit.collider.name;
+                Debug.Log("HIT: " + collidedName);
+
                 if (colliderList.ContainsKey(collidedName))
                 {
-                    if (collidedName != currentCollider && currentCollider != null)
+                    if (collidedName == currentCollider || currentCollider == null)
                     {
-                        if (missCount < threshold)
-                        {
-                            missCount++;
-                        }
-                        else
-                        {
-                            Cursor.SetActive(false);
-                            dial.fillAmount = 0;
-                            missCount = 0;
-                            elapsed = 0;
-                            pause = .25f;
-                            currentCollider = null;
-                        }
+                        prevCollidedHit = true; 
+                        currentCollider = collidedName;
                     }
                     else
                     {
-                        //Change texture of material if appliciable here 
-                        currentCollider = collidedName;
-                        missCount = 0; //reset the miss count becuase we have hit the object 
-
-                        if (elapsed > pause)
-                        {
-                            if (dial.fillAmount != 1f) //if we have not clicked Start animation
-                            {
-                                dial.fillAmount = dial.fillAmount + Time.deltaTime * timerSpeed;
-                            }
-                            else //we have clicked 
-                            {
-                                //Debug.Log("Button pressed\n");
-                                source.PlayOneShot(click, VOL);
-
-                                //Call the delegate method here 
-                                colliderList[collidedName].DynamicInvoke();
-
-                                pause = .5f; //setting our delay
-                                dial.fillAmount = 0; //reset the dial amount
-                                elapsed = 0;
-                            }
-                        }
-                        elapsed += Time.deltaTime; //checking number of seconds elapsed
+                       
                     }
                 }
                 else
@@ -182,12 +150,41 @@ public class HeadTracking : MonoBehaviour
                         currentAreaCollider = collidedName;  //Update tracking variables 
                     }
                 }
-                //else if(panelActive)
-                //{
-                //    onOffColliderList[currentAreaCollider].DynamicInvoke(); //Toggle the current inactive becuase we are no longer looking at a panel
-                //    panelActive = false;
-                //    currentAreaCollider = null; 
-                //}
+            }
+            if(prevCollidedHit)
+            {
+                //Change texture of material if appliciable here 
+                missCount = 0; //reset the miss count becuase we have hit the object 
+
+                if (elapsed > pause)
+                {
+                    if (dial.fillAmount != 1f) //if we have not clicked Start animation
+                    {
+                        dial.fillAmount = dial.fillAmount + Time.deltaTime * timerSpeed;
+                    }
+                    else //we have clicked 
+                    {
+                        //Debug.Log("Button pressed\n");
+                        source.PlayOneShot(click, VOL);
+
+                        //Call the delegate method here 
+                        colliderList[currentCollider].DynamicInvoke();
+
+                        pause = .5f; //setting our delay
+                        dial.fillAmount = 0; //reset the dial amount
+                        elapsed = 0;
+                    }
+                }
+                elapsed += Time.deltaTime; //checking number of seconds elapsed
+            }
+            else
+            {
+                //Cursor.SetActive(false);
+                dial.fillAmount = 0;
+                missCount = 0;
+                elapsed = 0;
+                pause = .25f;
+                currentCollider = null;
             }
         }
         else

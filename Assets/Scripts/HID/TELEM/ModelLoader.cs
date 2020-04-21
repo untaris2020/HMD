@@ -159,11 +159,11 @@ public class ModelLoader : MonoBehaviour
         {
             if(i == (currentHighlighted %5))
             {
-                modelButtons[i].GetComponent<MeshRenderer>().material = StyleSheet.Instance.ButtonActiveMat;
+                modelButtons[i].GetComponent<MeshRenderer>().material = StyleSheet.Instance.Highlighted;
             }
             else
             {
-                modelButtons[i].GetComponent<MeshRenderer>().material = StyleSheet.Instance.ButtonInactiveMat;   
+                modelButtons[i].GetComponent<MeshRenderer>().material = StyleSheet.Instance.NonHighlighted;   
             }
 
             int tmp_index = i + (page_index * 5);

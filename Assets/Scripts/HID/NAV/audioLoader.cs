@@ -141,11 +141,11 @@ public class audioLoader : MonoBehaviour
             GameObject tempBox = box_list[j];
             if(j == currentHighlighted%5)
             {
-                tempBox.GetComponentInChildren<MeshRenderer>().material = StyleSheet.Instance.ButtonActiveMat;
+                tempBox.GetComponentInChildren<MeshRenderer>().material = StyleSheet.Instance.Highlighted;
             }
             else
             {
-                tempBox.GetComponentInChildren<MeshRenderer>().material = StyleSheet.Instance.ButtonInactiveMat;
+                tempBox.GetComponentInChildren<MeshRenderer>().material = StyleSheet.Instance.NonHighlighted;
             }
 
             if(i < clips.Count)

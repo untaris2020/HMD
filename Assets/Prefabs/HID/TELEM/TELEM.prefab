@@ -2558,7 +2558,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1586146169894398, guid: fea76add2523fdd4bb7ac045d07ea211, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1586146169894398, guid: fea76add2523fdd4bb7ac045d07ea211, type: 3}
       propertyPath: m_Icon
@@ -2659,7 +2659,9 @@ PrefabInstance:
       propertyPath: m_Name
       value: model1_hit_box
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 64888644822102744, guid: fea76add2523fdd4bb7ac045d07ea211, type: 3}
+    - {fileID: 1866356314895813950, guid: fea76add2523fdd4bb7ac045d07ea211, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: fea76add2523fdd4bb7ac045d07ea211, type: 3}
 --- !u!114 &1066861128176307835 stripped
 MonoBehaviour:
@@ -2909,7 +2911,8 @@ PrefabInstance:
       propertyPath: m_Name
       value: telem_header_CL
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 64612463053769900, guid: 49fe80de65c21eb4ca25298e67034c0c, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: 49fe80de65c21eb4ca25298e67034c0c, type: 3}
 --- !u!4 &749406966175763416 stripped
 Transform:
@@ -3234,6 +3237,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_TagString
       value: gesture_sidescroll
+      objectReference: {fileID: 0}
+    - target: {fileID: 8209259504226745541, guid: 38cb154fed93fe442afc9fb4b4adcd1f,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 38cb154fed93fe442afc9fb4b4adcd1f, type: 3}
