@@ -94,55 +94,65 @@ public class HeadTracking : MonoBehaviour
         hits = Physics.RaycastAll(cam.transform.position, cam.transform.forward, 100.0f);
 
         bool prevCollidedHit = false; 
+
         if (hits.Length > 0)
         {
             //Debug.Log("Collided Name: " + collidedName + " RES: " + colliderList.ContainsKey(collidedName));
             //Check dictionary for collided name here
-            Cursor.transform.position = Vector3.Slerp(Cursor.transform.position, hits[0].point, speed); //Updates the position of the cursor to show object collided with
-            Cursor.transform.rotation = Quaternion.Slerp(Cursor.transform.rotation, cam.transform.rotation, speed);
-            Cursor.SetActive(true);
-
+            if(!InputSystemStatus.Instance.GetUseGaze())
+            {
+                Cursor.SetActive(false);
+            }
+            else
+            {
+                Cursor.transform.position = Vector3.Slerp(Cursor.transform.position, hits[0].point, speed); //Updates the position of the cursor to show object collided with
+                Cursor.transform.rotation = Quaternion.Slerp(Cursor.transform.rotation, cam.transform.rotation, speed);
+                Cursor.SetActive(true);
+            }
+            
             foreach (RaycastHit hit in hits)
             {
                 string collidedName = hit.collider.name;
                 Debug.Log("HIT: " + collidedName);
 
-                if (colliderList.ContainsKey(collidedName))
+                if(InputSystemStatus.Instance.GetUseGaze())
                 {
-                    if (collidedName == currentCollider || currentCollider == null)
+                    if (colliderList.ContainsKey(collidedName))
                     {
-                        prevCollidedHit = true; 
-                        currentCollider = collidedName;
-                    }
-                    else
-                    {
+                        if (collidedName == currentCollider || currentCollider == null)
+                        {
+                            prevCollidedHit = true; 
+                            currentCollider = collidedName;
+                        }
+                        else
+                        {
                        
-                    }
-                }
-                else
-                {
-                    if (missCount < threshold)
-                    {
-                        missCount++;
+                        }
                     }
                     else
                     {
-                        dial.fillAmount = 0;
-                        missCount = 0;
-                        elapsed = 0;
-                        pause = .25f;
+                        if (missCount < threshold)
+                        {
+                            missCount++;
+                        }
+                        else
+                        {
+                            dial.fillAmount = 0;
+                            missCount = 0;
+                            elapsed = 0;
+                            pause = .25f;
+                        }
                     }
                 }
-
-                if(onOffColliderList.ContainsKey(collidedName))
+                if(onOffColliderList.ContainsKey(collidedName) && InputSystemStatus.Instance.GetShowGestureIndicators()) //if we hit valid panel && we should render the gesture icons
                 {
-                    if(currentAreaCollider != collidedName && !panelActive)
+                    if(currentAreaCollider != collidedName && !panelActive) //If the current collided is a new one and panel is inactive start the toggle new icons  
                     {
                         onOffColliderList[collidedName].DynamicInvoke(); //Set brand new panel to active
                         panelActive = true;
                         currentAreaCollider = collidedName; //update tracking variables 
                     }
-                    else if(currentAreaCollider != collidedName && panelActive)
+                    else if(currentAreaCollider != collidedName && panelActive && currentAreaCollider != null) //If we just hit a new panel but one is already active 
                     {
                         onOffColliderList[currentAreaCollider].DynamicInvoke(); //Toggle former inactive
                         onOffColliderList[collidedName].DynamicInvoke(); //Toggle new active
@@ -150,8 +160,14 @@ public class HeadTracking : MonoBehaviour
                         currentAreaCollider = collidedName;  //Update tracking variables 
                     }
                 }
+                else if(onOffColliderList.ContainsKey(collidedName) && panelActive && !InputSystemStatus.Instance.GetShowGestureIndicators()) //if we have gestures set to inactive but we are currently rendering them 
+                {
+                    onOffColliderList[collidedName].DynamicInvoke(); //Set brand new panel to active
+                    panelActive = false;
+                    currentAreaCollider = null; //update tracking variables 
+                }
             }
-            if(prevCollidedHit)
+            if(prevCollidedHit) //this will only run if gaze is enabled 
             {
                 //Change texture of material if appliciable here 
                 missCount = 0; //reset the miss count becuase we have hit the object 
@@ -189,7 +205,7 @@ public class HeadTracking : MonoBehaviour
         }
         else
         {
-            if(panelActive)
+            if(panelActive && InputSystemStatus.Instance.GetShowGestureIndicators()) //If gesture active normal logic
             {
                 onOffColliderList[currentAreaCollider].DynamicInvoke(); //Toggle the current inactive becuase we are no longer looking at a panel
                 panelActive = false;
@@ -207,32 +223,38 @@ public class HeadTracking : MonoBehaviour
     public void forceClick(forceSensorManager.fingerInput input)
     {
         //DebugManager.Instance.LogBoth(this.GetType().Name, "Force Click Registered");
-
-        RaycastHit[] hits;
-
-        forceSensorManager.fingerInput thumblow = input;
-        thumblow.thumb = 0; 
-        forceSensorManager.fingerInput thumbhigh = input;
-        thumbhigh.thumb = 1;
-
-        //float lerp = Mathf.PingPong(Time.time, duration) / duration;
-        //float lerp = 0;
-        hits = Physics.RaycastAll(cam.transform.position, cam.transform.forward, 100.0f);
-        if (hits.Length > 0)
+        if(InputSystemStatus.Instance.GetUseGestures())
         {
-            foreach (RaycastHit hit in hits)
-            {
-                string collidedName = hit.collider.name;
+            RaycastHit[] hits;
 
-                foreach (forceClickData dat in pageColliderList.Values)
+            forceSensorManager.fingerInput thumblow = input;
+            thumblow.thumb = 0; 
+            forceSensorManager.fingerInput thumbhigh = input;
+            thumbhigh.thumb = 1;
+
+            //float lerp = Mathf.PingPong(Time.time, duration) / duration;
+            //float lerp = 0;
+            hits = Physics.RaycastAll(cam.transform.position, cam.transform.forward, 100.0f);
+            if (hits.Length > 0)
+            {
+                foreach (RaycastHit hit in hits)
                 {
-                    if ((dat.pageCol == collidedName) && (dat.input.Equals(thumblow) || dat.input.Equals(thumbhigh)))
+                    string collidedName = hit.collider.name;
+
+                    foreach (forceClickData dat in pageColliderList.Values)
                     {
-                        //We found the guy we are looking for 
-                        dat.del.DynamicInvoke();
+                        if ((dat.pageCol == collidedName) && (dat.input.Equals(thumblow) || dat.input.Equals(thumbhigh)))
+                        {
+                            //We found the guy we are looking for 
+                            dat.del.DynamicInvoke();
+                        }
                     }
                 }
             }
+        }
+        else
+        {
+            Debug.Log("GESTURES CURRENTLY INACTIVE");
         }
     }
 }

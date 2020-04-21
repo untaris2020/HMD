@@ -56,7 +56,7 @@ public class InputSystemStatus : MonoBehaviour
         Instance = this;
 
         // defuat system status
-        showGestureIndicators = true;
+        showGestureIndicators = false;
         useGestures = false;
         useGaze = true;
         isGloveReady = true; // reset this to false
@@ -155,13 +155,18 @@ public class InputSystemStatus : MonoBehaviour
             useGestures = !useGestures; 
             if(!useGestures)
             {
-                useGaze = true; 
+                useGaze = true;
             }
+            showGestureIndicators = useGestures;
         }
         UpdateUI();
     }
     void ShowGestureIndicatorsButtonPress() {
-        showGestureIndicators = !showGestureIndicators;
+        if(useGestures)
+        {
+            showGestureIndicators = !showGestureIndicators;
+        }
+        
         UpdateUI();
     }
 }
