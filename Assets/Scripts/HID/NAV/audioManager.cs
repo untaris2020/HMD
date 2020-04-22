@@ -32,7 +32,7 @@ public class audioManager : MonoBehaviour
         updateTime = 0f;
         prevTime = 0f;
         playbackTime.SetActive(false);
-        recordingIndicator.SetActive(false);
+        recordingIndicator.GetComponent<MeshRenderer>().material = StyleSheet.Instance.Icons; 
     }
 
    
@@ -67,7 +67,7 @@ public class audioManager : MonoBehaviour
             if(recording)
             {
                 playbackTime.SetActive(false);
-                recordingIndicator.SetActive(false);
+                recordingIndicator.GetComponent<MeshRenderer>().material = StyleSheet.Instance.Icons; 
                 recordButton.GetComponentInChildren<TextMeshProUGUI>().SetText("START");
                 recording = false;
                 ar.stopRecording();
@@ -75,7 +75,7 @@ public class audioManager : MonoBehaviour
             else
             {
                 playbackTime.SetActive(true); 
-                recordingIndicator.SetActive(true);
+                recordingIndicator.GetComponent<MeshRenderer>().material = StyleSheet.Instance.Red; 
                 recordButton.GetComponentInChildren<TextMeshProUGUI>().SetText("STOP");
                 playbackTime.GetComponent<TextMeshProUGUI>().SetText("REC TIME: 00:00");
                 recording = true;

@@ -10,7 +10,8 @@ public class StyleSheet : MonoBehaviour {
     public Material ButtonInactiveMat;
     public Material Highlighted;
     public Material NonHighlighted;
-
+    public Material Icons;
+    public Material Red; 
 
     public Font HeadingFont;
     public Font BodyFont;
