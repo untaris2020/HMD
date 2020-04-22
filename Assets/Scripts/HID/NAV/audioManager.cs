@@ -136,7 +136,7 @@ public class audioManager : MonoBehaviour
     public void playbackHit()
     {
         audioLoader al = GetComponent<audioLoader>();
-        if(begAud)
+        if(begAud && al.getPlayback() != -1)
         {
             al.restartAudio();
             playBackButtonText.SetText("PAUSE PLAYBACK");
