@@ -131,6 +131,8 @@ public class startBehavior : MonoBehaviour
         {
             AM.recordingHit();
         }
+        AM.stopPlayBack();
+
 
         //Toggle the finger inputs to inactive
         InputSystemStatus.Instance.ChangeGloveStatus(false);

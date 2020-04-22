@@ -158,6 +158,17 @@ public class audioManager : MonoBehaviour
             
         }
     }
+
+    public void stopPlayBack()
+    {
+        audioLoader al = GetComponent<audioLoader>();
+        if(playBackState)
+        {
+            al.pauseAudio();
+            playBackButtonText.SetText("PLAY AUDIO LOG");
+            playBackState = false; 
+        }
+    }
     public void loadTitle()
     {
         audioLoader al = GetComponent<audioLoader>();
