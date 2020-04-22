@@ -75,24 +75,33 @@ public class forceSensorManager : tcpPacket
 
     public override int processPacket(string packet)
     {
-        string[] tmp = packet.Split(new string[] { "$" }, StringSplitOptions.None);
-        try
+        if(CamerasManager.Instance.getFrameActive())
         {
-            if (tmp.Length == 5)
+            //We have an active frame 
+            CamerasManager.Instance.destroyCam();
+        }
+        else
+        {
+            string[] tmp = packet.Split(new string[] { "$" }, StringSplitOptions.None);
+            try
             {
-                currentInput.thumb = (int.Parse(tmp[0]));
-                currentInput.index = (int.Parse(tmp[1]));
-                currentInput.middle = (int.Parse(tmp[2]));
-                currentInput.ring = (int.Parse(tmp[3]));
-                currentInput.little = (int.Parse(tmp[4]));
-                newInput = true; 
+                if (tmp.Length == 5)
+                {
+                    currentInput.thumb = (int.Parse(tmp[0]));
+                    currentInput.index = (int.Parse(tmp[1]));
+                    currentInput.middle = (int.Parse(tmp[2]));
+                    currentInput.ring = (int.Parse(tmp[3]));
+                    currentInput.little = (int.Parse(tmp[4]));
+                    newInput = true; 
+                }
+            }
+            catch (FormatException e)
+            {
+                DebugManager.Instance.LogUnityConsole(e.Message);
+                return -1;
             }
         }
-        catch (FormatException e)
-        {
-            DebugManager.Instance.LogUnityConsole(e.Message);
-            return -1;
-        }
+
     
         return 0;
     }

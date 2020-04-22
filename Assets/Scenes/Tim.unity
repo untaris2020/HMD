@@ -2779,6 +2779,16 @@ PrefabInstance:
       propertyPath: FORCE_SENSOR
       value: 
       objectReference: {fileID: 594868873}
+    - target: {fileID: 7633208563387115851, guid: 30691d7d711b425408f2d5ab5dbdedcf,
+        type: 3}
+      propertyPath: Red
+      value: 
+      objectReference: {fileID: 2100000, guid: 346cbcb2d8fa248348daef42412c2b2a, type: 2}
+    - target: {fileID: 7633208563387115851, guid: 30691d7d711b425408f2d5ab5dbdedcf,
+        type: 3}
+      propertyPath: Icons
+      value: 
+      objectReference: {fileID: 2100000, guid: fa51086ead999e7419d831364c091c3b, type: 2}
     - target: {fileID: 7654520995065390274, guid: 30691d7d711b425408f2d5ab5dbdedcf,
         type: 3}
       propertyPath: m_textInfo.characterCount
@@ -3222,10 +3232,15 @@ PrefabInstance:
       propertyPath: m_PoseSource
       value: 2
       objectReference: {fileID: 0}
+    - target: {fileID: 4664801170597484352, guid: 11f6260e181c76246a741307d8143023,
+        type: 3}
+      propertyPath: m_text
+      value: Press Finger To Close Stream
+      objectReference: {fileID: 0}
     - target: {fileID: 5187408591501864329, guid: 11f6260e181c76246a741307d8143023,
         type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7164027079724746213, guid: 11f6260e181c76246a741307d8143023,
         type: 3}
