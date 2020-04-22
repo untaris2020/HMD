@@ -6,6 +6,7 @@ using System.IO;
 using TMPro;
 using UnityEngine.UI;
 using System.Linq;
+using System.Diagnostics;
 
 public class MissionPanelManager : MonoBehaviour
 {
@@ -92,12 +93,14 @@ public class MissionPanelManager : MonoBehaviour
 
     int counter = 1;
 
+    public bool force;
+
     // Use this for initialization
     void Start()
     {
         //coroutine = GetUserPOSLoop(3);
         //StartCoroutine(coroutine);
-
+        force = false;
         page0RenderState = false;
         currentHighlighted = 0;
         currentPage = -1;
@@ -386,6 +389,7 @@ public class MissionPanelManager : MonoBehaviour
 
     public void displayTasks()
     {
+        force = false;
         int taskCount = MissionContainerInstance.SuperMissions[SuperMissionNumber].Missions[MissionNumber].Tasks.Count;
 
         if (taskCount - TOffset <= 5)
@@ -621,6 +625,7 @@ public class MissionPanelManager : MonoBehaviour
     }
     public void forcePanelPress()
     {
+        /*
         if (currentPage == 0)
         {
             currentHighlighted = 0;
@@ -663,8 +668,12 @@ public class MissionPanelManager : MonoBehaviour
             SubTaskFlag = false;
             //currentPage = 0;
         }
+        */
         //DebugManager.Instance.LogUnityConsole("Current page: " + currentPage);
-        
+
+        force = true;
+            
+        pressCurrentHighlighted();
 
 
 
@@ -713,6 +722,10 @@ public class MissionPanelManager : MonoBehaviour
         }
         currentPage = page;
         currentHighlighted = 0;
+        SMOffset = 0;
+        MOffset = 0;
+        TOffset = 0;
+        STOffset = 0;
         // function overload
         //DebugManager.Instance.LogUnityConsole("Correct Load page");
 
@@ -745,6 +758,7 @@ public class MissionPanelManager : MonoBehaviour
 
         if (!checkText(0))
             return;
+        DebugManager.Instance.LogUnityConsole("I ran");
         if (SuperMissionFlag)
         {
             SuperMissionNumber = SMOffset;
@@ -754,6 +768,7 @@ public class MissionPanelManager : MonoBehaviour
         }
         else if (MissionFlag)
         {
+
             MissionNumber = MOffset;
             TaskFlag = true;
             MissionFlag = false;
@@ -766,17 +781,13 @@ public class MissionPanelManager : MonoBehaviour
             TaskFlag = false;
             LoadPage(3);
         }
-        else //subtasks are currently being displayed
+        else if(force) //subtasks are currently being displayed
         {
-            if (displayPicture)
-            {
-                displayPicture = !displayPicture;
-            }
-            else
-            {
-                SubTaskNumber = STOffset;
-                displayPicture = true;
-            }
+            SubTaskNumber = STOffset;
+            SubTaskFlag = false;
+            SuperMissionFlag = true;
+            LoadPage(0);
+            force = false;
 
 
         }
@@ -809,18 +820,13 @@ public class MissionPanelManager : MonoBehaviour
             TaskFlag = false;
             LoadPage(3);
         }
-        else //subtasks are currently being displayed
+        else if (force) //subtasks are currently being displayed
         {
-            if (displayPicture)
-            {
-                displayPicture = !displayPicture;
-            }
-            else
-            {
-                SubTaskNumber = STOffset + 1;
-                displayPicture = true;
-            }
-
+            SubTaskNumber = STOffset;
+            SubTaskFlag = false;
+            SuperMissionFlag = true;
+            LoadPage(0);
+            force = false;
 
         }
 
@@ -852,18 +858,13 @@ public class MissionPanelManager : MonoBehaviour
             TaskFlag = false;
             LoadPage(3);
         }
-        else //subtasks are currently being displayed
+        else if (force) //subtasks are currently being displayed
         {
-            if (displayPicture)
-            {
-                displayPicture = !displayPicture;
-            }
-            else
-            {
-                SubTaskNumber = STOffset + 2;
-                displayPicture = true;
-            }
-
+            SubTaskNumber = STOffset;
+            SubTaskFlag = false;
+            SuperMissionFlag = true;
+            LoadPage(0);
+            force = false;
 
         }
 
@@ -895,18 +896,13 @@ public class MissionPanelManager : MonoBehaviour
             TaskFlag = false;
             LoadPage(3);
         }
-        else //subtasks are currently being displayed
+        else if (force) //subtasks are currently being displayed
         {
-            if (displayPicture)
-            {
-                displayPicture = !displayPicture;
-            }
-            else
-            {
-                SubTaskNumber = STOffset + 3;
-                displayPicture = true;
-            }
-
+            SubTaskNumber = STOffset;
+            SubTaskFlag = false;
+            SuperMissionFlag = true;
+            LoadPage(0);
+            force = false;
 
         }
 
@@ -938,18 +934,13 @@ public class MissionPanelManager : MonoBehaviour
             TaskFlag = false;
             LoadPage(3);
         }
-        else //subtasks are currently being displayed
+        else if (force) //subtasks are currently being displayed
         {
-            if (displayPicture)
-            {
-                displayPicture = !displayPicture;
-            }
-            else
-            {
-                SubTaskNumber = STOffset + 4;
-                displayPicture = true;
-            }
-
+            SubTaskNumber = STOffset;
+            SubTaskFlag = false;
+            SuperMissionFlag = true;
+            LoadPage(0);
+            force = false;
 
         }
 
@@ -1186,6 +1177,7 @@ public class MissionPanelManager : MonoBehaviour
                 currentHighlighted++;
                 if (currentHighlighted % 5 == 0)
                 {
+                    currentHighlighted = 0;
                     nextPage();
 
                 }
@@ -1201,6 +1193,7 @@ public class MissionPanelManager : MonoBehaviour
                 currentHighlighted++;
                 if (currentHighlighted % 5 == 0)
                 {
+                    currentHighlighted = 0;
                     nextPage();
 
                 }
@@ -1216,6 +1209,7 @@ public class MissionPanelManager : MonoBehaviour
                 currentHighlighted++;
                 if (currentHighlighted % 5 == 0)
                 {
+                    currentHighlighted = 0;
                     nextPage();
 
                 }
@@ -1231,6 +1225,7 @@ public class MissionPanelManager : MonoBehaviour
                 currentHighlighted++;
                 if (currentHighlighted % 5 == 0)
                 {
+                    currentHighlighted = 0;
                     nextPage();
 
                 }
@@ -1259,8 +1254,8 @@ public class MissionContainer
     public void printData()
     {
 
-        Debug.Log("Supermission Text 0: " + SuperMissions[0].SuperMissionText);
-        Debug.Log("Supermission Text 1: " + SuperMissions[1].SuperMissionText);
+        //Debug.Log("Supermission Text 0: " + SuperMissions[0].SuperMissionText);
+        //Debug.Log("Supermission Text 1: " + SuperMissions[1].SuperMissionText);
 
     }
     public int getSMCount()

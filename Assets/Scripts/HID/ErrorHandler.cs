@@ -24,9 +24,10 @@ public class ErrorHandler : MonoBehaviour {
     public TextMeshProUGUI myText; 
 
     //public AudioClip error;
-      //  AudioSource source;
+    public AudioSource source;
+    public AudioClip error;
 
-    public float VOL = 1.7f;
+    public float VOL = 0.5F;
 
     //ErrorWindow windowInstance;
     private bool windowActive;
@@ -90,59 +91,67 @@ public class ErrorHandler : MonoBehaviour {
 
     public int HandleError(int Priority, string ErrorMsg)
     {
-        if (ErrorList.Count == 0)
+        int exists = ErrorList.IndexOf(ErrorMsg);
+        if (exists == -1)
         {
-
-            //Debug.Log("Do I run lol");
-            ErrorList.Add(ErrorMsg);
-            PriorityList.Add(Priority);
-            //Debug.Log(ErrorList.Count);
-            //Debug.Log(ErrorMsg);
-
-        }
-        else if(Priority < PriorityList[0])
-        {
-            isHigherPriority = true;
-            ErrorList.Insert(0, ErrorMsg);
-            PriorityList.Insert(0, Priority);
-
-        }
-        else if(Priority > PriorityList[0])
-        {
-                
-            int PrioLocation = PriorityList.IndexOf(Priority);
-            if (PrioLocation == -1)
+            source.PlayOneShot(error, VOL);
+            if (ErrorList.Count == 0)
             {
-                 PriorityList.Add(Priority);
-                 ErrorList.Add(ErrorMsg);
 
-            }
-            else
-            {
-                PriorityList.Insert(PrioLocation, Priority);
-                ErrorList.Insert(PrioLocation, ErrorMsg);
-
-            }
-                    
-
-        }
-        else
-        {
-
-            int PrioLocation = PriorityList.IndexOf(Priority);
-            if(PrioLocation == 0)
-            {
+                //Debug.Log("Do I run lol");
                 ErrorList.Add(ErrorMsg);
                 PriorityList.Add(Priority);
+                //Debug.Log(ErrorList.Count);
+                //Debug.Log(ErrorMsg);
+
+            }
+            else if (Priority < PriorityList[0])
+            {
+                isHigherPriority = true;
+                ErrorList.Insert(0, ErrorMsg);
+                PriorityList.Insert(0, Priority);
+
+            }
+            else if (Priority > PriorityList[0])
+            {
+
+                int PrioLocation = PriorityList.IndexOf(Priority);
+                if (PrioLocation == -1)
+                {
+                    PriorityList.Add(Priority);
+                    ErrorList.Add(ErrorMsg);
+
+                }
+                else
+                {
+                    PriorityList.Insert(PrioLocation, Priority);
+                    ErrorList.Insert(PrioLocation, ErrorMsg);
+
+                }
+
+
             }
             else
             {
-                ErrorList.Insert(PrioLocation, ErrorMsg);
-                PriorityList.Insert(PrioLocation, Priority);
+
+                int PrioLocation = PriorityList.IndexOf(Priority);
+                if (PrioLocation == 0)
+                {
+                    ErrorList.Add(ErrorMsg);
+                    PriorityList.Add(Priority);
+                }
+                else
+                {
+                    ErrorList.Insert(PrioLocation, ErrorMsg);
+                    PriorityList.Insert(PrioLocation, Priority);
+                }
+
+
             }
-           
 
         }
+            
+        
         return 0;
     }
 
@@ -153,7 +162,7 @@ public class ErrorHandler : MonoBehaviour {
         myText.SetText(ErrorList[0]);
         errorPanel.SetActive(true);
         
-        //source.PlayOneShot(error,VOL);
+        
 
     }
 
