@@ -569,7 +569,7 @@ public class StableCheckObject
                     // TODO remove this move to an error system
                     ErrorHandler.Instance.HandleError(0, "Warning: " + name + " low");
 
-                    DebugManager.Instance.LogUnityConsole(this.GetType().Name, "Warning: " + name + " low");
+                    DebugManager.Instance.LogSceneConsole("Warning: " + name + " low");
                     //ErrorHandler.Instance.HandleError(0, "Warning: " + name + " low");
 
                   
@@ -580,7 +580,7 @@ public class StableCheckObject
                     // TODO remove this move to an error system
                     ErrorHandler.Instance.HandleError(0, "Warning: " + name + " high");
 
-                    DebugManager.Instance.LogUnityConsole(this.GetType().Name, "Warning: " + name + " high");
+                    DebugManager.Instance.LogSceneConsole("Warning: " + name + " high");
                     //ErrorHandler.Instance.HandleError(0, "Warning: " + name + " high");
                     errorReady = false;
                 }
