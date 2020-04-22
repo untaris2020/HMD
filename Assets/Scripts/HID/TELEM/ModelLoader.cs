@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine.XR.MagicLeap;
+using System.Linq;
 
 public class ModelLoader : MonoBehaviour
 {
@@ -26,7 +27,7 @@ public class ModelLoader : MonoBehaviour
     private int page_index = 0;
     private int load_model;
     private bool ready_to_load = false;
-    public GameObject[] models;
+    public List<GameObject> models;
     public GameObject glove_model;
     private List<GameObject> loaded_models;
     private bool newIMUpacket;
@@ -62,10 +63,7 @@ public class ModelLoader : MonoBehaviour
         newIMUpacket = false;
         firstPacket = false; 
         
-        NUMOFMODELS = models.Length;
-        DebugManager.Instance.LogBoth(this.GetType().Name, NUMOFMODELS + " models loaded.");
-        NUMOFPAGES = (int)System.Math.Ceiling((double)NUMOFMODELS / 5);
-        DebugManager.Instance.LogUnityConsole("PAGES", NUMOFPAGES.ToString());
+        
 
         HeadTracking ht = GameObject.Find("SceneManager").GetComponent<HeadTracking>();
 
@@ -125,12 +123,20 @@ public class ModelLoader : MonoBehaviour
         input = new forceSensorManager.fingerInput(0, 0, 0, 1, 0);
         ht.registerForceCollider(telem_panel2Col.name + "3", telem_panel2Col.name, tmpDelegate0, input);
 
-        for (int i=0; i<models.Length; i++) {
+        for (int i=0; i<models.Count; i++) {
             if (models[i] == null) {
-                GameObject temp = new GameObject("NULL");
+                //models.RemoveAt(i);
+                GameObject temp = new GameObject("RemoveElement");
                 models[i] = temp;
             }
         }
+
+        models.RemoveAll(item => item.name == "RemoveElement");
+
+        NUMOFMODELS = models.Count;
+        DebugManager.Instance.LogBoth(this.GetType().Name, NUMOFMODELS + " models loaded.");
+        NUMOFPAGES = (int)System.Math.Ceiling((double)NUMOFMODELS / 5);
+        DebugManager.Instance.LogUnityConsole("PAGES", NUMOFPAGES.ToString());
 
         UpdateUI();
         misc_text.SetText("");
@@ -215,7 +221,7 @@ public class ModelLoader : MonoBehaviour
 
             int tmp_index = i + (page_index * 5);
             // TODO need to check if in bounds of array
-            if (tmp_index >=0 && tmp_index < models.Length)
+            if (tmp_index >=0 && tmp_index < models.Count)
             {
                 modelTexts[i].SetText(models[tmp_index].name);
             } else
@@ -250,6 +256,10 @@ public class ModelLoader : MonoBehaviour
 
     private void LoadModel(int pos)
     {
+        if (models.Count <= page_index * 5 + pos) {
+            return;
+        }
+
         if(mode != MOV_MODE.IMU)
         {
             if (!_controllerConnectionHandler.IsControllerValid()) //this is error condition
@@ -380,7 +390,7 @@ public class ModelLoader : MonoBehaviour
 
     private void pressCurrentHighlighted()
     {
-        switch(currentHighlighted)
+        switch(currentHighlighted % 5)
         {
             case 0:
                 LoadModel0(); 
@@ -415,7 +425,7 @@ public class ModelLoader : MonoBehaviour
     }
     private void downCurrentHighlight()
     {
-        if(currentHighlighted < (models.Length -1))
+        if(currentHighlighted < (models.Count - 1))
         {
             currentHighlighted++; 
             if(currentHighlighted % 5 == 0)

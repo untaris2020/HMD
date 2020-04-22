@@ -51,12 +51,10 @@ public class tcpPacket:MonoBehaviour
         bool part2 = (s.Available == 0);
         if (part1 && part2)
         {
-            Debug.Log("FALSE: " + part1 + " " + part2);
             return false;
         }   
         else
         {
-            Debug.Log("TRUE: " + part1 + " " + part2);
             return true;
         }
             
