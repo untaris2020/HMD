@@ -8,25 +8,36 @@ using UnityEngine;
 
 public class tcpPacket:MonoBehaviour
 {
-    
     /// <summary>
     /// Private data types
     /// Connected value if stream is active
     /// Cli data type that stores active socket connection
     /// </summary>
-    
     protected bool connected;
     protected TcpClient cli;
     protected int seqID;
     protected string debugName;
-    protected bool setParam = true; 
+    protected bool setParam = true;
+
+    public int POLL_TIMEOUT = 1000;
 
     protected void Start()
     {
         setParam = true;
     }
 
-
+    protected void Update()
+    {
+        if(connected && cli != null)
+        {
+            if(!SocketConnected(cli.Client))
+            {
+                connected = false; 
+            }
+            reportStatus(); 
+        }
+        
+    }
     public virtual void initialize(TcpClient client)
     {
         seqID = -1;
@@ -34,6 +45,22 @@ public class tcpPacket:MonoBehaviour
         connected = true;
     }
 
+    bool SocketConnected(Socket s)
+    {
+        bool part1 = s.Poll(POLL_TIMEOUT, SelectMode.SelectRead);
+        bool part2 = (s.Available == 0);
+        if (part1 && part2)
+        {
+            Debug.Log("FALSE: " + part1 + " " + part2);
+            return false;
+        }   
+        else
+        {
+            Debug.Log("TRUE: " + part1 + " " + part2);
+            return true;
+        }
+            
+    }
 
     /// <summary>
     /// processPacket virtual function that must be override to parse TCPPacket
@@ -112,5 +139,4 @@ public class tcpPacket:MonoBehaviour
     public void setCli(TcpClient client) { cli = client; }
     #endregion
 }
-
 
