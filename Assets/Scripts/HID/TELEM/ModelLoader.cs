@@ -331,6 +331,7 @@ public class ModelLoader : MonoBehaviour
 
             loaded_models.Add( (GameObject)Instantiate(models[model_index], glove_model.transform));
             DebugManager.Instance.LogBoth("INFO", "Loading 3D Model " + models[model_index].name);
+            instructions_text.SetText("Loading 3D Model " + models[model_index].name);
 
             load_model = -1;
             glove_model.GetComponent<Renderer>().enabled = false;
