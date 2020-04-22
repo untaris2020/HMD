@@ -311,6 +311,7 @@ public class ModelLoader : MonoBehaviour
         if(!IMU_GLOVE.getConnected())
         {
             DebugManager.Instance.LogBoth("MODEL LOADER: ERROR GLOVE IMU NOT CONNECTED");
+            return;
         }
         else
         {

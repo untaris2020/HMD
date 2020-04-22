@@ -17,7 +17,9 @@ public class forceSensorManager : tcpPacket
     private bool GloveActive;
     private bool newPacket;
     private bool newInput;
+    private bool destroyCamera = false;
     fingerInput currentInput; 
+
     private delegate void functionDelegate();
 
     public struct fingerInput
@@ -70,6 +72,11 @@ public class forceSensorManager : tcpPacket
             newInput = false;
             ht.forceClick(currentInput); 
         }
+        if(destroyCamera)
+        {
+            CamerasManager.Instance.destroyCam();
+            destroyCamera = false;
+        }
     }
 
 
@@ -78,7 +85,7 @@ public class forceSensorManager : tcpPacket
         if(CamerasManager.Instance.getFrameActive())
         {
             //We have an active frame 
-            CamerasManager.Instance.destroyCam();
+            destroyCamera = true;
         }
         else
         {
