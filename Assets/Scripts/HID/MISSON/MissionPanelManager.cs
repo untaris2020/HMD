@@ -712,6 +712,7 @@ public class MissionPanelManager : MonoBehaviour
             return;
         }
         currentPage = page;
+        currentHighlighted = 0;
         // function overload
         //DebugManager.Instance.LogUnityConsole("Correct Load page");
 
