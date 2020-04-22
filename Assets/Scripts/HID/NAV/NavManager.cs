@@ -41,6 +41,7 @@ public class NavManager : MonoBehaviour
 
     public CameraHandler GLOVE_CAM;
     public CameraHandler REAR_CAM;
+    public forceSensorManager FORCE_SENSOR; 
     bool rearviewCamStatus;
     bool gloveCamStatus;
     public GameObject _camera, _arrow, _world_center;
@@ -318,16 +319,49 @@ public class NavManager : MonoBehaviour
 
     void ToggleRearviewCam() {
         gloveCamStatus = false;
-        rearviewCamStatus = !rearviewCamStatus;
-
-        UpdateCamStatus();
+        if(!rearviewCamStatus && FORCE_SENSOR.getConnected() && REAR_CAM.getConnected())
+        {
+            rearviewCamStatus = !rearviewCamStatus;
+            UpdateCamStatus();
+        }
+        else if(rearviewCamStatus)
+        {
+            rearviewCamStatus = !rearviewCamStatus;
+            UpdateCamStatus();
+        }
+        else if(!REAR_CAM.getConnected())
+        {
+            ErrorHandler.Instance.HandleError(0,"NO REARVIEW CAM CONNECTED"); 
+        }
+        else if(!FORCE_SENSOR.getConnected())
+        {
+            ErrorHandler.Instance.HandleError(0,"NO FORCE SENSOR CONNECTED");     
+        }
+        
+        
     }
 
     void ToggleGloveCam() {
         rearviewCamStatus = false;
-        gloveCamStatus = !gloveCamStatus;
-
-        UpdateCamStatus();
+        if(!gloveCamStatus && FORCE_SENSOR.getConnected() && REAR_CAM.getConnected())
+        {
+            gloveCamStatus = !gloveCamStatus;
+            UpdateCamStatus();
+        }
+        else if(gloveCamStatus)
+        {
+            gloveCamStatus = !gloveCamStatus;
+            UpdateCamStatus();
+        }
+        else if(!GLOVE_CAM.getConnected())
+        {
+            ErrorHandler.Instance.HandleError(0,"NO GLOVE CAM CONNECTED"); 
+        }
+        else if(!FORCE_SENSOR.getConnected())
+        {
+            ErrorHandler.Instance.HandleError(0,"NO FORCE SENSOR CONNECTED");     
+        }
+        
     }
 
     void UpdateCamStatus() {
