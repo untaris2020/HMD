@@ -623,6 +623,7 @@ public class MissionPanelManager : MonoBehaviour
     {
         if (currentPage == 0)
         {
+            currentHighlighted = 0;
             LoadPage(1);
             SuperMissionFlag = false;
             MissionFlag = true;
@@ -634,6 +635,7 @@ public class MissionPanelManager : MonoBehaviour
         else if(currentPage == 1)
         {
             //DebugManager.Instance.LogUnityConsole("Panel2Press");
+            currentHighlighted = 0;
             LoadPage(2);
             SuperMissionFlag = false;
             MissionFlag = false;
@@ -643,6 +645,7 @@ public class MissionPanelManager : MonoBehaviour
         }
         else if(currentPage == 2)
         {
+            currentHighlighted = 0;
             LoadPage(3);
             SuperMissionFlag = false;
             MissionFlag = false;
@@ -652,6 +655,7 @@ public class MissionPanelManager : MonoBehaviour
         }
         else if(currentPage == 3)
         {
+            currentHighlighted = 0;
             LoadPage(0);
             SuperMissionFlag = true;
             MissionFlag = false;
@@ -678,7 +682,7 @@ public class MissionPanelManager : MonoBehaviour
             TOffset += 5;
         else
             STOffset += 5;
-
+        currentHighlighted = 0;
     }
     public void backPage()
     {
@@ -690,7 +694,7 @@ public class MissionPanelManager : MonoBehaviour
             TOffset -= 5;
         else
             STOffset -= 5;
-
+        currentHighlighted = 4;
 
     }
 
