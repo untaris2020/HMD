@@ -105,8 +105,14 @@ public class startBehavior : MonoBehaviour
         FORCE_SENSOR.setConnected(false); 
 
         //Toggle Camera inactive
-        NM.PressRearviewOFF();
-        NM.PressGloveOFF();
+        if(NavManager.Instance.getHeadCam())
+        {
+            NavManager.Instance.ToggleRearviewCam();
+        }
+        if(NavManager.Instance.getGloveCam())
+        {
+            NavManager.Instance.ToggleGloveCam();
+        }
 
         //Toggle Waypoint incactive
         if(NM.getRTHStat())
