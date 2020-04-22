@@ -1087,7 +1087,7 @@ public class MissionPanelManager : MonoBehaviour
             if (gesture_number == 5)
             {
                 //side scroll marker
-                Debug.Log("sidescroll");
+                //Debug.Log("sidescroll");
                 GameObject temp = Instantiate(DebugManager.Instance.sideScrollMarker, ob.transform);
                 // set offset
                 temp.transform.localScale = new Vector3(0.08333334f, 0.08333334f, 0.08333334f);
@@ -1114,8 +1114,8 @@ public class MissionPanelManager : MonoBehaviour
     void FadeOutGestureMarkers()
     {
 
-        Debug.Log(gestureMarkers.Count);
-        Debug.Log("Fading out...");
+        //Debug.Log(gestureMarkers.Count);
+        //Debug.Log("Fading out...");
         foreach (GameObject obj in gestureMarkers)
         {
             if (obj != null)
