@@ -50,6 +50,8 @@ public class ErrorHandler : MonoBehaviour {
     }
     void Start () {
         windowActive = false;
+        errorPanel.SetActive(false);
+        myText.SetText("");
         //source = GetComponent<AudioSource>();
 
         HeadTracking ht = GameObject.Find("SceneManager").GetComponent<HeadTracking>();

@@ -5,8 +5,9 @@ using System.Collections.Generic;
 using System.IO;
 using TMPro;
 using UnityEngine.UI;
+using System.Linq;
 
-public class MissionPanelManager : MonoBehaviour 
+public class MissionPanelManager : MonoBehaviour
 {
     [SerializeField] private string MissionServerURL;
     private string InputJSON;
@@ -14,7 +15,14 @@ public class MissionPanelManager : MonoBehaviour
     public TextAsset textFile;
     public StyleSheet style;
 
+    bool isScriptLoaded = false;
+
+    List<GameObject> gestureMarkers = new List<GameObject>();
+
     public delegate void Button0Delegate();
+
+    public GameObject Page0Col;
+    private bool page0RenderState;
 
     //Arrow game object
     public GameObject upArrow;
@@ -44,7 +52,7 @@ public class MissionPanelManager : MonoBehaviour
     public TextMeshProUGUI Page;
 
 
-
+    private IEnumerator coroutine;
 
     //Set count of all tasks
     //int SMissionCount = 0;
@@ -77,15 +85,22 @@ public class MissionPanelManager : MonoBehaviour
     public int STOffset = 0;
 
     //public List<int> SuperMissions;
+    forceSensorManager.fingerInput input;
+    public int currentHighlighted;
+    public int currentPage;
+    Transform[] obj;
 
-    
+    int counter = 1;
 
     // Use this for initialization
     void Start()
     {
+        //coroutine = GetUserPOSLoop(3);
+        //StartCoroutine(coroutine);
 
-        
-
+        page0RenderState = false;
+        currentHighlighted = 0;
+        currentPage = -1;
         createColliders();
         //Set default selections to 0 on start
         SuperMissionNumber = 0;
@@ -94,20 +109,22 @@ public class MissionPanelManager : MonoBehaviour
         SubTaskNumber = 0;
 
 
-
+        //LoadPage(0);
         panel1Press();
+        isScriptLoaded = true;
 
         upArrow.SetActive(false);
-        
+
+
+
     }
-    
+
     void Awake()
     {
         string InputJSON = textFile.text;
         //DebugManager.Instance.LogUnityConsole("JSON INPUT: " + InputJSON);
 
         MissionContainerInstance = MissionContainer.CreateFromJSON(InputJSON);
-
     }
 
     void Update()
@@ -128,15 +145,85 @@ public class MissionPanelManager : MonoBehaviour
         {
             displaySubTasks();
         }
+
+        if(currentHighlighted == 0)
+        {
+            button1C.GetComponent<MeshRenderer>().material = StyleSheet.Instance.Highlighted;
+            button2C.GetComponent<MeshRenderer>().material = StyleSheet.Instance.NonHighlighted;
+            button3C.GetComponent<MeshRenderer>().material = StyleSheet.Instance.NonHighlighted;
+            button4C.GetComponent<MeshRenderer>().material = StyleSheet.Instance.NonHighlighted;
+            button5C.GetComponent<MeshRenderer>().material = StyleSheet.Instance.NonHighlighted;
+        }
+        else if(currentHighlighted == 1)
+        {
+            button1C.GetComponent<MeshRenderer>().material = StyleSheet.Instance.NonHighlighted;
+            button2C.GetComponent<MeshRenderer>().material = StyleSheet.Instance.Highlighted;
+            button3C.GetComponent<MeshRenderer>().material = StyleSheet.Instance.NonHighlighted;
+            button4C.GetComponent<MeshRenderer>().material = StyleSheet.Instance.NonHighlighted;
+            button5C.GetComponent<MeshRenderer>().material = StyleSheet.Instance.NonHighlighted;
+        }
+        else if (currentHighlighted == 2)
+        {
+            button1C.GetComponent<MeshRenderer>().material = StyleSheet.Instance.NonHighlighted;
+            button2C.GetComponent<MeshRenderer>().material = StyleSheet.Instance.NonHighlighted;
+            button3C.GetComponent<MeshRenderer>().material = StyleSheet.Instance.Highlighted;
+            button4C.GetComponent<MeshRenderer>().material = StyleSheet.Instance.NonHighlighted;
+            button5C.GetComponent<MeshRenderer>().material = StyleSheet.Instance.NonHighlighted;
+        }
+        else if (currentHighlighted == 3)
+        {
+            button1C.GetComponent<MeshRenderer>().material = StyleSheet.Instance.NonHighlighted;
+            button2C.GetComponent<MeshRenderer>().material = StyleSheet.Instance.NonHighlighted;
+            button3C.GetComponent<MeshRenderer>().material = StyleSheet.Instance.NonHighlighted;
+            button4C.GetComponent<MeshRenderer>().material = StyleSheet.Instance.Highlighted;
+            button5C.GetComponent<MeshRenderer>().material = StyleSheet.Instance.NonHighlighted;
+        }
+        else if (currentHighlighted == 4)
+        {
+            button1C.GetComponent<MeshRenderer>().material = StyleSheet.Instance.NonHighlighted;
+            button2C.GetComponent<MeshRenderer>().material = StyleSheet.Instance.NonHighlighted;
+            button3C.GetComponent<MeshRenderer>().material = StyleSheet.Instance.NonHighlighted;
+            button4C.GetComponent<MeshRenderer>().material = StyleSheet.Instance.NonHighlighted;
+            button5C.GetComponent<MeshRenderer>().material = StyleSheet.Instance.Highlighted;
+        }
         //MissionContainerInstance.printData();
-        
+
+    }
+
+    private IEnumerator GetUserPOSLoop(float waitTime)
+    {
+        while (true)
+        {
+            if (counter == 1)
+            {
+
+                input = new forceSensorManager.fingerInput(0, 0, 0, 0, 1);
+                //DebugManager.Instance.LogUnityConsole("Counter 1");
+
+            }
+            if (counter == 2)
+            {
+                input = new forceSensorManager.fingerInput(0, 0, 0, 1, 0);
+                //DebugManager.Instance.LogUnityConsole("Counter 2");
+            }
+            if (counter == 3)
+            {
+                input = new forceSensorManager.fingerInput(0, 0, 1, 0, 0);
+                //DebugManager.Instance.LogUnityConsole("Counter 3");
+            }
+
+            yield return new WaitForSeconds(waitTime);
+            counter += 1;
+        }
+
+
     }
 
     public void displaySuperMissions()
     {
         int SMissionCount = MissionContainerInstance.SuperMissions.Count;
-        
-        //Debug.Log("SMission Count: " + SMissionCount);
+
+
 
         if (SMissionCount - SMOffset <= 5)
         {
@@ -178,7 +265,7 @@ public class MissionPanelManager : MonoBehaviour
         if (SMissionCount - SMOffset > 4)
             button5.SetText(MissionContainerInstance.SuperMissions[4 + SMOffset].SuperMissionText);
 
-        if(SMissionCount - SMOffset == 1)
+        if (SMissionCount - SMOffset == 1)
         {
             button2.SetText("");
             button3.SetText("");
@@ -203,9 +290,9 @@ public class MissionPanelManager : MonoBehaviour
 
         Index.SetText("Index");
         int pages = 1;
-        if(SMissionCount > 5)
+        if (SMissionCount > 5)
             pages = SMissionCount % 5 + 1;
-   
+
         if (SMOffset == 0)
             Page.SetText("Page 1/" + pages);
         else if (SMOffset == 5)
@@ -326,7 +413,7 @@ public class MissionPanelManager : MonoBehaviour
             upArrow.SetActive(true);
         }
 
-        
+
         if (taskCount - TOffset > 0)
             button1.SetText(MissionContainerInstance.SuperMissions[SuperMissionNumber].Missions[MissionNumber].Tasks[0 + TOffset].TaskText);
         if (taskCount - TOffset > 1)
@@ -361,7 +448,7 @@ public class MissionPanelManager : MonoBehaviour
             button5.SetText("");
         }
 
-        Index.SetText(SuperMissionNumber+1 + "." + (MissionNumber+1) + ".");
+        Index.SetText(SuperMissionNumber + 1 + "." + (MissionNumber + 1) + ".");
 
         int pages = 1;
         if (taskCount > 5)
@@ -393,7 +480,7 @@ public class MissionPanelManager : MonoBehaviour
             downArrowR.SetActive(true);
             downArrow.SetActive(true);
         }
-            
+
 
         if (STOffset == 0)
         {
@@ -407,10 +494,9 @@ public class MissionPanelManager : MonoBehaviour
             upArrowR.SetActive(true);
             upArrow.SetActive(true);
         }
-           
 
-        
-        Debug.Log("SubTask Count: " + StaskCount);
+
+
         if (StaskCount - STOffset > 0)
             button1.SetText(MissionContainerInstance.SuperMissions[SuperMissionNumber].Missions[MissionNumber].Tasks[TaskNumber].SubTasks[0 + STOffset].SubTaskText);
         if (StaskCount - STOffset > 1)
@@ -464,10 +550,10 @@ public class MissionPanelManager : MonoBehaviour
 
     public void createColliders()
     {
-
+        
         HeadTracking ht = GameObject.Find("SceneManager").GetComponent<HeadTracking>();
 
-
+        forceSensorManager.fingerInput input = new forceSensorManager.fingerInput(0, 0, 0, 0, 1);
         Button0Delegate tmpDelegate0 = new Button0Delegate(nextPage);
         ht.registerCollider(downArrow.GetComponent<Collider>().name, tmpDelegate0);
         functionDebug.Instance.registerFunction(this.GetType().Name + "_tab0", tmpDelegate0);
@@ -497,20 +583,47 @@ public class MissionPanelManager : MonoBehaviour
         functionDebug.Instance.registerFunction(this.GetType().Name + "_tab0", tmpDelegate6);
 
         Button0Delegate tmpDelegate7 = new Button0Delegate(panel1Press);
-        ht.registerCollider(panels[0].GetComponent<Collider>().name, tmpDelegate7);
+        ht.registerCollider(panels[0].GetComponent<Collider>().name, Page0Col.name, tmpDelegate7, input);
         functionDebug.Instance.registerFunction(this.GetType().Name + "_tab0", tmpDelegate7);
 
         Button0Delegate tmpDelegate8 = new Button0Delegate(panel2Press);
-        ht.registerCollider(panels[1].GetComponent<Collider>().name, tmpDelegate8);
+        ht.registerCollider(panels[1].GetComponent<Collider>().name, Page0Col.name, tmpDelegate8, input);
         functionDebug.Instance.registerFunction(this.GetType().Name + "_tab0", tmpDelegate8);
 
         Button0Delegate tmpDelegate9 = new Button0Delegate(panel3Press);
-        ht.registerCollider(panels[2].GetComponent<Collider>().name, tmpDelegate9);
+        ht.registerCollider(panels[2].GetComponent<Collider>().name, Page0Col.name, tmpDelegate9, input);
         functionDebug.Instance.registerFunction(this.GetType().Name + "_tab0", tmpDelegate9);
 
         Button0Delegate tmpDelegate10 = new Button0Delegate(panel4Press);
-        ht.registerCollider(panels[3].GetComponent<Collider>().name, tmpDelegate10);
+        ht.registerCollider(panels[3].GetComponent<Collider>().name, Page0Col.name, tmpDelegate10, input);
         functionDebug.Instance.registerFunction(this.GetType().Name + "_tab0", tmpDelegate10);
+
+        Button0Delegate tmpDelegate11 = new Button0Delegate(onViewTogglePG0);
+        ht.registerToggleCollider(Page0Col.name, tmpDelegate11);
+
+        Button0Delegate tmpDelegate12 = new Button0Delegate(pressCurrentHighlighted);
+        input = new forceSensorManager.fingerInput(0, 1, 0, 0, 0);
+        ht.registerForceCollider(Page0Col.name + "1", Page0Col.name, tmpDelegate12, input);
+
+        Button0Delegate tmpDelegate13 = new Button0Delegate(upCurrentHighlight);
+        input = new forceSensorManager.fingerInput(0, 0, 1, 0, 0);
+        ht.registerForceCollider(Page0Col.name + "2", Page0Col.name, tmpDelegate13, input);
+
+        Button0Delegate tmpDelegate14 = new Button0Delegate(downCurrentHighlight);
+        input = new forceSensorManager.fingerInput(0, 0, 0, 1, 0);
+        ht.registerForceCollider(Page0Col.name + "3", Page0Col.name, tmpDelegate14, input);
+
+
+
+
+    }
+    public void panelHandler()
+    {
+
+
+
+
+
     }
 
     public void nextPage()
@@ -536,20 +649,32 @@ public class MissionPanelManager : MonoBehaviour
             TOffset -= 5;
         else
             STOffset -= 5;
-        
+
 
     }
 
     public void LoadPage(int page)
     {
+
+        if (isScriptLoaded)
+        {
+            DestroyGestureMarkers();
+            InstantiateGestureMarkers();
+
+        }
+        if(page == currentPage)
+        {
+            return;
+        }
+        currentPage = page;
         // function overload
         DebugManager.Instance.LogUnityConsole("Correct Load page");
 
         DebugManager.Instance.LogUnityConsole(this.GetType().Name, "Page " + page + " Loaded.");
-        
+
         //if(Verbose)
         //{
-            
+
         //}
 
         // Set all buttons material to inactive
@@ -562,7 +687,7 @@ public class MissionPanelManager : MonoBehaviour
         panels[page].GetComponent<MeshRenderer>().material = style.Highlighted;
 
 
-        
+
 
         // add any custom logic here if needed
 
@@ -571,7 +696,7 @@ public class MissionPanelManager : MonoBehaviour
 
     public void button1Press()
     {
-        
+
 
         if (SuperMissionFlag)
         {
@@ -605,10 +730,10 @@ public class MissionPanelManager : MonoBehaviour
                 SubTaskNumber = STOffset;
                 displayPicture = true;
             }
-            
+
 
         }
-        
+
 
     }
 
@@ -778,6 +903,7 @@ public class MissionPanelManager : MonoBehaviour
 
     public void panel1Press()
     {
+        //DebugManager.Instance.LogUnityConsole("Panel1Press");
         LoadPage(0);
         SuperMissionFlag = true;
         MissionFlag = false;
@@ -786,6 +912,7 @@ public class MissionPanelManager : MonoBehaviour
     }
     public void panel2Press()
     {
+        //DebugManager.Instance.LogUnityConsole("Panel2Press");
         LoadPage(1);
         SuperMissionFlag = false;
         MissionFlag = true;
@@ -809,6 +936,204 @@ public class MissionPanelManager : MonoBehaviour
         SubTaskFlag = true;
     }
 
+    public void onViewTogglePG0()
+    {
+        page0RenderState = !page0RenderState;
+
+        if (page0RenderState)
+        {
+            InstantiateGestureMarkers();
+        }
+        else
+        {
+            FadeOutGestureMarkers();
+        }
+
+    }
+
+    void InstantiateGestureMarkers()
+    {
+        if (!InputSystemStatus.Instance.GetShowGestureIndicators())
+        {
+            return;
+        }
+
+        DestroyGestureMarkers();
+        obj = GetComponentsInChildren<Transform>(true);
+
+        // get all buttons if any
+        foreach (var ob in obj.Where(ob => (ob != transform)))
+        {
+            int gesture_number = -1;
+
+            if (ob.CompareTag("gesture_1"))
+            {
+                gesture_number = 1;
+            }
+            else if (ob.CompareTag("gesture_2"))
+            {
+                gesture_number = 2;
+            }
+            else if (ob.CompareTag("gesture_3"))
+            {
+                gesture_number = 3;
+            }
+            else if (ob.CompareTag("gesture_4"))
+            {
+                gesture_number = 4;
+            }
+            else if (ob.CompareTag("gesture_sidescroll"))
+            {
+                gesture_number = 5;
+            }
+
+            if (gesture_number == 5)
+            {
+                //side scroll marker
+                Debug.Log("sidescroll");
+                GameObject temp = Instantiate(DebugManager.Instance.sideScrollMarker, ob.transform);
+                // set offset
+                temp.transform.localScale = new Vector3(0.08333334f, 0.08333334f, 0.08333334f);
+                temp.transform.localEulerAngles = new Vector3(0f, 0f, 0f);
+                temp.transform.localPosition = new Vector3(-0.4575001f, -0.064f, -0.05166666f);
+                //temp.transform.position 
+                gestureMarkers.Add(temp);
+            }
+            else if (gesture_number != -1)
+            {
+                // regurlar number marker
+
+                GameObject temp = Instantiate(DebugManager.Instance.gestureMarkers[gesture_number - 1], ob.transform);
+                // set offset
+                temp.transform.localScale = new Vector3(0.0015f, 0.002f, 0.002f);
+                temp.transform.localEulerAngles = new Vector3(0f, -180f, 0f);
+                temp.transform.localPosition = new Vector3(-0.00252f, 0.00203f, 0.099f);
+                //temp.transform.position 
+                gestureMarkers.Add(temp);
+            }
+        }
+    }
+
+    void FadeOutGestureMarkers()
+    {
+
+        Debug.Log(gestureMarkers.Count);
+        Debug.Log("Fading out...");
+        foreach (GameObject obj in gestureMarkers)
+        {
+            if (obj != null)
+            {
+                FadeInOut temp = obj.GetComponent<FadeInOut>();
+                temp.FadeOut();
+            }
+        }
+    }
+
+    void DestroyGestureMarkers()
+    {
+        foreach (GameObject obj in gestureMarkers)
+        {
+            // can you destroy a null object? idk might need to null check
+            Destroy(obj);
+        }
+        gestureMarkers.Clear();
+    }
+
+    private void pressCurrentHighlighted()
+    {
+        switch (currentHighlighted)
+        {
+            case 0:
+                button1Press();
+                break;
+            case 1:
+                button2Press();
+                break;
+            case 2:
+                button3Press();
+                break;
+            case 3:
+                button4Press();
+                break;
+            case 4:
+                button5Press();
+                break;
+        }
+    }
+
+    private void upCurrentHighlight()
+    {
+        if (currentHighlighted > 0)
+        {
+            currentHighlighted--;
+            if (currentHighlighted % 5 == 4)
+            {
+                backPage();
+
+            }
+
+        }
+    }
+    private void downCurrentHighlight()
+    {
+        if (SuperMissionFlag)
+        {
+            if (currentHighlighted < (SuperMissionNumber - 1))
+            {
+                currentHighlighted++;
+                if (currentHighlighted % 5 == 0)
+                {
+                    nextPage();
+
+                }
+
+            }
+
+        }
+        else if (MissionFlag)
+        {
+            if (currentHighlighted < (MissionNumber - 1))
+            {
+                currentHighlighted++;
+                if (currentHighlighted % 5 == 0)
+                {
+                    nextPage();
+
+                }
+
+            }
+
+        }
+        else if (TaskFlag)
+        {
+            if (currentHighlighted < (TaskNumber - 1))
+            {
+                currentHighlighted++;
+                if (currentHighlighted % 5 == 0)
+                {
+                    nextPage();
+
+                }
+
+            }
+
+        }
+        else if (SubTaskFlag)
+        {
+            if (currentHighlighted < (SubTaskNumber - 1))
+            {
+                currentHighlighted++;
+                if (currentHighlighted % 5 == 0)
+                {
+                    nextPage();
+
+                }
+
+            }
+
+        }
+
+    }
 
 }
 
