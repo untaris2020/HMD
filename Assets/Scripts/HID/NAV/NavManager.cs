@@ -11,7 +11,7 @@ public class NavManager : MonoBehaviour
     // TODO 
     // 1) create backup system
     // 2) fix persistant behivior
-    NavManager Instance;
+    public static NavManager Instance;
 
     public GameObject rearviewToggleButton, gloveToggleButton, rthButton, showallButton;
     public Material buttonMat, buttonHoverMat, headerMat, headerHoverMat;
@@ -318,7 +318,7 @@ public class NavManager : MonoBehaviour
         
     }
 
-    void ToggleRearviewCam() {
+    public void ToggleRearviewCam() {
        
         if(!rearviewCamStatus && FORCE_SENSOR.getConnected() && REAR_CAM.getConnected())
         {
@@ -344,7 +344,7 @@ public class NavManager : MonoBehaviour
         
     }
 
-    void ToggleGloveCam() {
+    public void ToggleGloveCam() {
         
         if(!gloveCamStatus && FORCE_SENSOR.getConnected() && GLOVE_CAM.getConnected())
         {
