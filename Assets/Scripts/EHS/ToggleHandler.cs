@@ -49,6 +49,7 @@ public class ToggleHandler : tcpPacket
 
     void Update()
     {
+        base.Update();
         if(newPacket)
         {
             if(MODE == packetICD.Toggle_Mode.CHEST)

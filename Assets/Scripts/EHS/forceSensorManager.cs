@@ -67,6 +67,7 @@ public class forceSensorManager : tcpPacket
 
     void Update()
     {
+        base.Update(); 
         if(newInput)
         {
             //Call reworked force sensor here. 
