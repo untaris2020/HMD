@@ -574,7 +574,7 @@ PrefabInstance:
     - target: {fileID: 7477457557372352461, guid: ef7b0b778ef438d4fa839ceaf6afddbb,
         type: 3}
       propertyPath: IP
-      value: 192.168.1.4
+      value: 192.168.254.123
       objectReference: {fileID: 0}
     - target: {fileID: 7639089696926368934, guid: ef7b0b778ef438d4fa839ceaf6afddbb,
         type: 3}
@@ -2442,7 +2442,7 @@ PrefabInstance:
     - target: {fileID: 5946311688459297505, guid: 30691d7d711b425408f2d5ab5dbdedcf,
         type: 3}
       propertyPath: runState
-      value: 2
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 6003968411056746085, guid: 30691d7d711b425408f2d5ab5dbdedcf,
         type: 3}
@@ -3717,7 +3717,7 @@ PrefabInstance:
     - target: {fileID: 4930816357271775978, guid: 853e5fa3f16f642458c799dfa68f631a,
         type: 3}
       propertyPath: ignoreIMU
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4930816357271775978, guid: 853e5fa3f16f642458c799dfa68f631a,
         type: 3}
