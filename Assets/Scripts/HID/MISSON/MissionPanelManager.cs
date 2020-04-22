@@ -1114,9 +1114,14 @@ public class MissionPanelManager : MonoBehaviour
 
     private void upCurrentHighlight()
     {
-        if (currentHighlighted > 0)
+        DebugManager.Instance.LogUnityConsole("Current highlighted: " + currentHighlighted);
+        if (currentHighlighted > 0 || (SuperMissionFlag && (SMOffset!=0)) || (MissionFlag && (MOffset != 0)) || (TaskFlag && (TOffset != 0)) || (SubTaskFlag && (STOffset != 0)))
         {
-            currentHighlighted--;
+            if(currentHighlighted == 0)
+                currentHighlighted = 4;
+            else
+             currentHighlighted--;
+
             if (currentHighlighted % 5 == 4)
             {
                 backPage();
