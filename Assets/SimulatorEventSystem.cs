@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System;
 using UnityEngine.Audio;
 
 public class SimulatorEventSystem : MonoBehaviour
@@ -20,19 +21,30 @@ public class SimulatorEventSystem : MonoBehaviour
     public GameObject[] soilSamples;
     public AudioClip soil_audio;
 
-    float VOL = 1.7f;
+    List<PlaceOfIntrest> placesOfInterest = new List<PlaceOfIntrest>();
+    //List<GameObject> placesOfIntrestMarkers = new List<GameObject>();
+    public GameObject marker;
+
+    //float VOL = 1.7f;
     float interactionDistance = 15;
     bool has_fixed_mmsev = false;
 
     void Start()
     {
         source = hid.GetComponent<AudioSource>();
+
+        placesOfInterest.Add(new PlaceOfIntrest(mmsev_broken, marker));
+
+        foreach (var obj in soilSamples) {
+            placesOfInterest.Add(new PlaceOfIntrest(obj, marker));
+        }
+        
     }
 
     // Update is called once per frame
     void Update()
     {
-
+        
     }
 
     public void CheckUserEvent(GameObject user) {
@@ -55,6 +67,7 @@ public class SimulatorEventSystem : MonoBehaviour
     }
 
     void CollectSample(GameObject sample) {
+        UserVisited(sample);
         source.PlayOneShot(soil_audio, 1.0f);
         GameObject probaParticleClone = Instantiate(soilParticleSystem, sample.transform.position, Quaternion.Euler(new Vector3(-90f, 0f, 0f))) as GameObject;
         Destroy(probaParticleClone, 4);
@@ -62,6 +75,8 @@ public class SimulatorEventSystem : MonoBehaviour
     }
 
     void FixMMSEV() {
+        UserVisited(mmsev_broken);
+
         source.PlayOneShot(mmsev_audio, 1.0f);
         //mmsev_tire.transform.position = Vector3.MoveTowards();
 
@@ -95,5 +110,34 @@ public class SimulatorEventSystem : MonoBehaviour
         }
     }
 
+    void UserVisited(GameObject obj) {
+        Debug.Log("Uservisited: " + obj.name);
+        foreach  (PlaceOfIntrest place in placesOfInterest) {
+            if (place.parentInstanceID == obj.GetInstanceID()) {
+                place.hasUserInteracted = true;
+                place.marker.SetActive(false);
+            }
+        }
+    }
+
+    public class PlaceOfIntrest {
+        public int parentInstanceID;
+        public GameObject marker;
+
+        public bool hasUserInteracted = false;
+
+        public PlaceOfIntrest(GameObject _parent, GameObject _marker) {
+            parentInstanceID = _parent.GetInstanceID();
+
+            if (_marker != null) {
+                
+                marker = Instantiate(_marker, _parent.transform.position + new Vector3(0, 55f, 0f), Quaternion.Euler(new Vector3(-90f, 0f, 0f)));
+                marker.SetActive(true);
+            }
+        }
+    }
 
 }
+
+
+
