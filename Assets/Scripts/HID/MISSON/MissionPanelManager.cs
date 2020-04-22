@@ -291,7 +291,7 @@ public class MissionPanelManager : MonoBehaviour
         Index.SetText("Index");
         int pages = 1;
         if (SMissionCount > 5)
-            pages = SMissionCount % 5 + 1;
+            pages = SMissionCount / 5 + 1;
 
         if (SMOffset == 0)
             Page.SetText("Page 1/" + pages);
@@ -371,7 +371,7 @@ public class MissionPanelManager : MonoBehaviour
 
         int pages = 1;
         if (MissionCount > 5)
-            pages = MissionCount % 5 + 1;
+            pages = MissionCount / 5 + 1;
 
         if (MOffset == 0)
             Page.SetText("Page 1/" + pages);
@@ -452,7 +452,7 @@ public class MissionPanelManager : MonoBehaviour
 
         int pages = 1;
         if (taskCount > 5)
-            pages = taskCount % 5 + 1;
+            pages = taskCount / 5 + 1;
 
         if (TOffset == 0)
             Page.SetText("Page 1/" + pages);
@@ -535,7 +535,7 @@ public class MissionPanelManager : MonoBehaviour
 
         int pages = 1;
         if (StaskCount > 5)
-            pages = StaskCount % 5 + 1;
+            pages = StaskCount / 5 + 1;
 
         if (STOffset == 0)
             Page.SetText("Page 1/" + pages);
@@ -553,7 +553,7 @@ public class MissionPanelManager : MonoBehaviour
         
         HeadTracking ht = GameObject.Find("SceneManager").GetComponent<HeadTracking>();
 
-        forceSensorManager.fingerInput input = new forceSensorManager.fingerInput(0, 0, 0, 0, 1);
+        //forceSensorManager.fingerInput input = new forceSensorManager.fingerInput(0, 0, 0, 0, 1);
         Button0Delegate tmpDelegate0 = new Button0Delegate(nextPage);
         ht.registerCollider(downArrow.GetComponent<Collider>().name, tmpDelegate0);
         functionDebug.Instance.registerFunction(this.GetType().Name + "_tab0", tmpDelegate0);
@@ -583,19 +583,19 @@ public class MissionPanelManager : MonoBehaviour
         functionDebug.Instance.registerFunction(this.GetType().Name + "_tab0", tmpDelegate6);
 
         Button0Delegate tmpDelegate7 = new Button0Delegate(panel1Press);
-        ht.registerCollider(panels[0].GetComponent<Collider>().name, Page0Col.name, tmpDelegate7, input);
+        ht.registerCollider(panels[0].GetComponent<Collider>().name, tmpDelegate7);
         functionDebug.Instance.registerFunction(this.GetType().Name + "_tab0", tmpDelegate7);
 
         Button0Delegate tmpDelegate8 = new Button0Delegate(panel2Press);
-        ht.registerCollider(panels[1].GetComponent<Collider>().name, Page0Col.name, tmpDelegate8, input);
+        ht.registerCollider(panels[1].GetComponent<Collider>().name, tmpDelegate8);
         functionDebug.Instance.registerFunction(this.GetType().Name + "_tab0", tmpDelegate8);
 
         Button0Delegate tmpDelegate9 = new Button0Delegate(panel3Press);
-        ht.registerCollider(panels[2].GetComponent<Collider>().name, Page0Col.name, tmpDelegate9, input);
+        ht.registerCollider(panels[2].GetComponent<Collider>().name, tmpDelegate9);
         functionDebug.Instance.registerFunction(this.GetType().Name + "_tab0", tmpDelegate9);
 
         Button0Delegate tmpDelegate10 = new Button0Delegate(panel4Press);
-        ht.registerCollider(panels[3].GetComponent<Collider>().name, Page0Col.name, tmpDelegate10, input);
+        ht.registerCollider(panels[3].GetComponent<Collider>().name, tmpDelegate10);
         functionDebug.Instance.registerFunction(this.GetType().Name + "_tab0", tmpDelegate10);
 
         Button0Delegate tmpDelegate11 = new Button0Delegate(onViewTogglePG0);
@@ -613,13 +613,54 @@ public class MissionPanelManager : MonoBehaviour
         input = new forceSensorManager.fingerInput(0, 0, 0, 1, 0);
         ht.registerForceCollider(Page0Col.name + "3", Page0Col.name, tmpDelegate14, input);
 
-
+        Button0Delegate tmpDelegate15 = new Button0Delegate(forcePanelPress);
+        input = new forceSensorManager.fingerInput(0, 0, 0, 0, 1);
+        ht.registerForceCollider(Page0Col.name + "4", Page0Col.name, tmpDelegate15, input);
 
 
     }
-    public void panelHandler()
+    public void forcePanelPress()
     {
+        if (currentPage == 0)
+        {
+            LoadPage(1);
+            SuperMissionFlag = false;
+            MissionFlag = true;
+            TaskFlag = false;
+            SubTaskFlag = false;
+            //currentPage++;
 
+        }
+        else if(currentPage == 1)
+        {
+            //DebugManager.Instance.LogUnityConsole("Panel2Press");
+            LoadPage(2);
+            SuperMissionFlag = false;
+            MissionFlag = false;
+            TaskFlag = true;
+            SubTaskFlag = false;
+            //currentPage++;
+        }
+        else if(currentPage == 2)
+        {
+            LoadPage(3);
+            SuperMissionFlag = false;
+            MissionFlag = false;
+            TaskFlag = false;
+            SubTaskFlag = true;
+            //currentPage++;
+        }
+        else if(currentPage == 3)
+        {
+            LoadPage(0);
+            SuperMissionFlag = true;
+            MissionFlag = false;
+            TaskFlag = false;
+            SubTaskFlag = false;
+            //currentPage = 0;
+        }
+        DebugManager.Instance.LogUnityConsole("Current page: " + currentPage);
+        
 
 
 
@@ -909,6 +950,8 @@ public class MissionPanelManager : MonoBehaviour
         MissionFlag = false;
         TaskFlag = false;
         SubTaskFlag = false;
+        currentPage = 0;
+        
     }
     public void panel2Press()
     {
@@ -918,6 +961,7 @@ public class MissionPanelManager : MonoBehaviour
         MissionFlag = true;
         TaskFlag = false;
         SubTaskFlag = false;
+        currentPage = 1;
     }
     public void panel3Press()
     {
@@ -926,6 +970,7 @@ public class MissionPanelManager : MonoBehaviour
         MissionFlag = false;
         TaskFlag = true;
         SubTaskFlag = false;
+        currentPage = 2;
     }
     public void panel4Press()
     {
@@ -934,6 +979,7 @@ public class MissionPanelManager : MonoBehaviour
         MissionFlag = false;
         TaskFlag = false;
         SubTaskFlag = true;
+        currentPage = 3;
     }
 
     public void onViewTogglePG0()
@@ -1078,7 +1124,8 @@ public class MissionPanelManager : MonoBehaviour
     {
         if (SuperMissionFlag)
         {
-            if (currentHighlighted < (SuperMissionNumber - 1))
+            int SMissionCount = MissionContainerInstance.SuperMissions.Count;
+            if (currentHighlighted < SMissionCount - 1)
             {
                 currentHighlighted++;
                 if (currentHighlighted % 5 == 0)
@@ -1092,7 +1139,8 @@ public class MissionPanelManager : MonoBehaviour
         }
         else if (MissionFlag)
         {
-            if (currentHighlighted < (MissionNumber - 1))
+            int MissionCount = MissionContainerInstance.SuperMissions[SuperMissionNumber].Missions.Count;
+            if (currentHighlighted < (MissionCount - 1))
             {
                 currentHighlighted++;
                 if (currentHighlighted % 5 == 0)
@@ -1106,7 +1154,8 @@ public class MissionPanelManager : MonoBehaviour
         }
         else if (TaskFlag)
         {
-            if (currentHighlighted < (TaskNumber - 1))
+            int taskCount = MissionContainerInstance.SuperMissions[SuperMissionNumber].Missions[MissionNumber].Tasks.Count;
+            if (currentHighlighted < (taskCount - 1))
             {
                 currentHighlighted++;
                 if (currentHighlighted % 5 == 0)
@@ -1120,7 +1169,8 @@ public class MissionPanelManager : MonoBehaviour
         }
         else if (SubTaskFlag)
         {
-            if (currentHighlighted < (SubTaskNumber - 1))
+            int StaskCount = MissionContainerInstance.SuperMissions[SuperMissionNumber].Missions[MissionNumber].Tasks[TaskNumber].SubTasks.Count;
+            if (currentHighlighted < (StaskCount - 1))
             {
                 currentHighlighted++;
                 if (currentHighlighted % 5 == 0)

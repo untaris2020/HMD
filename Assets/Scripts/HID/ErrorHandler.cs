@@ -128,9 +128,19 @@ public class ErrorHandler : MonoBehaviour {
         }
         else
         {
+
             int PrioLocation = PriorityList.IndexOf(Priority);
-            ErrorList.Insert(PrioLocation, ErrorMsg);
-            PriorityList.Insert(PrioLocation, Priority);
+            if(PrioLocation == 0)
+            {
+                ErrorList.Add(ErrorMsg);
+                PriorityList.Add(Priority);
+            }
+            else
+            {
+                ErrorList.Insert(PrioLocation, ErrorMsg);
+                PriorityList.Insert(PrioLocation, Priority);
+            }
+           
 
         }
         return 0;
@@ -142,6 +152,11 @@ public class ErrorHandler : MonoBehaviour {
         //float trans = 0f;
         myText.SetText(ErrorList[0]);
         errorPanel.SetActive(true);
+        for(int i=0; i < ErrorList.Count; i++)
+        {
+            DebugManager.Instance.LogUnityConsole("Error list at " + i + ": " + ErrorList[i]);
+
+        }
         //source.PlayOneShot(error,VOL);
 
     }
