@@ -27,7 +27,7 @@ public class IMUHandler : tcpPacket
     public void Start()
     {
         base.Start();
-        Debug.Log("START IMU");
+        //Debug.Log("START IMU");
         seqID = -1; 
         connected = false;
         if (MODE == packetICD.IMU_Mode.CHEST)

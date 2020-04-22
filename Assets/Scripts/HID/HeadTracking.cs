@@ -113,7 +113,7 @@ public class HeadTracking : MonoBehaviour
             foreach (RaycastHit hit in hits)
             {
                 string collidedName = hit.collider.name;
-                Debug.Log("HIT: " + collidedName);
+                //Debug.Log("HIT: " + collidedName);
 
                 if(InputSystemStatus.Instance.GetUseGaze())
                 {

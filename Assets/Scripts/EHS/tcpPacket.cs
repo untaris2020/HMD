@@ -91,7 +91,7 @@ public class tcpPacket:MonoBehaviour
 
     public void reportStatus()
     {
-        Debug.Log("SETTING PARAM FOR " + debugName);
+        //Debug.Log("SETTING PARAM FOR " + debugName);
         string report; 
         if(connected)
         {
