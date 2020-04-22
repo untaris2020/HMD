@@ -66,7 +66,7 @@ public class tcpPacket:MonoBehaviour
                 byte[] serverMessageAsByteArray = Encoding.ASCII.GetBytes(message);
                 // Write byte array to socketConnection stream.               
                 stream.Write(serverMessageAsByteArray, 0, serverMessageAsByteArray.Length);
-                Debug.Log("Stream Write Returned");
+                //Debug.Log("Stream Write Returned");
             }
         }
         catch (SocketException socketException)

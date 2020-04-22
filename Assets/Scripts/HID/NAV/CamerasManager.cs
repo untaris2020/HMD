@@ -30,16 +30,21 @@ public class CamerasManager : MonoBehaviour
     RenderTexture rearViewCamRenderTexture;
     RenderTexture gloveCamRenderTexture;
 
-    private bool frameActive;
+    private bool frameActive = false;
     public bool getFrameActive() { return frameActive; }
 
     public void spawnCam()
     {
+        Debug.Log("spawn cam");
         ImageHolder.SetActive(true);
+        frameActive = true;
+        Debug.Log(ImageHolder.activeSelf);
     }
     public void destroyCam()
     {
+        Debug.Log("Destroy cam");
         ImageHolder.SetActive(false);
+        frameActive = false;
     }
 
     private void Awake()

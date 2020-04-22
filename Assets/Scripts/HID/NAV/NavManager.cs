@@ -11,6 +11,7 @@ public class NavManager : MonoBehaviour
     // TODO 
     // 1) create backup system
     // 2) fix persistant behivior
+    NavManager Instance;
 
     public GameObject rearviewToggleButton, gloveToggleButton, rthButton, showallButton;
     public Material buttonMat, buttonHoverMat, headerMat, headerHoverMat;
@@ -71,7 +72,7 @@ public class NavManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-
+        Instance = this;
         gloveCamStatus = false;
         rearviewCamStatus = false;
 
@@ -123,7 +124,7 @@ public class NavManager : MonoBehaviour
 
     private void OnDestroy() 
     {
-        
+        Instance = null;
     }
 
     // Update is called once per frame
@@ -318,16 +319,17 @@ public class NavManager : MonoBehaviour
     }
 
     void ToggleRearviewCam() {
-        gloveCamStatus = false;
+       
         if(!rearviewCamStatus && FORCE_SENSOR.getConnected() && REAR_CAM.getConnected())
         {
-            rearviewCamStatus = !rearviewCamStatus;
-            UpdateCamStatus();
+            gloveCamStatus = false;
+            rearviewCamStatus = true;
+            PressRearviewON();
         }
         else if(rearviewCamStatus)
         {
-            rearviewCamStatus = !rearviewCamStatus;
-            UpdateCamStatus();
+            rearviewCamStatus = false;
+            PressRearviewOFF();
         }
         else if(!REAR_CAM.getConnected())
         {
@@ -337,21 +339,23 @@ public class NavManager : MonoBehaviour
         {
             ErrorHandler.Instance.HandleError(0,"NO FORCE SENSOR CONNECTED");     
         }
-        
+
+        UpdateUI();
         
     }
 
     void ToggleGloveCam() {
-        rearviewCamStatus = false;
-        if(!gloveCamStatus && FORCE_SENSOR.getConnected() && REAR_CAM.getConnected())
+        
+        if(!gloveCamStatus && FORCE_SENSOR.getConnected() && GLOVE_CAM.getConnected())
         {
-            gloveCamStatus = !gloveCamStatus;
-            UpdateCamStatus();
+            rearviewCamStatus = false;
+            gloveCamStatus = true;
+            PressGloveON();
         }
         else if(gloveCamStatus)
         {
-            gloveCamStatus = !gloveCamStatus;
-            UpdateCamStatus();
+            gloveCamStatus = false;
+            PressGloveOFF();
         }
         else if(!GLOVE_CAM.getConnected())
         {
@@ -361,31 +365,17 @@ public class NavManager : MonoBehaviour
         {
             ErrorHandler.Instance.HandleError(0,"NO FORCE SENSOR CONNECTED");     
         }
-        
-    }
-
-    void UpdateCamStatus() {
-        if (rearviewCamStatus) {
-            PressRearviewON();
-        } else {
-            PressRearviewOFF();
-        }
-
-        if (gloveCamStatus) {
-            PressGloveON();
-        } else {
-            PressGloveOFF();
-        }
 
         UpdateUI();
+        
     }
 
 
     public void PressRearviewON()
     {
         // spawn camera
-        camerasManager.spawnCam();
-        
+        CamerasManager.Instance.spawnCam();
+        Debug.Log("head on");
         if(REAR_CAM.getConnected())
         {
             Debug.Log("START STREAM");
@@ -401,7 +391,8 @@ public class NavManager : MonoBehaviour
     {
         
         //Despawn camera
-        camerasManager.destroyCam();
+        
+        CamerasManager.Instance.destroyCam();
         if(REAR_CAM.getConnected())
         {
             REAR_CAM.stopStream();
@@ -416,7 +407,8 @@ public class NavManager : MonoBehaviour
     {
 
         Debug.Log("glove on");
-        camerasManager.spawnCam();
+        CamerasManager.Instance.spawnCam();
+
         if(GLOVE_CAM.getConnected())
         {
             GLOVE_CAM.startStream();
@@ -429,7 +421,7 @@ public class NavManager : MonoBehaviour
 
     public void PressGloveOFF() {
 
-        camerasManager.destroyCam();
+        CamerasManager.Instance.destroyCam();
         if (GLOVE_CAM.getConnected()) {
             GLOVE_CAM.stopStream();
         } else {
