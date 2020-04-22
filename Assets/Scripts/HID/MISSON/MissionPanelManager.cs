@@ -1130,7 +1130,7 @@ public class MissionPanelManager : MonoBehaviour
         if (SuperMissionFlag)
         {
             int SMissionCount = MissionContainerInstance.SuperMissions.Count;
-            if (currentHighlighted < SMissionCount - 1)
+            if (currentHighlighted < SMissionCount-SMOffset - 1)
             {
                 currentHighlighted++;
                 if (currentHighlighted % 5 == 0)
@@ -1145,7 +1145,7 @@ public class MissionPanelManager : MonoBehaviour
         else if (MissionFlag)
         {
             int MissionCount = MissionContainerInstance.SuperMissions[SuperMissionNumber].Missions.Count;
-            if (currentHighlighted < (MissionCount - 1))
+            if (currentHighlighted < (MissionCount-MOffset - 1))
             {
                 currentHighlighted++;
                 if (currentHighlighted % 5 == 0)
@@ -1160,7 +1160,7 @@ public class MissionPanelManager : MonoBehaviour
         else if (TaskFlag)
         {
             int taskCount = MissionContainerInstance.SuperMissions[SuperMissionNumber].Missions[MissionNumber].Tasks.Count;
-            if (currentHighlighted < (taskCount - 1))
+            if (currentHighlighted < (taskCount-TOffset - 1))
             {
                 currentHighlighted++;
                 if (currentHighlighted % 5 == 0)
@@ -1175,7 +1175,7 @@ public class MissionPanelManager : MonoBehaviour
         else if (SubTaskFlag)
         {
             int StaskCount = MissionContainerInstance.SuperMissions[SuperMissionNumber].Missions[MissionNumber].Tasks[TaskNumber].SubTasks.Count;
-            if (currentHighlighted < (StaskCount - 1))
+            if (currentHighlighted < (StaskCount-STOffset - 1))
             {
                 currentHighlighted++;
                 if (currentHighlighted % 5 == 0)
