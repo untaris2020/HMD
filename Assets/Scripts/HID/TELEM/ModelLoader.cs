@@ -310,33 +310,35 @@ public class ModelLoader : MonoBehaviour
 
         if(!IMU_GLOVE.getConnected())
         {
-            DebugManager.Instance.LogBoth("MODEL LOADER: ERROR CHEST IMU NOT CONNECTED");
+            DebugManager.Instance.LogBoth("MODEL LOADER: ERROR GLOVE IMU NOT CONNECTED");
         }
-
-        // Load and scale selected model
-        if (load_model == -1)
+        else
         {
-            DebugManager.Instance.LogBoth(this.GetType().Name, "ERROR: load_model number not set");
+             // Load and scale selected model
+            if (load_model == -1)
+            {
+                DebugManager.Instance.LogBoth(this.GetType().Name, "ERROR: load_model number not set");
+            }
+            int model_index = load_model + (page_index * 5);
+
+            // TODO
+            if (DebugManager.Instance.GetSimulatorMode()) {
+
+            } else {
+
+            }
+
+            loaded_models.Add( (GameObject)Instantiate(models[model_index], glove_model.transform));
+            DebugManager.Instance.LogBoth("INFO", "Loading 3D Model " + models[model_index].name);
+
+            load_model = -1;
+            glove_model.GetComponent<Renderer>().enabled = false;
+            instructions_text.SetText("");
+            ready_to_load = false;
+
+            //Start IMU stream 
+            IMU_GLOVE.startStream(); 
         }
-        int model_index = load_model + (page_index * 5);
-
-        // TODO
-        if (DebugManager.Instance.GetSimulatorMode()) {
-
-        } else {
-
-        }
-
-        loaded_models.Add( (GameObject)Instantiate(models[model_index], glove_model.transform));
-        DebugManager.Instance.LogBoth("INFO", "Loading 3D Model " + models[model_index].name);
-
-        load_model = -1;
-        glove_model.GetComponent<Renderer>().enabled = false;
-        instructions_text.SetText("");
-        ready_to_load = false;
-
-        //Start IMU stream 
-        IMU_GLOVE.startStream(); 
     }
 
     private void UpArrowButton()
