@@ -67,7 +67,7 @@ public class ToggleHandler : tcpPacket
 
     public override int processPacket(string packet)
     {
-        Debug.Log("Message Receieved From CLIENT");
+        //Debug.Log("Message Receieved From CLIENT");
         if(packet == "INACTIVE")
         {
             newPacket = true; 
