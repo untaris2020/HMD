@@ -743,7 +743,8 @@ public class MissionPanelManager : MonoBehaviour
     public void button1Press()
     {
 
-
+        if (!checkText(0))
+            return;
         if (SuperMissionFlag)
         {
             SuperMissionNumber = SMOffset;
@@ -785,6 +786,8 @@ public class MissionPanelManager : MonoBehaviour
 
     public void button2Press()
     {
+        if (!checkText(1))
+            return;
         if (SuperMissionFlag)
         {
             SuperMissionNumber = SMOffset + 1;
@@ -826,6 +829,8 @@ public class MissionPanelManager : MonoBehaviour
 
     public void button3Press()
     {
+        if (!checkText(2))
+            return;
         if (SuperMissionFlag)
         {
             SuperMissionNumber = SMOffset + 2;
@@ -867,6 +872,8 @@ public class MissionPanelManager : MonoBehaviour
 
     public void button4Press()
     {
+        if (!checkText(3))
+            return;
         if (SuperMissionFlag)
         {
             SuperMissionNumber = SMOffset + 3;
@@ -908,6 +915,8 @@ public class MissionPanelManager : MonoBehaviour
 
     public void button5Press()
     {
+        if (!checkText(4))
+            return;
         if (SuperMissionFlag)
         {
             SuperMissionNumber = SMOffset + 4;
@@ -985,6 +994,43 @@ public class MissionPanelManager : MonoBehaviour
         TaskFlag = false;
         SubTaskFlag = true;
         currentPage = 3;
+    }
+
+    public bool checkText(int num)
+    {
+
+        if (num == 0)
+        {
+            
+             if (button1.text == "")
+                 return false;
+           
+        }
+        else if (num == 1)
+        {
+            if (button2.text == "")
+                return false;
+        }
+        else if (num == 2)
+        {
+            if (button3.text == "")
+                return false;
+        }
+        else if (num == 3)
+        {
+            if (button4.text == "")
+                return false;
+        }
+        else if (num == 4)
+        {
+            if (button5.text == "")
+                return false;
+        }
+
+        return true;
+
+
+
     }
 
     public void onViewTogglePG0()
