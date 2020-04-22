@@ -659,7 +659,7 @@ public class MissionPanelManager : MonoBehaviour
             SubTaskFlag = false;
             //currentPage = 0;
         }
-        DebugManager.Instance.LogUnityConsole("Current page: " + currentPage);
+        //DebugManager.Instance.LogUnityConsole("Current page: " + currentPage);
         
 
 

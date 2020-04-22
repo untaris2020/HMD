@@ -152,11 +152,7 @@ public class ErrorHandler : MonoBehaviour {
         //float trans = 0f;
         myText.SetText(ErrorList[0]);
         errorPanel.SetActive(true);
-        for(int i=0; i < ErrorList.Count; i++)
-        {
-            DebugManager.Instance.LogUnityConsole("Error list at " + i + ": " + ErrorList[i]);
-
-        }
+        
         //source.PlayOneShot(error,VOL);
 
     }
