@@ -68,7 +68,7 @@ public class HeadLockScript : MonoBehaviour
             {
                 MLInput.Controller controller = _controllerConnectionHandler.ConnectedController;
 
-                Debug.Log("Controller Position Data: " + controller.Position);
+                //Debug.Log("Controller Position Data: " + controller.Position);
 
                 if (buttonPressed)
                 {
@@ -86,7 +86,7 @@ public class HeadLockScript : MonoBehaviour
 
                     this.transform.position = Vector3.Slerp(this.transform.position, temp, speed);
 
-                    Debug.Log("Controller Rotation Data: " + controller.Orientation);
+                    //Debug.Log("Controller Rotation Data: " + controller.Orientation);
 
                     Quaternion rot = (controller.Orientation * Quaternion.Inverse(DefaultRot));
                     this.transform.rotation = Quaternion.Slerp(this.transform.rotation, rot, speed);
