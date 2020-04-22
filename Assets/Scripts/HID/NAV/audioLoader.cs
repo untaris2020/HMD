@@ -20,9 +20,20 @@ public class audioLoader : MonoBehaviour
     private int currentPage;
     private AudioSource aud;
     private int currentHighlighted;
-    public Collider navPG3_col; 
+    public Collider navPG3_col;
+    private int playbackIdx = -1;
+    
+    public AudioSource getCurrSource() { return aud; }
 
-    private struct recording
+    //private recording currentRec; 
+    public int getPlayback() { return playbackIdx; }
+
+    public recording GetRecording(int indx)
+    {
+        return clips[indx]; 
+    }
+
+    public struct recording
     {
         public AudioClip clip;
         public string Name; 
@@ -86,13 +97,19 @@ public class audioLoader : MonoBehaviour
         UpdateList();
     }
 
-    private void playClip(int Box)
+    private void selectClip(int Box)
     {
         int idx = currentPage * 5 + Box;
         if(clips.Count > idx)
         {
-            aud.clip = clips[idx].clip;
-            aud.Play();
+            playbackIdx = idx;
+
+            audioManager am = GetComponent<audioManager>();
+            am.loadTitle();
+
+            //Need tab switch logic here 
+            NavPanelManager NPM = GetComponent<NavPanelManager>();
+            NPM.LoadPage(2);
         }
         else
         {
@@ -168,33 +185,53 @@ public class audioLoader : MonoBehaviour
 
     public void Box1Hit()
     {
-        currentHighlighted = 0;
+        int idx = currentPage * 5 + 0;
+        if(clips.Count > idx)
+        {
+            currentHighlighted = 0;
+            selectClip(0);
+        }
         UpdateList(); 
-        playClip(0);
     }
     public void Box2Hit()
     {
-        currentHighlighted = 1; 
+        int idx = currentPage * 5 + 1;
+        if(clips.Count > idx)
+        {
+            currentHighlighted = 1;
+            selectClip(1);
+        }
         UpdateList(); 
-        playClip(1);
     }
     public void Box3Hit()
     {
-        currentHighlighted = 2;
+        int idx = currentPage * 5 + 2;
+        if(clips.Count > idx)
+        {
+            currentHighlighted = 2;
+            selectClip(2);
+        }
         UpdateList(); 
-        playClip(2);
     }
     public void Box4Hit()
     {
-        currentHighlighted = 3;
+        int idx = currentPage * 5 + 3;
+        if(clips.Count > idx)
+        {
+            currentHighlighted = 3;
+            selectClip(3);
+        }
         UpdateList(); 
-        playClip(3);
     }
     public void Box5Hit()
     {
-        currentHighlighted = 4; 
+        int idx = currentPage * 5 + 4;
+        if(clips.Count > idx)
+        {
+            currentHighlighted = 4;
+            selectClip(4);
+        }
         UpdateList(); 
-        playClip(4);
     }
     public void upArrowHit()
     {
@@ -224,7 +261,7 @@ public class audioLoader : MonoBehaviour
 
     private void pressCurrentHighlighted()
     {
-       playClip(currentHighlighted%5);
+       selectClip(currentHighlighted%5);
     }
 
     private void upCurrentHighlight()
@@ -259,6 +296,30 @@ public class audioLoader : MonoBehaviour
         }
     }
 
+    public void unPause()
+    {
+        if(playbackIdx != -1)
+        {
+            aud.UnPause();
+        }
+    }
+
+    public void pauseAudio()
+    {
+        if(playbackIdx != -1)
+        {
+            aud.Pause();
+        }
+    }
+
+    public void restartAudio()
+    {
+        if(playbackIdx != -1)
+        {
+            aud.clip = clips[playbackIdx].clip;
+            aud.Play();
+        }
+    }
 
     public void LoadNewAudio(AudioClip clip, DateTime time, string Name)
     {
