@@ -93,7 +93,7 @@ public class forceSensorManager : tcpPacket
             //We have an active frame 
             destroyHeadCamera = true;
         }
-        if(NavManager.Instance.getGloveCam())
+        else if(NavManager.Instance.getGloveCam())
         {
             destroyGloveCamera = true;
         }
