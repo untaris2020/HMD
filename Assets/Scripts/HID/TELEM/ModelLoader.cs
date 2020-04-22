@@ -7,6 +7,7 @@ using System.Linq;
 public class ModelLoader : MonoBehaviour
 {
     // buttons
+    public MOV_MODE mode;
     public TelemPanelManager telem_panel_manager;
     public GameObject clearModelsBut, misc1Button, misc2Button, upButton, downButton, upArrow, _camera;
     public GameObject[] modelButtons;
@@ -26,12 +27,13 @@ public class ModelLoader : MonoBehaviour
     private int NUMOFPAGES;
     private int page_index = 0;
     private int load_model;
-    private bool ready_to_load = false;
     public List<GameObject> models;
     public GameObject glove_model;
+    public GameObject ModelList; 
     private List<GameObject> loaded_models;
     private bool newIMUpacket;
-    private bool firstPacket; 
+    private bool firstPacket;
+    private bool ready_to_load = false;
     private Quaternion rot;
     private Quaternion defaultRot; 
     private Vector3 pos;
@@ -44,7 +46,7 @@ public class ModelLoader : MonoBehaviour
         controller = 2, 
     }
 
-    public MOV_MODE mode;
+    
     private delegate void functionDelegate();
 
     [SerializeField]
@@ -57,25 +59,24 @@ public class ModelLoader : MonoBehaviour
     void Start()
     {
         loaded_models = new List<GameObject>();
-
+        
         currentHighlighted = 0; 
 
         newIMUpacket = false;
-        firstPacket = false; 
+        firstPacket = false;
+        //Future expansior below line should be removed to allow for multiple models
         
-        
-
         HeadTracking ht = GameObject.Find("SceneManager").GetComponent<HeadTracking>();
 
         // clear models button
         functionDelegate tmpDelegate0 = new functionDelegate(ClearModelsButton);
-        forceSensorManager.fingerInput input = new forceSensorManager.fingerInput(0, 1, 0, 0, 0);
+        forceSensorManager.fingerInput input = new forceSensorManager.fingerInput(0, 0, 1, 0, 0);
         ht.registerCollider(clearModelsBut.GetComponent<Collider>().name, telem_panel3Col.name, tmpDelegate0, input);
         functionDebug.Instance.registerFunction("clearModels", tmpDelegate0);
 
         // set position button
         tmpDelegate0 = new functionDelegate(Set3DModelPosition);
-        input = new forceSensorManager.fingerInput(0, 0, 1, 0, 0);
+        input = new forceSensorManager.fingerInput(0, 1, 0, 0, 0);
         ht.registerCollider(misc1Button.GetComponent<Collider>().name, telem_panel3Col.name, tmpDelegate0, input);
         functionDebug.Instance.registerFunction("set3DModelPosition", tmpDelegate0);
         
@@ -160,9 +161,9 @@ public class ModelLoader : MonoBehaviour
                     }
                     newIMUpacket = false;
                     float speed = Time.deltaTime * 12.0f;
-                    glove_model.transform.position = Vector3.Slerp(glove_model.transform.position, pos, speed);
+                    ModelList.transform.position = Vector3.Slerp(ModelList.transform.position, pos, speed);
                     rot = rot * Quaternion.Inverse(defaultRot);
-                    glove_model.transform.rotation = Quaternion.Slerp(glove_model.transform.rotation, rot, speed);
+                    ModelList.transform.rotation = Quaternion.Slerp(ModelList.transform.rotation, rot, speed);
                 }
             }
             else if (mode == MOV_MODE.BLEND)
@@ -178,9 +179,9 @@ public class ModelLoader : MonoBehaviour
                     }
                     newIMUpacket = false;
                     float speed = Time.deltaTime * 12.0f;
-                    glove_model.transform.position = Vector3.Slerp(glove_model.transform.position, _control.Position, speed);
+                    ModelList.transform.position = Vector3.Slerp(ModelList.transform.position, _control.Position, speed);
                     rot = rot * Quaternion.Inverse(defaultRot);
-                    glove_model.transform.rotation = Quaternion.Slerp(glove_model.transform.rotation, rot, speed);
+                    ModelList.transform.rotation = Quaternion.Slerp(ModelList.transform.rotation, rot, speed);
                 }
             }
             else if (mode == MOV_MODE.controller)
@@ -188,8 +189,8 @@ public class ModelLoader : MonoBehaviour
                 if (loaded_models.Count > 0)
                 {
                     float speed = Time.deltaTime * 12.0f;
-                    glove_model.transform.position = Vector3.Slerp(glove_model.transform.position, _control.Position, speed);
-                    glove_model.transform.rotation = Quaternion.Slerp(glove_model.transform.rotation, _control.Orientation, speed);
+                    ModelList.transform.position = Vector3.Slerp(ModelList.transform.position, _control.Position, speed);
+                    ModelList.transform.rotation = Quaternion.Slerp(ModelList.transform.rotation, _control.Orientation, speed);
                 }
             }
         }
@@ -260,6 +261,8 @@ public class ModelLoader : MonoBehaviour
             return;
         }
 
+        ClearModelsButton(); 
+
         if(mode != MOV_MODE.IMU)
         {
             if (!_controllerConnectionHandler.IsControllerValid()) //this is error condition
@@ -318,7 +321,7 @@ public class ModelLoader : MonoBehaviour
             return;
         }
 
-        if(!IMU_GLOVE.getConnected())
+        if(!IMU_GLOVE.getConnected() && mode != MOV_MODE.controller)
         {
             DebugManager.Instance.LogBoth("MODEL LOADER: ERROR GLOVE IMU NOT CONNECTED");
             return;
@@ -339,13 +342,13 @@ public class ModelLoader : MonoBehaviour
 
             }
 
-            loaded_models.Add( (GameObject)Instantiate(models[model_index], glove_model.transform));
+            loaded_models.Add( (GameObject)Instantiate(models[model_index], ModelList.transform));
             DebugManager.Instance.LogBoth("INFO", "Loading 3D Model " + models[model_index].name);
             instructions_text.SetText("Loading 3D Model " + models[model_index].name);
 
             load_model = -1;
             glove_model.GetComponent<Renderer>().enabled = false;
-            instructions_text.SetText("");
+            instructions_text.SetText("Click the \"CLEAR ALL");
             ready_to_load = false;
 
             //Start IMU stream 
