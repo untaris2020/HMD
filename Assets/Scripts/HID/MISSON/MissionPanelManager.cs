@@ -668,9 +668,9 @@ public class MissionPanelManager : MonoBehaviour
         }
         currentPage = page;
         // function overload
-        DebugManager.Instance.LogUnityConsole("Correct Load page");
+        //DebugManager.Instance.LogUnityConsole("Correct Load page");
 
-        DebugManager.Instance.LogUnityConsole(this.GetType().Name, "Page " + page + " Loaded.");
+        //DebugManager.Instance.LogUnityConsole(this.GetType().Name, "Page " + page + " Loaded.");
 
         //if(Verbose)
         //{

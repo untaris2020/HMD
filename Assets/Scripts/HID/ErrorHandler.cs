@@ -96,8 +96,8 @@ public class ErrorHandler : MonoBehaviour {
             //Debug.Log("Do I run lol");
             ErrorList.Add(ErrorMsg);
             PriorityList.Add(Priority);
-            Debug.Log(ErrorList.Count);
-            Debug.Log(ErrorMsg);
+            //Debug.Log(ErrorList.Count);
+            //Debug.Log(ErrorMsg);
 
         }
         else if(Priority < PriorityList[0])
