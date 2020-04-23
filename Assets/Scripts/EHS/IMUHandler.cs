@@ -110,6 +110,15 @@ public class IMUHandler : tcpPacket
                     y = (float.Parse(tmp[6]));
                     z = (float.Parse(tmp[7]));
 
+                    if (MODE == packetICD.IMU_Mode.CHEST)
+                    {
+                        DebugManager.Instance.LogUnityConsole("Chest IMU, xAccel: " + xAccel + " yAccel: " + yAccel + " zAccel: " + zAccel + " QuaW: " + w + " QuaX: " + x + " Quay: " + y + " QuaZ " + z);
+                    }
+                    else
+                    {
+                        DebugManager.Instance.LogUnityConsole("Glove IMU, xAccel: " + xAccel + " yAccel: " + yAccel + " zAccel: " + zAccel + " QuaW: " + w + " QuaX: " + x + " Quay: " + y + " QuaZ " + z);
+                    }
+
                     imuDataSmoothing();
                 }
             }
