@@ -51,16 +51,22 @@ public class ToggleHandler : tcpPacket
 
     protected override void handleDiscon()
     {
+
         if (MODE == packetICD.Toggle_Mode.CHEST)
         {
-            ErrorHandler.Instance.HandleError(0, "TOGGLE CHEST: ERROR LOST CONNECTION");
-            DebugManager.Instance.LogBoth("TOGGLE CHEST: ERROR LOST CONNECTION");
+            ErrorHandler.Instance.HandleError(0, "CHEST TOGGLE: ERROR LOST CONNECTION");
+            DebugManager.Instance.LogBoth("CHEST TOGGLE: ERROR LOST CONNECTION");
 
             //We need to hide the HID until connection is back as well as stop playback, clear models and camera
             //Toggle 3D inactive 
             ML.ClearModelsButton();
 
             AM.stopPlayBack();
+
+            if(AM.getRecording())
+            {
+                AM.recordingHit(); //This should stop recording
+            }
 
             //Toggle Camera inactive
             if (NavManager.Instance.getHeadCam())
@@ -76,8 +82,9 @@ public class ToggleHandler : tcpPacket
         }
         else
         {
-            ErrorHandler.Instance.HandleError(0, "GLOVE IMU: ERROR LOST CONNECTION");
-            DebugManager.Instance.LogBoth("GLOVE IMU: ERROR LOST CONNECTION");
+            ErrorHandler.Instance.HandleError(0, "GLOVE TOGGLE: ERROR LOST CONNECTION");
+            DebugManager.Instance.LogBoth("GLOVE TOGGLE: ERROR LOST CONNECTION");
+            
             //If glove is down clear all models 
             ML.ClearModelsButton();
 
@@ -88,6 +95,8 @@ public class ToggleHandler : tcpPacket
 
             InputSystemStatus.Instance.ChangeGloveStatus(false);
         }
+
+
         base.handleDiscon();
     }
 
@@ -104,7 +113,18 @@ public class ToggleHandler : tcpPacket
             else if(MODE == packetICD.Toggle_Mode.GLOVE)
             {
                 //Disable glove scripts here 
-                gloveObj.GetComponent<IMUHandler>().setConnected(false); 
+                //Debug.Log("Setting glove to discon");
+                if(gloveObj.GetComponent<IMUHandler>().getConnected())
+                {
+                    gloveObj.GetComponent<IMUHandler>().setConnected(false); 
+
+                    ErrorHandler.Instance.HandleError(0, "GLOVE IMU: ERROR LOST CONNECTION");
+                    DebugManager.Instance.LogBoth("GLOVE IMU: ERROR LOST CONNECTION");
+                    //If glove is down clear all models 
+                     ML.ClearModelsButton();
+                }
+               
+
             }
             newPacket = false; 
         }
@@ -113,7 +133,7 @@ public class ToggleHandler : tcpPacket
 
     public override int processPacket(string packet)
     {
-        //Debug.Log("Message Receieved From CLIENT");
+        //Debug.Log("Message Receieved From CLIENT: " + packet);
         if(packet == "INACTIVE")
         {
             newPacket = true; 

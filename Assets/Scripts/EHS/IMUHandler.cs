@@ -52,6 +52,8 @@ public class IMUHandler : tcpPacket
 
     protected override void handleDiscon()
     {
+        //Debug.Log("Discon IMU: " + MODE.ToString());
+
         if(MODE == packetICD.IMU_Mode.CHEST)
         {
             ErrorHandler.Instance.HandleError(0, "CHEST IMU: ERROR LOST CONNECTION");
@@ -61,6 +63,10 @@ public class IMUHandler : tcpPacket
             ML.ClearModelsButton();
 
             AM.stopPlayBack(); 
+            if(AM.getRecording())
+            {
+                AM.recordingHit(); //This should stop recording
+            }
 
             //Toggle Camera inactive
             if(NavManager.Instance.getHeadCam())

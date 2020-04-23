@@ -17,25 +17,25 @@ public class packetICD : MonoBehaviour
         HEAD_CAM = 4, 
         GLOVE_CAM = 5, 
         FORCE_SENSOR = 6,
-        TOGGLE_GLOVE = 7,
+        TOGGLE_GLOVE = 7
     }
 
     public enum IMU_Mode
     {
         CHEST = 0,
-        GLOVE = 1,
+        GLOVE = 1
     }
 
     public enum CAM_Mode
     {
         HEAD = 0,
-        GLOVE = 1,
+        GLOVE = 1
     }
     
     public enum Toggle_Mode
     {
         CHEST = 0, 
-        GLOVE = 1, 
+        GLOVE = 1
     }
 
     public struct Header
