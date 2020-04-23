@@ -319,7 +319,11 @@ public class NavManager : MonoBehaviour
     }
 
     public void ToggleRearviewCam() {
-       
+       if (gloveCamStatus) {
+            PressGloveOFF();
+
+        }
+
         if(!rearviewCamStatus && FORCE_SENSOR.getConnected() && REAR_CAM.getConnected())
         {
             gloveCamStatus = false;
@@ -345,7 +349,10 @@ public class NavManager : MonoBehaviour
     }
 
     public void ToggleGloveCam() {
-        
+        if (rearviewCamStatus) {
+            PressRearviewOFF();
+        }
+
         if(!gloveCamStatus && FORCE_SENSOR.getConnected() && GLOVE_CAM.getConnected())
         {
             rearviewCamStatus = false;

@@ -113,7 +113,7 @@ public class HeadLockScript : MonoBehaviour
 
     public void updateHIDwithIMU(float w, float x, float y, float z)
     { 
-        rot = new Quaternion(-x,-z,-y,w);
+        rot = new Quaternion(-x,-y,-z,w);
         updateWithIMU = true; 
     }
 
