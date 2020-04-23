@@ -22,11 +22,14 @@ public class IMUHandler : tcpPacket
     private float yAccel;
     private float zAccel;
 
+    private int count;
+
     
     private delegate void functionDelegate();
 
     public void Start()
     {
+        count = 0;
         base.Start();
         //Debug.Log("START IMU");
         seqID = -1; 
@@ -116,6 +119,17 @@ public class IMUHandler : tcpPacket
                     y = (float.Parse(tmp[6]));
                     z = (float.Parse(tmp[7]));
 
+                    if (MODE == packetICD.IMU_Mode.CHEST)
+                    {
+                        if(count%100 == 0)
+                            DebugManager.Instance.LogUnityConsole("Chest IMU, xAccel: " + xAccel + " yAccel: " + yAccel + " zAccel: " + zAccel + " QuaW: " + w + " QuaX: " + x + " Quay: " + y + " QuaZ " + z);
+                    }
+                    else
+                    {
+                        if (count%100 == 0)
+                            DebugManager.Instance.LogUnityConsole("Glove IMU, xAccel: " + xAccel + " yAccel: " + yAccel + " zAccel: " + zAccel + " QuaW: " + w + " QuaX: " + x + " Quay: " + y + " QuaZ " + z);
+                    }
+                    count++;
                     imuDataSmoothing();
                 }
             }
