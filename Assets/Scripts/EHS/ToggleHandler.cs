@@ -17,6 +17,8 @@ public class ToggleHandler : tcpPacket
     public GameObject startScene; 
     private bool GloveActive;
     public GameObject gloveObj;
+    public ModelLoader ML;
+    public audioManager AM; 
     private bool newPacket;
 
     private delegate void functionDelegate();
@@ -46,6 +48,49 @@ public class ToggleHandler : tcpPacket
         functionDebug.Instance.registerFunction(NAME + "start", startDelegate);
         functionDebug.Instance.registerFunction(NAME + "stop", stopDelegate);
     }
+
+    protected override void handleDiscon()
+    {
+        if (MODE == packetICD.Toggle_Mode.CHEST)
+        {
+            ErrorHandler.Instance.HandleError(0, "TOGGLE CHEST: ERROR LOST CONNECTION");
+            DebugManager.Instance.LogBoth("TOGGLE CHEST: ERROR LOST CONNECTION");
+
+            //We need to hide the HID until connection is back as well as stop playback, clear models and camera
+            //Toggle 3D inactive 
+            ML.ClearModelsButton();
+
+            AM.stopPlayBack();
+
+            //Toggle Camera inactive
+            if (NavManager.Instance.getHeadCam())
+            {
+                NavManager.Instance.ToggleRearviewCam();
+            }
+            if (NavManager.Instance.getGloveCam())
+            {
+                NavManager.Instance.ToggleGloveCam();
+            }
+            //Toggle HID invis 
+            startBehavior.instance.DisableHID(); 
+        }
+        else
+        {
+            ErrorHandler.Instance.HandleError(0, "GLOVE IMU: ERROR LOST CONNECTION");
+            DebugManager.Instance.LogBoth("GLOVE IMU: ERROR LOST CONNECTION");
+            //If glove is down clear all models 
+            ML.ClearModelsButton();
+
+            if(NavManager.Instance.getGloveCam())
+            {
+                NavManager.Instance.ToggleGloveCam();
+            }
+
+            InputSystemStatus.Instance.ChangeGloveStatus(false);
+        }
+        base.handleDiscon();
+    }
+
 
     void Update()
     {

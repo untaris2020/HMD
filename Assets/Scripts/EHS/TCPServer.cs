@@ -38,7 +38,8 @@ public class TCPServer : MonoBehaviour
     private Thread tcpListenerThread; // Background thread for TcpServer workload.
     private TcpClient tempTcpClient;
 
-   
+    private string MSG;
+    private bool newMSG = false; 
 
 
     //public GameObject SYSTEM;
@@ -65,6 +66,15 @@ public class TCPServer : MonoBehaviour
         }
     }
 
+    void Update()
+    {
+        if(newMSG)
+        {
+            DebugManager.Instance.LogBoth("TCP SERVER: " + MSG);
+            MSG = "";
+            newMSG = false;
+        }
+    }
 
     void Start()
     {
@@ -93,14 +103,16 @@ public class TCPServer : MonoBehaviour
             {
                 tempTcpClient = tcpListener.AcceptTcpClient();
                 // TODO this is causing called from a new thread error
-                //DebugManager.Instance.LogBoth("New Client Connection: " + ((IPEndPoint)tempTcpClient.Client.RemoteEndPoint).Address.ToString());
+                MSG =("New Client Connection: " + ((IPEndPoint)tempTcpClient.Client.RemoteEndPoint).Address.ToString());
+                newMSG = true; 
                 Thread clientThread = new Thread(new ParameterizedThreadStart(HandleClientComm));
                 clientThread.Start(tempTcpClient);
             }
         }
         catch (SocketException socketException)
         {
-            Debug.Log("SocketException " + socketException.ToString());
+            MSG = "SocketException " + socketException.ToString();
+            newMSG = true; 
         }
     }
 
@@ -229,7 +241,6 @@ public class TCPServer : MonoBehaviour
                             }
                             else
                             {
-                                Debug.Log("Got body message");
                                 FORCE_SENSOR.processPacket(body);
                             }
                             break;
@@ -247,7 +258,8 @@ public class TCPServer : MonoBehaviour
                             }
                             break; 
                         default:
-                            DebugManager.Instance.LogUnityConsole("ID Unknown: " + msgID);
+                            MSG = ("ID Unknown: " + msgID);
+                            newMSG = true;
                             break;
                     }
                 }

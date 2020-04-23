@@ -32,7 +32,9 @@ public class tcpPacket:MonoBehaviour
         {
             if(!SocketConnected(cli.Client))
             {
-                connected = false; 
+                connected = false;
+                //Call the disconnect handler here
+                handleDiscon();
             }
             reportStatus(); 
         }
@@ -43,6 +45,11 @@ public class tcpPacket:MonoBehaviour
         seqID = -1;
         cli = client;
         connected = true;
+    }
+
+    protected virtual void handleDiscon()
+    {
+        return; 
     }
 
     bool SocketConnected(Socket s)

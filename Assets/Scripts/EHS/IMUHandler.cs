@@ -9,7 +9,8 @@ using UnityEngine;
 public class IMUHandler : tcpPacket
 {
     public packetICD.IMU_Mode MODE;
-    public ModelLoader ML; 
+    public ModelLoader ML;
+    public audioManager AM; 
     private string NAME; 
 
     //IMU Packet Information 
@@ -47,6 +48,41 @@ public class IMUHandler : tcpPacket
         functionDelegate startDelegate = new functionDelegate(startStream);
         functionDebug.Instance.registerFunction(NAME + "start", startDelegate);
         functionDebug.Instance.registerFunction(NAME + "stop", stopDelegate);
+    }
+
+    protected override void handleDiscon()
+    {
+        if(MODE == packetICD.IMU_Mode.CHEST)
+        {
+            ErrorHandler.Instance.HandleError(0, "CHEST IMU: ERROR LOST CONNECTION");
+            DebugManager.Instance.LogBoth("CHEST IMU: ERROR LOST CONNECTION");
+            //We need to hide the HID until connection is back as well as stop playback, clear models and camera
+            //Toggle 3D inactive 
+            ML.ClearModelsButton();
+
+            AM.stopPlayBack(); 
+
+            //Toggle Camera inactive
+            if(NavManager.Instance.getHeadCam())
+            {
+                NavManager.Instance.ToggleRearviewCam();
+            }
+            if(NavManager.Instance.getGloveCam())
+            {
+                NavManager.Instance.ToggleGloveCam();
+            }
+
+            //Toggle HID invis 
+            startBehavior.instance.DisableHID();
+        }
+        else
+        {
+            ErrorHandler.Instance.HandleError(0, "GLOVE IMU: ERROR LOST CONNECTION");
+            DebugManager.Instance.LogBoth("GLOVE IMU: ERROR LOST CONNECTION");
+            //If glove is down clear all models 
+            ML.ClearModelsButton();
+        }
+        base.handleDiscon();
     }
 
     public override int processPacket(string packet)

@@ -113,7 +113,7 @@ public class audioLoader : MonoBehaviour
         }
         else
         {
-            Debug.Log("ERROR NO CLIP TO LOAD");
+            DebugManager.Instance.LogBoth("ERROR NO CLIP TO LOAD");
         }
     }
 
@@ -239,10 +239,6 @@ public class audioLoader : MonoBehaviour
         {
             currentPage--;
         }
-        else
-        {
-            Debug.Log("Pages Min");
-        }
         UpdateList();
     }
     public void downArrowHit()
@@ -251,10 +247,6 @@ public class audioLoader : MonoBehaviour
         if (currentPage < pageMax-1)
         {
             currentPage++;
-        }
-        else
-        {
-            Debug.Log("Pages Maxed");
         }
         UpdateList();
     }

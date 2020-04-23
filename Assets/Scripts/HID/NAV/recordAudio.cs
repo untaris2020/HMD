@@ -32,6 +32,7 @@ public class recordAudio : MonoBehaviour
         if (Microphone.devices.Length <= 0)
         {
             DebugManager.Instance.LogBoth("NO MICROPHONE DETECTED");
+            ErrorHandler.Instance.HandleError(0, "NO MICROPHONE DETECTED");
             DebugManager.Instance.SetParam("microphone", "D-CON");
             
             micConnected = false;
@@ -72,12 +73,13 @@ public class recordAudio : MonoBehaviour
             audioSource.clip.SetData(ClipSamples, 0);
             if(firstClip)
             {
-                AudioPathDir = DateTime.Now.ToString("MMM_dd_HH_mm");
+                AudioPathDir = DateTime.Now.ToString("yyyyMMdd_HHmmss");
                 firstClip = false; 
             }
-            
+            string minutes = Mathf.RoundToInt(audioSource.clip.length/ 60).ToString("00");
+            string seconds = Mathf.RoundToInt(audioSource.clip.length % 60).ToString("00");
 
-            SavWav.Save(AudioPathDir + "/" + "recording" + idx + ".wav", audioSource.clip);
+            SavWav.Save(AudioPathDir + "/" + DateTime.Now.ToString("yyyyMMdd_HHmmss_") + "Dur-" + minutes + "-" + seconds + ".wav", audioSource.clip);
             al.LoadNewAudio(audioSource.clip, DateTime.Now, ("Recording " + idx));
             idx += 1;
         }

@@ -130,7 +130,9 @@ public class audioManager : MonoBehaviour
         }
         else
         {
-            Debug.Log("NO MIC");
+            DebugManager.Instance.LogBoth("NO MIC DETECTED");
+            ErrorHandler.Instance.HandleError(0, "NO MIC DETECTED");
+            
         }
     }  
     public void playbackHit()

@@ -11,8 +11,10 @@ public class ModelLoader : MonoBehaviour
     public TelemPanelManager telem_panel_manager;
     public GameObject clearModelsBut, misc1Button, misc2Button, upButton, downButton, upArrow, _camera;
     public GameObject[] modelButtons;
-    public IMUHandler IMU_GLOVE; 
-
+    public IMUHandler IMU_GLOVE;
+    public IMUHandler IMU_CHEST;
+    public ToggleHandler TOGGLE_CHEST;
+    public ToggleHandler TOGGLE_GLOVE; 
     // text
     public TextMeshProUGUI[] modelTexts;
     public TextMeshProUGUI heading_text;
@@ -324,6 +326,7 @@ public class ModelLoader : MonoBehaviour
         if(!IMU_GLOVE.getConnected() && mode != MOV_MODE.controller)
         {
             DebugManager.Instance.LogBoth("MODEL LOADER: ERROR GLOVE IMU NOT CONNECTED");
+            ErrorHandler.Instance.HandleError(1, "MODEL LOADER: ERROR GLOVE IMU NOT CONNECTED");
             return;
         }
         else
@@ -342,17 +345,21 @@ public class ModelLoader : MonoBehaviour
 
             }
 
-            loaded_models.Add( (GameObject)Instantiate(models[model_index], ModelList.transform));
-            DebugManager.Instance.LogBoth("INFO", "Loading 3D Model " + models[model_index].name);
-            instructions_text.SetText("Loading 3D Model " + models[model_index].name);
+            if(IMU_GLOVE.getConnected() && TOGGLE_CHEST.getConnected() && TOGGLE_GLOVE.getConnected() && IMU_CHEST.getConnected())
+            {
+                loaded_models.Add( (GameObject)Instantiate(models[model_index], ModelList.transform));
+                DebugManager.Instance.LogBoth("INFO", "Loading 3D Model " + models[model_index].name);
+                instructions_text.SetText("Loading 3D Model " + models[model_index].name);
 
-            load_model = -1;
-            glove_model.GetComponent<Renderer>().enabled = false;
-            instructions_text.SetText("Click the \"CLEAR ALL");
-            ready_to_load = false;
+                load_model = -1;
+                glove_model.GetComponent<Renderer>().enabled = false;
+                instructions_text.SetText("Click the \"CLEAR ALL");
+                ready_to_load = false;
 
-            //Start IMU stream 
-            IMU_GLOVE.startStream(); 
+                //Start IMU stream 
+                IMU_GLOVE.startStream(); 
+            }
+            
         }
     }
 

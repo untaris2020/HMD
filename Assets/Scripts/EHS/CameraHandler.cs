@@ -42,6 +42,29 @@ public class CameraHandler : tcpPacket
         functionDebug.Instance.registerFunction(NAME + "stop", stopDelegate);
     }
 
+    protected override void handleDiscon()
+    {
+        //Toggle Camera inactive if camera goes down. 
+        if((MODE == packetICD.CAM_Mode.HEAD))
+        {
+            ErrorHandler.Instance.HandleError(0, "HEAD CAM: ERROR LOST CONNECTION");
+            DebugManager.Instance.LogBoth("HEAD CAM: ERROR LOST CONNECTION");
+            if (NavManager.Instance.getHeadCam())
+            {
+                NavManager.Instance.ToggleRearviewCam();
+            }
+        }
+        else
+        {
+            ErrorHandler.Instance.HandleError(0, "GLOVE CAM: ERROR LOST CONNECTION"); 
+            DebugManager.Instance.LogBoth("GLOVE CAM: ERROR LOST CONNECTION");
+            if(NavManager.Instance.getGloveCam())
+            {
+                NavManager.Instance.ToggleGloveCam();
+            }
+        }
+        base.handleDiscon();
+    }
 
 
     public override int processPacket(string packet)

@@ -376,7 +376,7 @@ public class NavManager : MonoBehaviour
         // spawn camera
         CamerasManager.Instance.spawnCam();
         Debug.Log("head on");
-        if(REAR_CAM.getConnected())
+        if(REAR_CAM.getConnected() && FORCE_SENSOR.getConnected())
         {
             Debug.Log("START STREAM");
             REAR_CAM.startStream();

@@ -65,6 +65,25 @@ public class forceSensorManager : tcpPacket
         reportStatus(); 
     }
 
+    protected override void handleDiscon()
+    {
+        ErrorHandler.Instance.HandleError(0, "FORCE SENSOR: ERROR LOST CONNECTION");
+        DebugManager.Instance.LogBoth("FORCE SENSOR: ERROR LOST CONNECTION");
+        //Toggle the cameras off 
+        if(NavManager.Instance.getHeadCam())
+        {
+            NavManager.Instance.ToggleRearviewCam();
+        }
+        if(NavManager.Instance.getGloveCam())
+        {
+            NavManager.Instance.ToggleGloveCam();
+        }
+
+        //Toggle glove input off 
+        InputSystemStatus.Instance.ChangeGloveStatus(false);
+        base.handleDiscon();
+    }
+
     void Update()
     {
         base.Update(); 
@@ -74,16 +93,7 @@ public class forceSensorManager : tcpPacket
             newInput = false;
             ht.forceClick(currentInput); 
         }
-        if(destroyHeadCamera)
-        {
-            NavManager.Instance.ToggleRearviewCam();
-            destroyHeadCamera = false;
-        }
-        if(destroyGloveCamera)
-        {
-            NavManager.Instance.ToggleGloveCam();
-            destroyGloveCamera = false;
-        }
+      
     }
 
 

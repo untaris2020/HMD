@@ -24,7 +24,14 @@ public class startBehavior : MonoBehaviour
     public ModelLoader ML;
     public audioManager AM;
     public NavManager NM; 
+
+    public static startBehavior instance; 
     // Start is called before the first frame update
+    void Awake()
+    {
+        instance = this; 
+    }
+
     void Start()
     {
         HeadTracking ht = GameObject.Find("SceneManager").GetComponent<HeadTracking>();
@@ -94,48 +101,5 @@ public class startBehavior : MonoBehaviour
         text.SetActive(true);
         startPG_col.enabled = true;
         this.GetComponentInChildren<TextMeshProUGUI>().SetText("CLICK TO START SCENE");
-        
-        //Toggle all hardware to off 
-        HEAD_CAM.setConnected(false);
-        GLOVE_CAM.setConnected(false);
-        IMU_CHEST.setConnected(false);
-        IMU_GLOVE.setConnected(false);
-        CHEST_TOGGLE.setConnected(false);
-        GLOVE_TOGGLE.setConnected(false);
-        FORCE_SENSOR.setConnected(false); 
-
-        //Toggle Camera inactive
-        if(NavManager.Instance.getHeadCam())
-        {
-            NavManager.Instance.ToggleRearviewCam();
-        }
-        if(NavManager.Instance.getGloveCam())
-        {
-            NavManager.Instance.ToggleGloveCam();
-        }
-
-        //Toggle Waypoint incactive
-        if(NM.getRTHStat())
-        {
-            NM.PressRTH();
-        }
-        if(NM.getSAStat())
-        {
-            NM.PressShowAll();
-        }
-        //Toggle 3D inactive 
-        ML.ClearModelsButton();
-
-        //Stop recording 
-        if(AM.getRecording())
-        {
-            AM.recordingHit();
-        }
-        AM.stopPlayBack();
-
-
-        //Toggle the finger inputs to inactive
-        InputSystemStatus.Instance.ChangeGloveStatus(false);
-
     }
 }
