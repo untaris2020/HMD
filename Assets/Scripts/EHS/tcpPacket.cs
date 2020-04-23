@@ -137,6 +137,7 @@ public class tcpPacket:MonoBehaviour
             report = "D-CON";
         }
         DebugManager.Instance.SetParam(debugName, report);
+        TCPServer.Instance.updateStatus();
     }
 
     #region setters and getters

@@ -63,6 +63,10 @@ public class IMUHandler : tcpPacket
             ML.ClearModelsButton();
 
             AM.stopPlayBack(); 
+            if(AM.getRecording())
+            {
+                AM.recordingHit(); //This should stop recording
+            }
 
             //Toggle Camera inactive
             if(NavManager.Instance.getHeadCam())

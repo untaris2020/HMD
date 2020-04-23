@@ -63,6 +63,11 @@ public class ToggleHandler : tcpPacket
 
             AM.stopPlayBack();
 
+            if(AM.getRecording())
+            {
+                AM.recordingHit(); //This should stop recording
+            }
+
             //Toggle Camera inactive
             if (NavManager.Instance.getHeadCam())
             {
@@ -109,12 +114,16 @@ public class ToggleHandler : tcpPacket
             {
                 //Disable glove scripts here 
                 //Debug.Log("Setting glove to discon");
-                gloveObj.GetComponent<IMUHandler>().setConnected(false); 
+                if(gloveObj.GetComponent<IMUHandler>().getConnected())
+                {
+                    gloveObj.GetComponent<IMUHandler>().setConnected(false); 
 
-                ErrorHandler.Instance.HandleError(0, "GLOVE IMU: ERROR LOST CONNECTION");
-                DebugManager.Instance.LogBoth("GLOVE IMU: ERROR LOST CONNECTION");
-                //If glove is down clear all models 
-                 ML.ClearModelsButton();
+                    ErrorHandler.Instance.HandleError(0, "GLOVE IMU: ERROR LOST CONNECTION");
+                    DebugManager.Instance.LogBoth("GLOVE IMU: ERROR LOST CONNECTION");
+                    //If glove is down clear all models 
+                     ML.ClearModelsButton();
+                }
+               
 
             }
             newPacket = false; 

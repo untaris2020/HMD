@@ -54,15 +54,23 @@ public class TCPServer : MonoBehaviour
         Instance = this;
     }
 
-    void updateStatus()
+    public void updateStatus()
     {
         if(IMU_CHEST.getConnected() && CHEST_TOGGLE.getConnected() && HEAD_CAM.getConnected())
         {
             DebugManager.Instance.SetParam("chest_system", "CON");
         }
+        else
+        {
+            DebugManager.Instance.SetParam("chest_system", "D-CON");
+        }
         if(IMU_GLOVE.getConnected() && GLOVE_TOGGLE.getConnected() && GLOVE_CAM.getConnected() && FORCE_SENSOR.getConnected())
         {
             DebugManager.Instance.SetParam("glove_system", "CON");
+        }
+        else
+        {
+            DebugManager.Instance.SetParam("glove_system", "D-CON");
         }
     }
 

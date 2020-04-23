@@ -267,9 +267,32 @@ public class ModelLoader : MonoBehaviour
 
         if(!(IMU_GLOVE.getConnected() && TOGGLE_CHEST.getConnected() && TOGGLE_GLOVE.getConnected() && IMU_CHEST.getConnected()))
         {
-            DebugManager.Instance.LogBoth("UNABLE TO LOAD MODEL: CHECK CONNECTION STATUS");
+            if(!IMU_GLOVE.getConnected())
+            {
+                DebugManager.Instance.LogBoth("UNABLE TO LOAD MODEL: IMU_GLOVE NOT CONNECTED");
+                ErrorHandler.Instance.HandleError(1, "UNABLE TO LOAD MODEL: IMU_GLOVE NOT CONNECTED");
+            }
+            else if(!TOGGLE_CHEST.getConnected())
+            {
+                DebugManager.Instance.LogBoth("UNABLE TO LOAD MODEL: TOGGLE_CHEST NOT CONNECTED");
+                ErrorHandler.Instance.HandleError(1, "UNABLE TO LOAD MODEL: TOGGLE_CHEST NOT CONNECTED");
+            }
+            else if(!TOGGLE_GLOVE.getConnected())
+            {
+                DebugManager.Instance.LogBoth("UNABLE TO LOAD MODEL: TOGGLE_GLOVE NOT CONNECTED");
+                ErrorHandler.Instance.HandleError(1, "UNABLE TO LOAD MODEL: TOGGLE_GLOVE NOT CONNECTED");
+            }
+            else if(!IMU_CHEST.getConnected())
+            {
+                DebugManager.Instance.LogBoth("UNABLE TO LOAD MODEL: IMU_CHEST NOT CONNECTED");
+                ErrorHandler.Instance.HandleError(1, "UNABLE TO LOAD MODEL: IMU_CHEST NOT CONNECTED");
+            }
+
             return; 
         }
+
+
+
 
         if(mode != MOV_MODE.IMU)
         {
