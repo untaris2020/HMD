@@ -265,6 +265,12 @@ public class ModelLoader : MonoBehaviour
 
         ClearModelsButton(); 
 
+        if(!(IMU_GLOVE.getConnected() && TOGGLE_CHEST.getConnected() && TOGGLE_GLOVE.getConnected() && IMU_CHEST.getConnected()))
+        {
+            DebugManager.Instance.LogBoth("UNABLE TO LOAD MODEL: CHECK CONNECTION STATUS");
+            return; 
+        }
+
         if(mode != MOV_MODE.IMU)
         {
             if (!_controllerConnectionHandler.IsControllerValid()) //this is error condition
@@ -305,6 +311,7 @@ public class ModelLoader : MonoBehaviour
         {
             Destroy(obj);
         }
+        glove_model.GetComponent<Renderer>().enabled = false;
 
         loaded_models.Clear();
     }
@@ -358,6 +365,11 @@ public class ModelLoader : MonoBehaviour
 
                 //Start IMU stream 
                 IMU_GLOVE.startStream(); 
+            }
+            else
+            {
+                glove_model.GetComponent<Renderer>().enabled = false;
+                
             }
             
         }
