@@ -34,9 +34,12 @@ public class tcpPacket:MonoBehaviour
             {
                 connected = false;
                 //Call the disconnect handler here
+                //Debug.Log("Someone disconnected... tcpPacket");
                 handleDiscon();
+                reportStatus();
             }
-            reportStatus(); 
+
+            
         }
         
     }
@@ -52,7 +55,7 @@ public class tcpPacket:MonoBehaviour
         return; 
     }
 
-    bool SocketConnected(Socket s)
+    protected bool SocketConnected(Socket s)
     {
         bool part1 = s.Poll(POLL_TIMEOUT, SelectMode.SelectRead);
         bool part2 = (s.Available == 0);
@@ -123,7 +126,7 @@ public class tcpPacket:MonoBehaviour
 
     public void reportStatus()
     {
-        //Debug.Log("SETTING PARAM FOR " + debugName);
+        //Debug.Log("SETTING PARAM FOR " + debugName + " " + connected);
         string report; 
         if(connected)
         {
@@ -140,7 +143,7 @@ public class tcpPacket:MonoBehaviour
     public bool getConnected() { return connected; }
     public TcpClient getCli() { return cli; }
 
-    public void setConnected(bool connect) { connected = connect; }
+    public void setConnected(bool connect) { connected = connect; reportStatus();  }
     public void setCli(TcpClient client) { cli = client; }
     #endregion
 }
