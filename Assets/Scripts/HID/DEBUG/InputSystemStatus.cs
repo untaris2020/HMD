@@ -150,15 +150,18 @@ public class InputSystemStatus : MonoBehaviour
     }
 
     void GestureButtonPress() {
-        if(FORCE_SENSOR.getConnected())
-        {
-            useGestures = !useGestures; 
-            if(!useGestures)
+        if (!DebugManager.Instance.GetSimulatorMode()) {
+            if(FORCE_SENSOR.getConnected())
             {
-                useGaze = true;
+                useGestures = !useGestures; 
+                if(!useGestures)
+                {
+                    useGaze = true;
+                }
+                showGestureIndicators = useGestures;
             }
-            showGestureIndicators = useGestures;
         }
+        
         UpdateUI();
     }
     void ShowGestureIndicatorsButtonPress() {

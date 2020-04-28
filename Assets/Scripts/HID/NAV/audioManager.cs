@@ -50,7 +50,10 @@ public class audioManager : MonoBehaviour
         updateTime = 0f;
         prevTime = 0f;
         //recordTime.SetActive(false);
-        recordingIndicator.GetComponent<MeshRenderer>().material = StyleSheet.Instance.Icons; 
+        if (!DebugManager.Instance.GetSimulatorMode()) {
+            recordingIndicator.GetComponent<MeshRenderer>().material = StyleSheet.Instance.Icons; 
+        }
+        
         recordButtonText.SetText("START RECORDING");
         recordTime.SetText("");
         recording = false;

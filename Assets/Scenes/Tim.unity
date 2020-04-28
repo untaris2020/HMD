@@ -3767,12 +3767,12 @@ PrefabInstance:
     - target: {fileID: 4930816357271775978, guid: 853e5fa3f16f642458c799dfa68f631a,
         type: 3}
       propertyPath: useStartRoutine
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4930816357271775978, guid: 853e5fa3f16f642458c799dfa68f631a,
         type: 3}
       propertyPath: ignoreIMU
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4930816357271775978, guid: 853e5fa3f16f642458c799dfa68f631a,
         type: 3}
