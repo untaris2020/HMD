@@ -27,10 +27,11 @@ public class IMUHandler : tcpPacket
     private float xAverage;
     private float yAverage;
     private float zAverage;
-    List<float> prevXData = new List<float>();
-    List<float> prevYData = new List<float>();
-    List<float> prevZData = new List<float>();
-    List<float> prevWData = new List<float>();
+    //private Quaternion distanceThreshold = new Quaternion();  
+    private Quaternion prevVal;
+    private float highestX; 
+    private float highestY;
+    private float highestZ;
     private int count;
     private bool shift;
     private const int standardDeviation = 3;
@@ -45,6 +46,11 @@ public class IMUHandler : tcpPacket
         //Debug.Log("START IMU");
         seqID = -1; 
         connected = false;
+
+        highestX = 0; 
+        highestY = 0; 
+        highestZ = 0;
+        
         if (MODE == packetICD.IMU_Mode.CHEST)
         {
             NAME = "chestIMU";
@@ -130,9 +136,6 @@ public class IMUHandler : tcpPacket
                     y = (float.Parse(tmp[6]));
                     z = (float.Parse(tmp[7]));
 
-                    
-
-
                     if (MODE == packetICD.IMU_Mode.CHEST)
                     {
                         if(count%200 == 0)
@@ -160,41 +163,55 @@ public class IMUHandler : tcpPacket
     private void imuDataSmoothing()
     {
         //For now this function simply takes the freshest packet and updates frame with it but custom smoothing logic inserts here 
+        Quaternion newData = new Quaternion(x, y, z, w);
+        Vector3 adjusted = newData.eulerAngles;
+        Vector3 temp = adjusted;
+        adjusted.z = temp.y;
+        adjusted.y = temp.z;
 
-        //In here the logic for which values get sent also need to be adjusted based on default. For instance the chest is tilted so the axis are all wrong 
+        newData = Quaternion.Euler(adjusted); //put back together 
 
-        if (prevXData.Count < maxListSize) //need to fill buffer first
+        //Might still need to invert
+                     
+        if(prevVal == null)
         {
-            prevXData.Add(x);
-            prevYData.Add(y);
-            prevZData.Add(x);
-            prevWData.Add(w);
+            prevVal = newData;
         }
         else
         {
-            float avgX = prevXData.Sum() / prevXData.Count;
-            float avgY = prevYData.Sum() / prevYData.Count;  
-            float avgZ = prevZData.Sum() / prevZData.Count;
-            float avgW = prevWData.Sum() / prevWData.Count; 
+            Quaternion diff = newData * Quaternion.Inverse(prevVal); //get the difference between the two 
+            //Here we need to check if it is greater then prev 
+            Vector3 difference = diff.eulerAngles;
 
-            prevXData.Add(x);
-            prevYData.Add(y);
-            prevZData.Add(x);
-            prevWData.Add(w);
-
-            prevXData.RemoveAt(prevXData.Count - 1);
-            prevYData.RemoveAt(prevYData.Count - 1);
-            prevZData.RemoveAt(prevZData.Count - 1);
-            prevWData.RemoveAt(prevWData.Count - 1);
-
+            if(Math.Abs(difference.x) > Math.Abs(highestX))
+            {
+                highestX = difference.x;
+                Debug.Log("Highest X: " + highestX);
+            }
+            if(Math.Abs(difference.y) > Math.Abs(highestY))
+            {
+                highestY = difference.y;
+                Debug.Log("Highest Y: " + highestY);
+            }
+            if(Math.Abs(difference.z) > Math.Abs(highestZ))
+            {
+                highestZ = difference.z;
+                Debug.Log("Highest Z: " + highestZ);
+            }
             if (MODE == packetICD.IMU_Mode.CHEST)
             {
-                HeadLockScript.Instance.updateHIDwithIMU(avgW,avgX,avgY,avgZ);
+                HeadLockScript.Instance.updateHIDwithIMU(newData.x,newData.y,newData.z,newData.w);
             }
             else if(MODE == packetICD.IMU_Mode.GLOVE)
             {
-                ML.updateModelwithIMU(avgW, avgX, avgY, avgZ, xAccel, yAccel, zAccel); 
+                ML.updateModelwithIMU(newData.w,newData.y,newData.z,newData.x, xAccel, yAccel, zAccel); 
             }
+
+        }
+        //In here the logic for which values get sent also need to be adjusted based on default. For instance the chest is tilted so the axis are all wrong 
+        
+
+           
         }
     }
 }

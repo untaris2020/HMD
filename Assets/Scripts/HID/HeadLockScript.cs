@@ -102,10 +102,8 @@ public class HeadLockScript : MonoBehaviour
             }
             speed = Time.deltaTime * 12.0f;
             this.transform.position = Vector3.Slerp(this.transform.position, Camera.transform.position, speed);
-
-            rot = rot *  Quaternion.Inverse(DefaultRot);
-
             this.transform.rotation = Quaternion.Slerp(this.transform.rotation, rot, speed); 
+
             updateWithIMU = false;
         }
     }
@@ -113,8 +111,7 @@ public class HeadLockScript : MonoBehaviour
 
     public void updateHIDwithIMU(float w, float x, float y, float z)
     {
-        Debug.Log("TEST: " + x);
-        rot = new Quaternion(-x,-y,-z,w);
+        rot = new Quaternion(x,y,z,w);
         updateWithIMU = true; 
     }
 
