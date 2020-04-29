@@ -162,6 +162,7 @@ public class IMUHandler : tcpPacket
 
         if (prevXData.Count < 10)
         {
+            shift = false;
             prevXData.Add(x);
             prevYData.Add(y);
             prevZData.Add(x);
@@ -187,6 +188,7 @@ public class IMUHandler : tcpPacket
         {
             for(int i=9; i > 0; i--)
             {
+
                 prevXData[i] = prevXData[i - 1];
                 prevYData[i] = prevYData[i - 1];
                 prevZData[i] = prevZData[i - 1];
