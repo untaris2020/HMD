@@ -5,10 +5,13 @@ using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using UnityEngine;
+using System.Linq;
 
 public class IMUHandler : tcpPacket
 {
     public packetICD.IMU_Mode MODE;
+    public int maxListSize; 
+
     public ModelLoader ML;
     public audioManager AM; 
     private string NAME; 
@@ -160,9 +163,8 @@ public class IMUHandler : tcpPacket
 
         //In here the logic for which values get sent also need to be adjusted based on default. For instance the chest is tilted so the axis are all wrong 
 
-        if (prevXData.Count < 10)
+        if (prevXData.Count < maxListSize) //need to fill buffer first
         {
-            shift = false;
             prevXData.Add(x);
             prevYData.Add(y);
             prevZData.Add(x);
@@ -170,44 +172,29 @@ public class IMUHandler : tcpPacket
         }
         else
         {
-            
-            for (int i = 0; i < 10; i++)
-            {
-                if(Math.Abs(standardDeviation * prevXData[i]) < Math.Abs(x) || Math.Abs(standardDeviation * prevYData[i]) < Math.Abs(y) || Math.Abs(standardDeviation * prevZData[i]) < Math.Abs(z))
-                {
-                    x = prevXData[0];
-                    y = prevYData[0];
-                    z = prevZData[0];
-                    w = prevWData[0];
-                    shift = false;
-                }
-            }
-            
-        }
-        if (shift)
-        {
-            for(int i=9; i > 0; i--)
-            {
+            float avgX = prevXData.Sum() / prevXData.Count;
+            float avgY = prevYData.Sum() / prevYData.Count;  
+            float avgZ = prevZData.Sum() / prevZData.Count;
+            float avgW = prevWData.Sum() / prevWData.Count; 
 
-                prevXData[i] = prevXData[i - 1];
-                prevYData[i] = prevYData[i - 1];
-                prevZData[i] = prevZData[i - 1];
-                prevWData[i] = prevWData[i - 1];
-            }
-            prevXData[0] = x;
-            prevYData[0] = y;
-            prevZData[0] = z;
-            prevWData[0] = w;
+            prevXData.Add(x);
+            prevYData.Add(y);
+            prevZData.Add(x);
+            prevWData.Add(w);
 
-        }
-        shift = true;
-        if (MODE == packetICD.IMU_Mode.CHEST)
-        {
-            HeadLockScript.Instance.updateHIDwithIMU(w,x,y,z);
-        }
-        else if(MODE == packetICD.IMU_Mode.GLOVE)
-        {
-            ML.updateModelwithIMU(w, x, y, z, xAccel, yAccel, zAccel); 
+            prevXData.RemoveAt(prevXData.Count - 1);
+            prevYData.RemoveAt(prevYData.Count - 1);
+            prevZData.RemoveAt(prevZData.Count - 1);
+            prevWData.RemoveAt(prevWData.Count - 1);
+
+            if (MODE == packetICD.IMU_Mode.CHEST)
+            {
+                HeadLockScript.Instance.updateHIDwithIMU(avgW,avgX,avgY,avgZ);
+            }
+            else if(MODE == packetICD.IMU_Mode.GLOVE)
+            {
+                ML.updateModelwithIMU(avgW, avgX, avgY, avgZ, xAccel, yAccel, zAccel); 
+            }
         }
     }
 }
