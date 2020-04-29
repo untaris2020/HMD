@@ -21,14 +21,22 @@ public class IMUHandler : tcpPacket
     private float xAccel;
     private float yAccel;
     private float zAccel;
-
+    private float xAverage;
+    private float yAverage;
+    private float zAverage;
+    List<float> prevXData = new List<float>();
+    List<float> prevYData = new List<float>();
+    List<float> prevZData = new List<float>();
+    List<float> prevWData = new List<float>();
     private int count;
-
+    private bool shift;
+    private const int standardDeviation = 3;
     
     private delegate void functionDelegate();
 
     public void Start()
     {
+        shift = true;
         count = 0;
         base.Start();
         //Debug.Log("START IMU");
@@ -119,14 +127,17 @@ public class IMUHandler : tcpPacket
                     y = (float.Parse(tmp[6]));
                     z = (float.Parse(tmp[7]));
 
+                    
+
+
                     if (MODE == packetICD.IMU_Mode.CHEST)
                     {
-                        if(count%100 == 0)
+                        if(count%200 == 0)
                             DebugManager.Instance.LogUnityConsole("Chest IMU, xAccel: " + xAccel + " yAccel: " + yAccel + " zAccel: " + zAccel + " QuaW: " + w + " QuaX: " + x + " Quay: " + y + " QuaZ " + z);
                     }
                     else
                     {
-                        if (count%100 == 0)
+                        if (count%200 == 0)
                             DebugManager.Instance.LogUnityConsole("Glove IMU, xAccel: " + xAccel + " yAccel: " + yAccel + " zAccel: " + zAccel + " QuaW: " + w + " QuaX: " + x + " Quay: " + y + " QuaZ " + z);
                     }
                     count++;
@@ -146,9 +157,49 @@ public class IMUHandler : tcpPacket
     private void imuDataSmoothing()
     {
         //For now this function simply takes the freshest packet and updates frame with it but custom smoothing logic inserts here 
-         
+
         //In here the logic for which values get sent also need to be adjusted based on default. For instance the chest is tilted so the axis are all wrong 
-        if(MODE == packetICD.IMU_Mode.CHEST)
+
+        if (prevXData.Count < 10)
+        {
+            prevXData.Add(x);
+            prevYData.Add(y);
+            prevZData.Add(x);
+            prevWData.Add(w);
+        }
+        else
+        {
+            
+            for (int i = 0; i < 10; i++)
+            {
+                if(Math.Abs(standardDeviation * prevXData[i]) < Math.Abs(x) || Math.Abs(standardDeviation * prevYData[i]) < Math.Abs(y) || Math.Abs(standardDeviation * prevZData[i]) < Math.Abs(z))
+                {
+                    x = prevXData[0];
+                    y = prevYData[0];
+                    z = prevZData[0];
+                    w = prevWData[0];
+                    shift = false;
+                }
+            }
+            
+        }
+        if (shift)
+        {
+            for(int i=9; i > 0; i--)
+            {
+                prevXData[i] = prevXData[i - 1];
+                prevYData[i] = prevYData[i - 1];
+                prevZData[i] = prevZData[i - 1];
+                prevWData[i] = prevWData[i - 1];
+            }
+            prevXData[0] = x;
+            prevYData[0] = y;
+            prevZData[0] = z;
+            prevWData[0] = w;
+
+        }
+        shift = true;
+        if (MODE == packetICD.IMU_Mode.CHEST)
         {
             HeadLockScript.Instance.updateHIDwithIMU(w,x,y,z);
         }

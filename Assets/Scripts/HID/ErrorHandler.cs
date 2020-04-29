@@ -91,6 +91,7 @@ public class ErrorHandler : MonoBehaviour {
 
     public int HandleError(int Priority, string ErrorMsg)
     {
+        DebugManager.Instance.LogErrorConsole(Priority, ErrorMsg);
         int exists = ErrorList.IndexOf(ErrorMsg);
         if (exists == -1)
         {
