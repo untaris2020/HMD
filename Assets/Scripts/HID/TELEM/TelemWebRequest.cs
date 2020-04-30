@@ -137,7 +137,8 @@ public class TelemWebRequest : MonoBehaviour
                     return tmpStringArr;
                 } else
                 {
-                    tmpStringArr[0] = "Data not populated";
+                    tmpStringArr[0] = "ERR";
+                    tmpStringArr[1] = "red";
                     return tmpStringArr;
                 }
             }

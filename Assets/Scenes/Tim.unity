@@ -2307,7 +2307,7 @@ PrefabInstance:
     - target: {fileID: 5164311967820880981, guid: 30691d7d711b425408f2d5ab5dbdedcf,
         type: 3}
       propertyPath: mode
-      value: 2
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5164311967820880981, guid: 30691d7d711b425408f2d5ab5dbdedcf,
         type: 3}
@@ -3824,7 +3824,7 @@ PrefabInstance:
     - target: {fileID: 4930816357271775978, guid: 853e5fa3f16f642458c799dfa68f631a,
         type: 3}
       propertyPath: useStartRoutine
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4930816357271775978, guid: 853e5fa3f16f642458c799dfa68f631a,
         type: 3}
