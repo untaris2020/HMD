@@ -86,6 +86,15 @@ public class forceSensorManager : tcpPacket
 
     void Update()
     {
+        if (destroyHeadCamera) {
+            NavManager.Instance.ToggleRearviewCam();
+            destroyHeadCamera = false;
+        }
+
+        if (destroyGloveCamera) {
+            NavManager.Instance.ToggleGloveCam();
+            destroyGloveCamera = false;
+        }
         base.Update(); 
         if(newInput)
         {
@@ -107,6 +116,7 @@ public class forceSensorManager : tcpPacket
         else if(NavManager.Instance.getGloveCam())
         {
             destroyGloveCamera = true;
+            
         }
         else
         {

@@ -34,6 +34,7 @@ public class IMUHandler : tcpPacket
     private int count;
     private bool shift;
     private const int standardDeviation = 3;
+    private bool startValSet = false;
     
     private delegate void functionDelegate();
 
@@ -135,13 +136,12 @@ public class IMUHandler : tcpPacket
 
                     if (MODE == packetICD.IMU_Mode.CHEST)
                     {
-                        //if(count%200 == 0)
-                            //DebugManager.Instance.LogUnityConsole("Chest IMU, xAccel: " + xAccel + " yAccel: " + yAccel + " zAccel: " + zAccel + " QuaW: " + w + " QuaX: " + x + " Quay: " + y + " QuaZ " + z);
-                    }
-                    else
+                        if (count % 200 == 0)
+                            DebugManager.Instance.LogUnityConsole("Chest IMU, xAccel: " + xAccel + " yAccel: " + yAccel + " zAccel: " + zAccel + " QuaW: " + w + " QuaX: " + x + " Quay: " + y + " QuaZ " + z);
+                    } else
                     {
-                        //if (count%200 == 0)
-                            //DebugManager.Instance.LogUnityConsole("Glove IMU, xAccel: " + xAccel + " yAccel: " + yAccel + " zAccel: " + zAccel + " QuaW: " + w + " QuaX: " + x + " Quay: " + y + " QuaZ " + z);
+                        if (count % 200 == 0)
+                            DebugManager.Instance.LogUnityConsole("Glove IMU, xAccel: " + xAccel + " yAccel: " + yAccel + " zAccel: " + zAccel + " QuaW: " + w + " QuaX: " + x + " Quay: " + y + " QuaZ " + z);
                     }
                     count++;
                     imuDataSmoothing();
@@ -161,21 +161,30 @@ public class IMUHandler : tcpPacket
     {
         //For now this function simply takes the freshest packet and updates frame with it but custom smoothing logic inserts here 
         Quaternion newData = new Quaternion(x, y, z, w);
+        newData = newData.normalized;
+        
 
-        if(startingVal == null)
+        if(!startValSet)
         {
             startingVal = newData;
             prevVal = newData;
+            startValSet = true;
         }
         else
         {
             newData = newData * Quaternion.Inverse(startingVal); //subtract off default orientation
-            //Here we need to check if it is greater then prev 
             
+
+            //Here we need to check if it is greater then prev 
+            Debug.Log("DIFF = " + Quaternion.Angle(newData, prevVal));
+            //Debug.Log("START = " + startingVal);
             if(Quaternion.Angle(newData, prevVal) > maxAngle) //catches the twitches 
             {
                 maxAngle = Quaternion.Angle(newData, prevVal);
-                Debug.Log("NEW MAX = " + maxAngle); 
+                Debug.Log("Twitch"); 
+                
+            } else {
+
             }
 
             prevVal = newData; 
