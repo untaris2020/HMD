@@ -27,11 +27,10 @@ public class IMUHandler : tcpPacket
     private float xAverage;
     private float yAverage;
     private float zAverage;
-    //private Quaternion distanceThreshold = new Quaternion();  
+    private float rotThreshold; 
+    private Quaternion startingVal;
     private Quaternion prevVal;
-    private float highestX; 
-    private float highestY;
-    private float highestZ;
+    private float maxAngle;
     private int count;
     private bool shift;
     private const int standardDeviation = 3;
@@ -47,10 +46,8 @@ public class IMUHandler : tcpPacket
         seqID = -1; 
         connected = false;
 
-        highestX = 0; 
-        highestY = 0; 
-        highestZ = 0;
-        
+        maxAngle = 0; 
+
         if (MODE == packetICD.IMU_Mode.CHEST)
         {
             NAME = "chestIMU";
@@ -138,13 +135,13 @@ public class IMUHandler : tcpPacket
 
                     if (MODE == packetICD.IMU_Mode.CHEST)
                     {
-                        if(count%200 == 0)
-                            DebugManager.Instance.LogUnityConsole("Chest IMU, xAccel: " + xAccel + " yAccel: " + yAccel + " zAccel: " + zAccel + " QuaW: " + w + " QuaX: " + x + " Quay: " + y + " QuaZ " + z);
+                        //if(count%200 == 0)
+                            //DebugManager.Instance.LogUnityConsole("Chest IMU, xAccel: " + xAccel + " yAccel: " + yAccel + " zAccel: " + zAccel + " QuaW: " + w + " QuaX: " + x + " Quay: " + y + " QuaZ " + z);
                     }
                     else
                     {
-                        if (count%200 == 0)
-                            DebugManager.Instance.LogUnityConsole("Glove IMU, xAccel: " + xAccel + " yAccel: " + yAccel + " zAccel: " + zAccel + " QuaW: " + w + " QuaX: " + x + " Quay: " + y + " QuaZ " + z);
+                        //if (count%200 == 0)
+                            //DebugManager.Instance.LogUnityConsole("Glove IMU, xAccel: " + xAccel + " yAccel: " + yAccel + " zAccel: " + zAccel + " QuaW: " + w + " QuaX: " + x + " Quay: " + y + " QuaZ " + z);
                     }
                     count++;
                     imuDataSmoothing();
@@ -164,43 +161,30 @@ public class IMUHandler : tcpPacket
     {
         //For now this function simply takes the freshest packet and updates frame with it but custom smoothing logic inserts here 
         Quaternion newData = new Quaternion(x, y, z, w);
-        Vector3 adjusted = newData.eulerAngles;
-        Vector3 temp = adjusted;
-        adjusted.z = temp.y;
-        adjusted.y = temp.z;
 
-        newData = Quaternion.Euler(adjusted); //put back together 
-
-        //Might still need to invert
-                     
-        if(prevVal == null)
+        if(startingVal == null)
         {
+            startingVal = newData;
             prevVal = newData;
         }
         else
         {
-            Quaternion diff = newData * Quaternion.Inverse(prevVal); //get the difference between the two 
+            newData = newData * Quaternion.Inverse(startingVal); //subtract off default orientation
             //Here we need to check if it is greater then prev 
-            Vector3 difference = diff.eulerAngles;
+            
+            if(Quaternion.Angle(newData, prevVal) > maxAngle) //catches the twitches 
+            {
+                maxAngle = Quaternion.Angle(newData, prevVal);
+                Debug.Log("NEW MAX = " + maxAngle); 
+            }
 
-            if(Math.Abs(difference.x) > Math.Abs(highestX))
-            {
-                highestX = difference.x;
-                Debug.Log("Highest X: " + highestX);
-            }
-            if(Math.Abs(difference.y) > Math.Abs(highestY))
-            {
-                highestY = difference.y;
-                Debug.Log("Highest Y: " + highestY);
-            }
-            if(Math.Abs(difference.z) > Math.Abs(highestZ))
-            {
-                highestZ = difference.z;
-                Debug.Log("Highest Z: " + highestZ);
-            }
+            prevVal = newData; 
+
+            //Note still might need to do somme fucking around to get the coordinate system to line up but hopefully not. 
+
             if (MODE == packetICD.IMU_Mode.CHEST)
             {
-                HeadLockScript.Instance.updateHIDwithIMU(newData.x,newData.y,newData.z,newData.w);
+                HeadLockScript.Instance.updateHIDwithIMU(newData.x,newData.y,newData.z,newData.w); 
             }
             else if(MODE == packetICD.IMU_Mode.GLOVE)
             {
@@ -209,9 +193,5 @@ public class IMUHandler : tcpPacket
 
         }
         //In here the logic for which values get sent also need to be adjusted based on default. For instance the chest is tilted so the axis are all wrong 
-        
-
-           
-        }
     }
 }

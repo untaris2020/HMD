@@ -12,7 +12,6 @@ public class HeadLockScript : MonoBehaviour
     public float speed = 12f;
     public AudioClip reset;
     AudioSource source;
-    private bool firstTime;
 
     private bool updateWithIMU;
 
@@ -47,7 +46,6 @@ public class HeadLockScript : MonoBehaviour
         MLInput.OnTriggerDown += HandleOnTriggerDown;
         
         source = GetComponent<AudioSource>();
-        firstTime = true; 
     }
 
     #region Private Methods 
@@ -95,11 +93,6 @@ public class HeadLockScript : MonoBehaviour
         }
         else if(updateWithIMU)
         {
-            if(firstTime)
-            {
-                DefaultRot = rot;
-                firstTime = false; 
-            }
             speed = Time.deltaTime * 12.0f;
             this.transform.position = Vector3.Slerp(this.transform.position, Camera.transform.position, speed);
             this.transform.rotation = Quaternion.Slerp(this.transform.rotation, rot, speed); 
