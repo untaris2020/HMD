@@ -157,32 +157,19 @@ public class ModelLoader : MonoBehaviour
             {
                 if (newIMUpacket && loaded_models.Count > 0)
                 {
-                    if (firstPacket)
-                    {
-                        defaultRot = rot;
-                    }
                     newIMUpacket = false;
                     float speed = Time.deltaTime * 12.0f;
                     ModelList.transform.position = Vector3.Slerp(ModelList.transform.position, pos, speed);
-                    rot = rot * Quaternion.Inverse(defaultRot);
                     ModelList.transform.rotation = Quaternion.Slerp(ModelList.transform.rotation, rot, speed);
                 }
             }
             else if (mode == MOV_MODE.BLEND)
             {
-                   
-
-
                 if (newIMUpacket && loaded_models.Count > 0)
                 {
-                    if (firstPacket)
-                    {
-                        defaultRot = rot;
-                    }
                     newIMUpacket = false;
                     float speed = Time.deltaTime * 12.0f;
                     ModelList.transform.position = Vector3.Slerp(ModelList.transform.position, _control.Position, speed);
-                    rot = rot * Quaternion.Inverse(defaultRot);
                     ModelList.transform.rotation = Quaternion.Slerp(ModelList.transform.rotation, rot, speed);
                 }
             }
@@ -342,7 +329,7 @@ public class ModelLoader : MonoBehaviour
     public void updateModelwithIMU(float w, float x, float y, float z, float xAccel, float yAccel, float zAccel)
     { 
         pos = new Vector3(xAccel, yAccel, zAccel);
-        rot = new Quaternion(-x,-z,-y,w);
+        rot = new Quaternion(x,y,z,w);
         newIMUpacket = true;
     }
 

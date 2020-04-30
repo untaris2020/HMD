@@ -27,6 +27,7 @@ public class InputSystemStatus : MonoBehaviour
     bool useGestures;
     bool showGestureIndicators;
     bool isGloveReady;
+    bool isChestReady;
     
     public bool GetUseGaze() {
         return useGaze;
@@ -51,6 +52,13 @@ public class InputSystemStatus : MonoBehaviour
         UpdateUI();
     }
 
+    public void ChangeGazeStatus(bool status) {
+        useGaze = status;
+
+        isChestReady = status;
+        UpdateUI();
+    }
+
     void Start()
     {
         Instance = this;
@@ -60,6 +68,7 @@ public class InputSystemStatus : MonoBehaviour
         useGestures = false;
         useGaze = true;
         isGloveReady = true; // reset this to false
+        isChestReady = false;
 
         HeadTracking ht = GameObject.Find("SceneManager").GetComponent<HeadTracking>();
 

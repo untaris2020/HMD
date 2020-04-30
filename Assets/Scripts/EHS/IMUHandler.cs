@@ -27,7 +27,7 @@ public class IMUHandler : tcpPacket
     private float xAverage;
     private float yAverage;
     private float zAverage;
-    private float rotThreshold; 
+    private float rotThreshold = 30.0f; 
     private Quaternion startingVal;
     private Quaternion prevVal;
     private float maxAngle;
@@ -96,6 +96,10 @@ public class IMUHandler : tcpPacket
                 NavManager.Instance.ToggleGloveCam();
             }
 
+            // Toggle gaze active
+            InputSystemStatus.Instance.ChangeGazeStatus(true);
+
+
             //Toggle HID invis 
             startBehavior.instance.DisableHID();
         }
@@ -136,8 +140,8 @@ public class IMUHandler : tcpPacket
 
                     if (MODE == packetICD.IMU_Mode.CHEST)
                     {
-                        if (count % 200 == 0)
-                            DebugManager.Instance.LogUnityConsole("Chest IMU, xAccel: " + xAccel + " yAccel: " + yAccel + " zAccel: " + zAccel + " QuaW: " + w + " QuaX: " + x + " Quay: " + y + " QuaZ " + z);
+                        //if (count % 200 == 0)
+                        //    DebugManager.Instance.LogUnityConsole("Chest IMU, xAccel: " + xAccel + " yAccel: " + yAccel + " zAccel: " + zAccel + " QuaW: " + w + " QuaX: " + x + " Quay: " + y + " QuaZ " + z);
                     } else
                     {
                         if (count % 200 == 0)
@@ -176,29 +180,32 @@ public class IMUHandler : tcpPacket
             
 
             //Here we need to check if it is greater then prev 
-            Debug.Log("DIFF = " + Quaternion.Angle(newData, prevVal));
+            //Debug.Log("DIFF = " + Quaternion.Angle(newData, prevVal));
             //Debug.Log("START = " + startingVal);
-            if(Quaternion.Angle(newData, prevVal) > maxAngle) //catches the twitches 
+            
+
+            if(Quaternion.Angle(newData, prevVal) > rotThreshold) //catches the twitches 
             {
-                maxAngle = Quaternion.Angle(newData, prevVal);
-                Debug.Log("Twitch"); 
+                
+                //Debug.Log("Twitch"); 
                 
             } else {
 
+                //Note still might need to do somme fucking around to get the coordinate system to line up but hopefully not. 
+
+                if (MODE == packetICD.IMU_Mode.CHEST)
+                {
+                    HeadLockScript.Instance.updateHIDwithIMU(newData.w, newData.y, -newData.z, -newData.x); 
+                }
+                else if(MODE == packetICD.IMU_Mode.GLOVE)
+                {
+                    //new Quaternion(x,-y,-z,w);
+                    ML.updateModelwithIMU(newData.w,newData.x,-newData.y,-newData.z, xAccel, yAccel, zAccel); 
+                }
             }
 
             prevVal = newData; 
 
-            //Note still might need to do somme fucking around to get the coordinate system to line up but hopefully not. 
-
-            if (MODE == packetICD.IMU_Mode.CHEST)
-            {
-                HeadLockScript.Instance.updateHIDwithIMU(newData.x,newData.y,newData.z,newData.w); 
-            }
-            else if(MODE == packetICD.IMU_Mode.GLOVE)
-            {
-                ML.updateModelwithIMU(newData.w,newData.y,newData.z,newData.x, xAccel, yAccel, zAccel); 
-            }
 
         }
         //In here the logic for which values get sent also need to be adjusted based on default. For instance the chest is tilted so the axis are all wrong 

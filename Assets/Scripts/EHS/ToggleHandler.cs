@@ -77,8 +77,12 @@ public class ToggleHandler : tcpPacket
             {
                 NavManager.Instance.ToggleGloveCam();
             }
+
             //Toggle HID invis 
             startBehavior.instance.DisableHID(); 
+
+            // Toggle gaze active
+            InputSystemStatus.Instance.ChangeGazeStatus(true);
         }
         else
         {
@@ -107,7 +111,8 @@ public class ToggleHandler : tcpPacket
         if(newPacket)
         {
             if(MODE == packetICD.Toggle_Mode.CHEST)
-            { 
+            {
+                Debug.Log("this is calling");
                 startScene.GetComponent<startBehavior>().DisableHID(); 
             }
             else if(MODE == packetICD.Toggle_Mode.GLOVE)
