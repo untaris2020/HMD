@@ -231,7 +231,7 @@ public class DebugManager : MonoBehaviour
         for (int i = 0; i < 30; i++)
         {
 
-            buildString += String.Format("{{{0}}}: {2} \n", errorConsoleEntries[i].count, errorConsoleEntries[i].msg);
+            buildString += String.Format("{{{0}}}: {1} \n", errorConsoleEntries[i].count, errorConsoleEntries[i].msg);
         }
         
         errorConsole.text = buildString;
