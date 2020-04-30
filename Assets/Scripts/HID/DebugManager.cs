@@ -51,16 +51,19 @@ public class DebugManager : MonoBehaviour
     private const int NUM_OF_OBJECTS = 100;
     private ConsoleEntrie[] consoleEntries = new ConsoleEntrie[NUM_OF_OBJECTS];
     private ConsoleEntrie[] errorConsoleEntries = new ConsoleEntrie[NUM_OF_OBJECTS];
-
+    List<int> priorityList = new List<int>();
+    private bool first;
 
     public TextMeshProUGUI console;
     public TextMeshProUGUI errorConsole;
 
     private void Awake()
     {
+        
         //m_Instance = this;
         Instance = this;
-        updateStatusesState = false; 
+        updateStatusesState = false;
+        first = true;
         // Moved from void Start()
         for (int i=0; i<consoleEntries.Length; i++) consoleEntries[i] = new ConsoleEntrie();
         for (int i = 0; i < errorConsoleEntries.Length; i++) errorConsoleEntries[i] = new ConsoleEntrie();
@@ -183,8 +186,17 @@ public class DebugManager : MonoBehaviour
         //Debug.Log(fileName + ": " + msg);
 
         ShiftRight<ConsoleEntrie>(errorConsoleEntries, 1);
-        errorConsoleEntries[0] = new ConsoleEntrie();
+        if (!first)
+        {
+            for(int i= priorityList.Count; i > 0 ; i--)
+            {
+                priorityList[i] = priorityList[i - 1];
 
+            }
+
+        }
+        errorConsoleEntries[0] = new ConsoleEntrie();
+        
         if (errorDuplicateCheckHashtable.Contains(msg))
         {
             // Duplicate message here
@@ -203,6 +215,7 @@ public class DebugManager : MonoBehaviour
                     for (int j = i; j < errorConsoleEntries.Length - 1; j++)
                     {
                         errorConsoleEntries[j] = errorConsoleEntries[j + 1];
+                        priorityList[j] = priorityList[j + 1];
                     }
 
                     // break out of the for loop
@@ -216,6 +229,15 @@ public class DebugManager : MonoBehaviour
             errorDuplicateCheckHashtable.Add(msg, 0);
             errorConsoleEntries[0].msg = msg;
             errorConsoleEntries[0].count = 1;
+            if (first)
+            {
+                priorityList.Add(priority);
+                first = false;
+            }
+            else
+            {
+                priorityList.Insert(0, priority);
+            }
         }
 
 
@@ -225,6 +247,7 @@ public class DebugManager : MonoBehaviour
 
         for (int i = 0; i < 30; i++)
         {
+
             buildString += String.Format("{{{0}}}: P:{1} {2} \n", errorConsoleEntries[i].count, priority, errorConsoleEntries[i].msg);
         }
         
