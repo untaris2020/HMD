@@ -186,15 +186,7 @@ public class DebugManager : MonoBehaviour
         //Debug.Log(fileName + ": " + msg);
 
         ShiftRight<ConsoleEntrie>(errorConsoleEntries, 1);
-        if (!first)
-        {
-            for(int i= priorityList.Count; i > 0 ; i--)
-            {
-                priorityList[i] = priorityList[i - 1];
-
-            }
-
-        }
+        
         errorConsoleEntries[0] = new ConsoleEntrie();
         
         if (errorDuplicateCheckHashtable.Contains(msg))
@@ -215,7 +207,6 @@ public class DebugManager : MonoBehaviour
                     for (int j = i; j < errorConsoleEntries.Length - 1; j++)
                     {
                         errorConsoleEntries[j] = errorConsoleEntries[j + 1];
-                        priorityList[j] = priorityList[j + 1];
                     }
 
                     // break out of the for loop
@@ -229,15 +220,7 @@ public class DebugManager : MonoBehaviour
             errorDuplicateCheckHashtable.Add(msg, 0);
             errorConsoleEntries[0].msg = msg;
             errorConsoleEntries[0].count = 1;
-            if (first)
-            {
-                priorityList.Add(priority);
-                first = false;
-            }
-            else
-            {
-                priorityList.Insert(0, priority);
-            }
+            
         }
 
 
@@ -248,7 +231,7 @@ public class DebugManager : MonoBehaviour
         for (int i = 0; i < 30; i++)
         {
 
-            buildString += String.Format("{{{0}}}: P:{1} {2} \n", errorConsoleEntries[i].count, priorityList[i], errorConsoleEntries[i].msg);
+            buildString += String.Format("{{{0}}}: {2} \n", errorConsoleEntries[i].count, errorConsoleEntries[i].msg);
         }
         
         errorConsole.text = buildString;
