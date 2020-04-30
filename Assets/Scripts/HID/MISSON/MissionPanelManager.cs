@@ -760,10 +760,9 @@ public class MissionPanelManager : MonoBehaviour
         if (!checkText(0))
         {
             return;
-            currentHighlighted = 0;
-
+            
         }
-        DebugManager.Instance.LogUnityConsole("I ran");
+        currentHighlighted = 0;
         if (SuperMissionFlag)
         {
             SuperMissionNumber = SMOffset;
@@ -802,15 +801,16 @@ public class MissionPanelManager : MonoBehaviour
 
     public void button2Press()
     {
-        currentHighlighted = 1;
+ 
 
 
         if(!checkText(1))
         {
             return;
-            currentHighlighted = 1;
+            
 
         }
+        currentHighlighted = 1;
         if (SuperMissionFlag)
         {
             SuperMissionNumber = SMOffset + 1;
@@ -850,11 +850,11 @@ public class MissionPanelManager : MonoBehaviour
         if (!checkText(2))
         {
             return;
-            currentHighlighted = 2;
+            
 
         }
-        if (!checkText(2))
-            return;
+        currentHighlighted = 2;
+
         if (SuperMissionFlag)
         {
             SuperMissionNumber = SMOffset + 2;
@@ -894,9 +894,10 @@ public class MissionPanelManager : MonoBehaviour
         if (!checkText(3))
         {
             return;
-            currentHighlighted = 3;
+
 
         }
+        currentHighlighted = 3;
         if (SuperMissionFlag)
         {
             SuperMissionNumber = SMOffset + 3;
@@ -936,9 +937,10 @@ public class MissionPanelManager : MonoBehaviour
         if (!checkText(4))
         {
             return;
-            currentHighlighted = 4;
+
 
         }
+        currentHighlighted = 4;
         if (SuperMissionFlag)
         {
             SuperMissionNumber = SMOffset + 4;
