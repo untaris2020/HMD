@@ -755,6 +755,7 @@ public class MissionPanelManager : MonoBehaviour
 
     public void button1Press()
     {
+        currentHighlighted = 0;
 
         if (!checkText(0))
             return;
@@ -797,6 +798,9 @@ public class MissionPanelManager : MonoBehaviour
 
     public void button2Press()
     {
+        currentHighlighted = 1;
+            
+            
         if (!checkText(1))
             return;
         if (SuperMissionFlag)
@@ -835,6 +839,7 @@ public class MissionPanelManager : MonoBehaviour
 
     public void button3Press()
     {
+        currentHighlighted = 2;
         if (!checkText(2))
             return;
         if (SuperMissionFlag)
@@ -873,6 +878,7 @@ public class MissionPanelManager : MonoBehaviour
 
     public void button4Press()
     {
+        currentHighlighted = 3;
         if (!checkText(3))
             return;
         if (SuperMissionFlag)
@@ -911,6 +917,7 @@ public class MissionPanelManager : MonoBehaviour
 
     public void button5Press()
     {
+        currentHighlighted = 4;
         if (!checkText(4))
             return;
         if (SuperMissionFlag)
@@ -1151,7 +1158,7 @@ public class MissionPanelManager : MonoBehaviour
 
     private void upCurrentHighlight()
     {
-        DebugManager.Instance.LogUnityConsole("Current highlighted: " + currentHighlighted);
+        //DebugManager.Instance.LogUnityConsole("Current highlighted: " + currentHighlighted);
         if (currentHighlighted > 0 || (SuperMissionFlag && (SMOffset!=0)) || (MissionFlag && (MOffset != 0)) || (TaskFlag && (TOffset != 0)) || (SubTaskFlag && (STOffset != 0)))
         {
             if(currentHighlighted == 0)
