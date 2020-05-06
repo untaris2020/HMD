@@ -110,6 +110,8 @@ public class IMUHandler : tcpPacket
             //If glove is down clear all models 
             ML.ClearModelsButton();
         }
+
+        startValSet = false;
         base.handleDiscon();
     }
 

@@ -67,7 +67,7 @@ public class forceSensorManager : tcpPacket
 
     protected override void handleDiscon()
     {
-        ErrorHandler.Instance.HandleError(0, "FORCE SENSOR: ERROR LOST CONNECTION");
+        ErrorHandler.Instance.HandleError(1, "FORCE SENSOR: ERROR LOST CONNECTION");
         DebugManager.Instance.LogBoth("FORCE SENSOR: ERROR LOST CONNECTION");
         //Toggle the cameras off 
         if(NavManager.Instance.getHeadCam())
